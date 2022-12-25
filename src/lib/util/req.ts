@@ -11,7 +11,7 @@ interface Res {
 	data: string;
 }
 
-const socket = new iso_ws('ws://127.0.0.1:8000/ws');
+const socket = new iso_ws(BACKEND);
 
 // TODO error notification if response error
 
@@ -38,7 +38,7 @@ socket.onmessage = ({ data }: { data: string }) => {
 	try {
 		res = JSON.parse(data);
 	} catch {
-		console.error(`non-JSON response: ${data}`);
+		console.debug(`non-JSON response: ${data}`);
 	}
 
 	const [resolve, reject] = reqs.get(res.id);

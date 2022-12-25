@@ -14,22 +14,27 @@
 
 <div class:open={item.open}>
 	<div class="line">
-		<Checkbox indeterminate={!item.recommended} bind:checked={item.done} />
+		<div class="checkbox">
+			<Checkbox indeterminate={!item.recommended} bind:checked={item.done} />
+		</div>
 		<Button size="small" kind="ghost" on:click={() => item.open = !item.open}>{text}</Button>
 		<CopyButton text={text} />
 	</div>
 	{#if item.open && item.suggestions}
-		<!-- <div class="suggestions"> -->
+		<div class="suggestions">
 		{#each Object.keys(item.suggestions) as text}
 			<svelte:self {text} item={item.suggestions[text]} />
 		{/each}
-		<!-- </div> -->
+		</div>
 	{/if}
 </div>
 
 <style lang="sass">
+	.checkbox
+		max-width: fit-content
 	.line
 		display: flex
+		align-items: center
 		flex-direction: row
 	.suggestions
 		margin-left: 1rem
