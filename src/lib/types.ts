@@ -7,3 +7,8 @@ export interface TodoItem {
 	examples?: string[],
 	suggestions?: Record<string, TodoItem>;
 }
+
+export interface User {
+	id: number,
+	username: string
+}

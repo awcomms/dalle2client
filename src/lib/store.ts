@@ -1,5 +1,6 @@
 import { browser } from "$app/environment";
 import { req } from "$lib/util";
+import type { User } from "./types";
 import { writable, derived } from 'svelte/store';
 
 export const booleanStore = (key = '', initialValue = false) => {
@@ -91,8 +92,9 @@ export const userTags = arrayStore("userTags", []);
 export const isSideNavOpen = booleanStore("isSideNavOpen");
 export const token = stringStore("token");
 
-// export const user = derived(token, ($token, set) => {
-// 	req({User: {Auth: $token}}).then((r) => {
-// 		set(r)
-// 	});
-// });
+export const user = derived(token, ($token, set) => {
+	set(null)
+	// req<User>({User: {Auth: $token}}).then((r) => {
+	// 	set(r)
+	// });
+});

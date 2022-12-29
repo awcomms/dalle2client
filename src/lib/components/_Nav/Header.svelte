@@ -4,7 +4,7 @@
 	// import url8 from "$lib/util/url8";
 	import { navigating } from '$app/stores';
 	// import Login from '$lib/components/Login.svelte'
-	import { isSideNavOpen, loginOpen, token, /*user*/ } from '$lib/store';
+	import { isSideNavOpen, loginOpen, token, user } from '$lib/store';
 	import {
 		InlineLoading,
 		SkipToContent,
@@ -115,7 +115,7 @@
 		{#if show}
 			<SideNavLink on:click={install} href={null} text="Add To Homescreen" />
 		{/if}
-		<!-- {#if $user} -->
+		{#if $user}
 			<!-- <SideNavLink text="Current result" href="result" /> -->
 			<!-- {#if $user.role === 'admin'}
 				<SideNavLink text="Results" />
@@ -123,9 +123,9 @@
 			{/if} -->
 			<!-- <SideNavLink text="Edit Profile" href="/profile/edit" />
 			<SideNavLink text="Logout" href={null} on:click={exit} /> -->
-		<!-- {:else} -->
+		{:else}
 			<!-- <SideNavLink href={null} on:click={()=> $loginOpen = true} text="Login" /> -->
-		<!-- {/if} -->
+		{/if}
 		<SideNavLink text="Completions" />
 		<!-- {#if $user}
       <SideNavLink isSelected={$page.url.pathname === `/u/${$user.username}`} text="Me" href="/u/{$user.username}" />
