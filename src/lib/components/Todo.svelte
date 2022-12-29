@@ -7,6 +7,199 @@
 			done: false,
 			recommended: true,
 			suggestions: {
+				emotion: {
+					recommended: true,
+					suggestions: {
+						'positive mood, low energy': {
+							suggestions: {
+								light: {},
+								peaceful: {},
+								calm: {},
+								serene: {},
+								soothing: {},
+								relaxed: {},
+								placid: {},
+								comforting: {},
+								cosy: {},
+								tranquil: {},
+								quiet: {},
+								pastel: {},
+								delicate: {},
+								graceful: {},
+								subtle: {},
+								balmy: {},
+								mild: {},
+								ethereal: {},
+								elegant: {},
+								tender: {},
+								soft: {}
+							}
+						},
+						'negative mood, low energy': {
+							suggestions: {
+								muted: {},
+								bleak: {},
+								funereal: {},
+								somber: {},
+								melancholic: {},
+								mournful: {},
+								gloomy: {},
+								dismal: {},
+								sad: {},
+								pale: {},
+								'washed-out': {},
+								desaturated: {},
+								grey: {},
+								subdued: {},
+								dull: {},
+								dreary: {},
+								depressing: {},
+								weary: {},
+								tired: {}
+							}
+						},
+						'positive mood, high energy': {
+							suggestions: {
+								bright: {},
+								vibrant: {},
+								dynamic: {},
+								spirited: {},
+								vivid: {},
+								lively: {},
+								energetic: {},
+								colorful: {},
+								joyful: {},
+								romantic: {},
+								expressive: {},
+								rich: {},
+								kaleidoscopic: {},
+								psychedelic: {},
+								saturated: {},
+								ecstatic: {},
+								brash: {},
+								exciting: {},
+								passionate: {},
+								hot: {}
+							}
+						},
+						'negative mood, high energy': {
+							suggestions: {
+								dark: {},
+								ominous: {},
+								threatening: {},
+								haunting: {},
+								forbidding: {},
+								gloomy: {},
+								stormy: {},
+								doom: {},
+								apocalyptic: {},
+								sinister: {},
+								shadowy: {},
+								ghostly: {},
+								unnerving: {},
+								harrowing: {},
+								dreadful: {},
+								frightful: {},
+								shocking: {},
+								terror: {},
+								hideous: {},
+								ghastly: {},
+								terrifying: {}
+							}
+						}
+					}
+				},
+				'size-y, structure-y': {
+					recommended: true,
+					suggestions: {
+						'big and free': {
+							suggestions: {
+								curvaceous: {},
+								swirling: {},
+								organic: {},
+								riotous: {},
+								turbulent: {},
+								flowing: {},
+								amorphous: {},
+								natural: {},
+								distorted: {},
+								uneven: {},
+								random: {},
+								lush: {},
+								bold: {},
+								intuitive: {},
+								emotive: {},
+								chaotic: {},
+								tumultuous: {},
+								earthy: {},
+								churning: {}
+							}
+						},
+						'big and structured': {
+							suggestions: {
+								monumental: {},
+								imposing: {},
+								rigorous: {},
+								geometric: {},
+								ordered: {},
+								angular: {},
+								artificial: {},
+								lines: {},
+								straight: {},
+								rhythmic: {},
+								composed: {},
+								unified: {},
+								manmade: {},
+								perspective: {},
+								minimalist: {},
+								blocks: {},
+								dignified: {},
+								robust: {},
+								defined: {}
+							}
+						},
+						'small and structured': {
+							suggestions: {
+								ornate: {},
+								delicate: {},
+								neat: {},
+								precise: {},
+								detailed: {},
+								opulent: {},
+								lavish: {},
+								elegant: {},
+								ornamented: {},
+								fine: {},
+								elaborate: {},
+								accurate: {},
+								intricate: {},
+								meticulous: {},
+								decorative: {},
+								realistic: {}
+							}
+						},
+						'small and free': {
+							suggestions: {
+								unplanned: {},
+								daring: {},
+								brash: {},
+								random: {},
+								casual: {},
+								sketched: {},
+								playful: {},
+								spontaneous: {},
+								extemporaneous: {},
+								offhand: {},
+								improvisational: {},
+								experimental: {},
+								loose: {},
+								jaunty: {},
+								light: {},
+								expressive: {}
+							}
+						}
+					}
+				},
 				aesthetic: {
 					recommended: true,
 					suggestions: {
@@ -46,17 +239,55 @@
 							suggestions: {
 								'extreme close-up': {},
 								'close-up': {},
-								'medium shot': {},
-								'long shot': {},
-								'extreme long shot': {}
+								'medium shot': {
+									suggestions: {
+										'mid-shot': {},
+										'waist shot': {}
+									}
+								},
+								'long shot': {
+									suggestions: {
+										'wide shot': {},
+										'full shot': {}
+									}
+								},
+								'extreme long shot': {
+									suggestions: {
+										'extreme wide shot, <X> in the distance': {}
+									}
+								}
 							}
 						},
 						position: {
 							recommended: true,
 							suggestions: {
-								'high angle': {},
-								'low angle': {},
-								'aerial view': {},
+								'overhead view': {
+									suggestions: {
+										'establishing shot': {},
+										'from above': {},
+										'high angle': {},
+										'crane shot': {}
+									},
+									examples: [
+										'Film still, establishing shot of bustling farmers market, golden hour, high angle'
+									]
+								},
+								'low angle': {
+									suggestions: {
+										'from below': {},
+									},
+									examples: [
+										'Film still, gangster squirrel counting his money, low angle,shot from below, worms eye view'
+									]
+								},
+								'aerial view': {
+									suggestions: {
+										"bird's eye view, drone photography": {},
+									},
+									examples: [
+										"Aerial photo of a coral reef that looks like a labyrinth"
+									]
+								},
 								'tilted frame': {},
 								'over the shoulder shot': {}
 							}

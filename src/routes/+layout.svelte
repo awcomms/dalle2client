@@ -4,7 +4,7 @@
 	import { Content, Grid } from 'carbon-components-svelte';
 	import 'carbon-components-svelte/css/g100.css';
 	import 'carbon-components-svelte/css/white.css';
-	// import Header from '$lib/components/_Nav/Header.svelte';
+	import Header from '$lib/components/_Nav/Header.svelte';
 	import Theme from '$lib/components/Theme.svelte';
 	import { browser } from '$app/environment';
 
@@ -12,7 +12,7 @@
 </script>
 
 <Theme persist theme="white">
-	<!-- <Header /> -->
+	<Header />
 	<Content style="background: none; padding: 1rem">
 		<Grid>
 			<slot />

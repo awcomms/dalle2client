@@ -1,5 +1,5 @@
 {
-	"name": "dalle2client",
+	"name": "openaiclient",
 	"version": "0.0.1",
 	"private": true,
 	"scripts": {

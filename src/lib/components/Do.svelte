@@ -13,7 +13,7 @@
 	const _do = async () => {
 		loading = true;
 		previous = value;
-		await req<string>({ DallE2: value })
+		await req<string>({OpenAI: { DALLE2: value }})
 			.then((r) => (src = r))
 			.catch(() => alert('error generating image'))
 			.finally(() => (loading = false));

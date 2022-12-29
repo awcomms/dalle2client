@@ -4,5 +4,6 @@ export interface TodoItem {
 	done?: boolean;
 	open?: boolean;
 	recommended?: boolean;
+	examples?: string[],
 	suggestions?: Record<string, TodoItem>;
 }

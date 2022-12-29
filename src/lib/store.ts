@@ -91,8 +91,8 @@ export const userTags = arrayStore("userTags", []);
 export const isSideNavOpen = booleanStore("isSideNavOpen");
 export const token = stringStore("token");
 
-export const user = derived(token, ($token, set) => {
-	req({User: {Auth: $token}}).then((r) => {
-		set(r)
-	});
-});
+// export const user = derived(token, ($token, set) => {
+// 	req({User: {Auth: $token}}).then((r) => {
+// 		set(r)
+// 	});
+// });

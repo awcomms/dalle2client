@@ -1,6 +1,7 @@
 <script lang="ts">
 	import { Button, Checkbox, CopyButton } from 'carbon-components-svelte';
-	export let item: import('$lib/types').TodoItem, text = "";
+	export let item: import('$lib/types').TodoItem,
+		text = '';
 
 	const copy = async (s: string) => {
 		// let all = await navigator.clipboard.read()
@@ -15,16 +16,16 @@
 <div class:open={item.open}>
 	<div class="line">
 		<div class="checkbox">
-			<Checkbox indeterminate={!item.recommended} bind:checked={item.done} />
+			<Checkbox indeterminate={/*!item.recommended*/false} bind:checked={item.done} />
 		</div>
-		<Button size="small" kind="ghost" on:click={() => item.open = !item.open}>{text}</Button>
-		<CopyButton text={text} />
+		<Button size="small" kind="ghost" on:click={() => (item.open = !item.open)}>{text}</Button>
+		<CopyButton {text} />
 	</div>
 	{#if item.open && item.suggestions}
 		<div class="suggestions">
-		{#each Object.keys(item.suggestions) as text}
-			<svelte:self {text} item={item.suggestions[text]} />
-		{/each}
+			{#each Object.keys(item.suggestions) as text}
+				<svelte:self {text} item={item.suggestions[text]} />
+			{/each}
 		</div>
 	{/if}
 </div>
