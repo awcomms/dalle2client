@@ -1,7 +1,7 @@
 import { v4 as uuidv4 } from 'uuid';
 import { get } from 'svelte/store';
 import { token } from '$lib/store';
-import { BACKEND } from '$lib/env';
+import { BACKEND_SOCKET } from '$lib/env';
 import iso_ws from 'isomorphic-ws';
 
 const reqs = new Map();
@@ -11,7 +11,7 @@ interface Res {
 	data: string;
 }
 
-const socket = new iso_ws(BACKEND);
+const socket = new iso_ws(BACKEND_SOCKET);
 
 // TODO error notification if response error
 
@@ -38,7 +38,7 @@ socket.onmessage = ({ data }: { data: string }) => {
 	try {
 		res = JSON.parse(data);
 	} catch {
-		console.debug(`non-JSON response: ${data}`);
+		console.error(`non-JSON response: ${data}`);
 	}
 
 	const [resolve, reject] = reqs.get(res.id);
@@ -58,13 +58,13 @@ socket.onmessage = ({ data }: { data: string }) => {
 
 type Model = 'User' | 'Attempt' | 'Quiz';
 
-// const cached = (model: Model, id: number) => {
-// 	let cache = localStorage.get('req');
-// 	if (!cache) return
-// 	cache = JSON.parse(cache);
-// 	if (!cache[model]) return
-// 	return cache[model][id];
-// };
+const cached = (model: Model, id: number) => {
+	let cache = localStorage.get('req');
+	if (!cache) return
+	cache = JSON.parse(cache);
+	if (!cache[model]) return
+	return cache[model][id];
+};
 
 export const req = async<Type>(data: object, auth = false): Promise<Type> => {
 	console.log('req', data, auth);

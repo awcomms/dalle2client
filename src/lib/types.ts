@@ -12,3 +12,13 @@ export interface User {
 	id: number,
 	username: string
 }
+
+export interface PromptResponse {
+	prompt: Entry,
+	response: Entry
+}
+
+export interface Entry {
+	text: string[] | string,
+	date: Date
+}
