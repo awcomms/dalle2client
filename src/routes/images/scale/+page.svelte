@@ -38,7 +38,7 @@
 			blob_options.mime_type = e.result.mime_type;
 		}
 		let extension = e.result.extension || e.options.extension;
-		return new Blob([e.result.bytes], blob_options), extension;
+		return [new Blob([e.result.bytes], blob_options), extension];
 	};
 
 	const act = async (entries: Entry[]) => {
@@ -72,14 +72,15 @@
 		let zip = new JSZip();
 		if (to_download.length > 1) {
 			to_download.forEach((e) => {
-				let [blob, extension] = get_res(e);
-				zip.file(`${e.name}.${extension}`, blob);
+				let [b, extension] = get_res(e);
+				zip.file(`${e.name}.${extension}`, b);
 			});
 			zip.generateAsync({ type: 'blob' }).then((blob) => {
 				download_blob(blob, `resize - ${date}.zip`);
 			});
 		} else {
 			let e = to_download[0];
+			if (!e) return;
 			let [blob, extension] = get_res(e);
 			download_blob(blob, `${e.file.name} - resize - ${date}.${extension}`);
 		}
