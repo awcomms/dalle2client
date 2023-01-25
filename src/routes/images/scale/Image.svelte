@@ -9,14 +9,22 @@
 
 	import { Button, NumberInput, Select, SelectItem } from 'carbon-components-svelte';
 	import TrashCan from 'carbon-icons-svelte/lib/TrashCan.svelte';
-	import type { Entry, FilterType } from './types';
+	import type { Entry } from './types';
 	import { onMount, createEventDispatcher } from 'svelte';
-	import { download_blob } from '$lib/util';
 
 	const dispatch = createEventDispatcher();
+	const base_width = entry.options.width;
+	const base_height = entry.options.height;
+
+	$: change_by_factor(factor)
 
 	let filter_types = ['Nearest', 'Triangle', 'CatmullRom', 'Gaussian', 'Lanczos3'],
-		open = false;
+		open = false, factor = 1;
+
+	const change_by_factor = (f: number) => {
+		entry.options.width = base_width * f;
+		entry.options.height = base_height * f;
+	}
 
 	onMount(() => {
 		const img = new Image();
@@ -39,15 +47,6 @@
 			entry.options.bytes = new Uint8Array(reader.result);
 		};
 	});
-	/**
-	 * delete
-	 * edit name
-	 *
-	 * status
-	 * name
-	 * dimension
-	 * filetype - `change this if you want to receive the file in a different extension`
-	 */
 </script>
 
 {#if entry.options}
@@ -64,6 +63,7 @@
 			<div class="details">
 				<p>{entry.options.extension}</p>
 				<p>{entry.size} bytes</p>
+				<NumberInput size="sm" label="factor" bind:value={factor} />
 				<NumberInput size="sm" label="width" bind:value={entry.options.width} />
 				<NumberInput size="sm" label="height" bind:value={entry.options.height} />
 				<Select bind:selected={entry.options.filter_type}>

@@ -8,7 +8,7 @@
 	import FileUpload from '$lib/components/FileUpload.svelte';
 	import { Button } from 'carbon-components-svelte';
 	import JSZip from 'jszip';
-	import { scale, get_filter_type } from 'si';
+	import { scale, get_filter_type, FilterType } from 'si';
 
 	let entries: Entry[] = [],
 		next_id: number = 0;
@@ -20,20 +20,34 @@
 
 		entries.forEach((e) => {
 			try {
-				e.result = scale(e.options.width, e.options.height, e.options.exact, e.options.bytes, e.options.extension, e.options.filter_type)
-			} catch {
-				console.error(e)
+				let filter_type;
+				try {
+					filter_type = get_filter_type(e.options.filter_type);
+				} catch (error) {
+					console.log(error);
+					return
+				}
+				e.result = scale(
+					e.options.width,
+					e.options.height,
+					e.options.exact,
+					e.options.bytes,
+					e.options.extension,
+					filter_type
+				);
+			} catch (error) {
+				console.error(error);
 			}
 		});
 		console.log('done');
 		let zip = new JSZip();
 		if (entries.length > 1) {
-			let extension = e.result.extension || e.options.extension
+			let extension = e.result.extension || e.options.extension;
 			entries.forEach((e) => {
 				if (!e.result) return;
-				let blob_options = {}
+				let blob_options = {};
 				if (e.result.mime_type) {
-					blob_options.mime_type = e.result.mime_type
+					blob_options.mime_type = e.result.mime_type;
 				}
 				zip.file(e.file.name, new Blob([e.result.bytes], blob_options));
 			});
@@ -43,16 +57,19 @@
 		} else {
 			let entry = entries[0];
 			if (!entry.result) return;
-			console.log(entry.result)
-			console.log(entry.options.bytes)
-			console.log(entry.result.bytes)
-			console.log(entry.options.bytes === entry.result.bytes)
-			let blob_options = {}
+			console.log(entry.result);
+			console.log(entry.options.bytes);
+			console.log(entry.result.bytes);
+			console.log(entry.options.bytes === entry.result.bytes);
+			let blob_options = {};
 			if (entry.result.mime_type) {
-				blob_options.mime_type = entry.result.mime_type
+				blob_options.mime_type = entry.result.mime_type;
 			}
-			let extension = entry.result.extension //|| entry.options.extension
-			download_blob(new Blob([entry.result.bytes], blob_options), `${entries[0].file.name} - resize - ${date}.${extension}`);
+			let extension = entry.result.extension; //|| entry.options.extension
+			download_blob(
+				new Blob([entry.result.bytes], blob_options),
+				`${entries[0].file.name} - resize - ${date}.${extension}`
+			);
 		}
 	};
 
@@ -75,7 +92,7 @@
 						height: 0,
 						extension: file.name.substring(file.name.lastIndexOf('.') + 1),
 						bytes: new Uint8Array(),
-						filter_type: get_filter_type('Nearest')
+						filter_type: 'Nearest'
 					}
 				}
 			];
