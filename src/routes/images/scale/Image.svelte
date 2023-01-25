@@ -4,27 +4,25 @@
 	 * switch: open - to show details
 	 * option: keep proportion
 	 * option: exact
+	 *
+	 * on wf or hf change, change other by other * ratio
+	 * button for both height and width to ratio to other
 	 */
 	export let entry: Entry;
 
-	import { Button, NumberInput, Select, SelectItem } from 'carbon-components-svelte';
+	import { Button, ToastNotification } from 'carbon-components-svelte';
 	import TrashCan from 'carbon-icons-svelte/lib/TrashCan.svelte';
 	import type { Entry } from './types';
 	import { onMount, createEventDispatcher } from 'svelte';
+	import Options from './Options.svelte';
 
 	const dispatch = createEventDispatcher();
-	const base_width = entry.options.width;
-	const base_height = entry.options.height;
 
-	$: change_by_factor(factor)
+	const clear_error = () => {
+		entry.error = undefined;
+	};
 
-	let filter_types = ['Nearest', 'Triangle', 'CatmullRom', 'Gaussian', 'Lanczos3'],
-		open = false, factor = 1;
-
-	const change_by_factor = (f: number) => {
-		entry.options.width = base_width * f;
-		entry.options.height = base_height * f;
-	}
+	let open = false;
 
 	onMount(() => {
 		const img = new Image();
@@ -33,7 +31,12 @@
 		img.onload = () => {
 			entry.options.width = img.naturalWidth;
 			entry.options.height = img.naturalHeight;
-			console.log(entry.options.width, entry.options.height);
+			entry.width = entry.options.width;
+			entry.height = entry.options.height;
+
+			dispatch('img', [entry.width, entry.height])
+
+			entry.ratio = entry.options.width / entry.options.height;
 		};
 
 		const reader = new FileReader();
@@ -41,7 +44,7 @@
 		reader.onload = () => {
 			if (!reader.result) return;
 			if (typeof reader.result === 'string') {
-				console.log('reader.result is a string not an arraybuffer');
+				console.error('reader.result is a string not an arraybuffer');
 				return;
 			}
 			entry.options.bytes = new Uint8Array(reader.result);
@@ -49,7 +52,16 @@
 	});
 </script>
 
-{#if entry.options}
+<div>
+	{#if entry.error}
+		<ToastNotification
+			fullWidth
+			kind="error"
+			title={entry.error.error}
+			caption={entry.error.date.toUTCString()}
+		/>
+	{/if}
+
 	<div class="entry">
 		<div class="line">
 			<Button size="small" kind="ghost" on:click={() => (open = !open)}>{entry.file.name}</Button>
@@ -61,20 +73,17 @@
 		</div>
 		{#if open}
 			<div class="details">
-				<p>{entry.options.extension}</p>
-				<p>{entry.size} bytes</p>
-				<NumberInput size="sm" label="factor" bind:value={factor} />
-				<NumberInput size="sm" label="width" bind:value={entry.options.width} />
-				<NumberInput size="sm" label="height" bind:value={entry.options.height} />
-				<Select bind:selected={entry.options.filter_type}>
-					{#each filter_types as ft}
-						<SelectItem value={ft} text={ft} />
-					{/each}
-				</Select>
+				<Options
+					on:input={clear_error}
+					bind:options={entry.options}
+					width={entry.width}
+					height={entry.height}
+					ratio={entry.ratio}
+				/>
 			</div>
 		{/if}
 	</div>
-{/if}
+</div>
 
 <style lang="sass">
 	.details

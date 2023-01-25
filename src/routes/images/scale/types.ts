@@ -8,15 +8,19 @@ export interface Options {
 	filter_type: FilterType;
 }
 
-export interface Resized {
-	file_name: string
-	name: string,
-	bytes: Uint8Array
+export interface Error {
+	error: unknown,
+	date: Date
 }
 
 export interface Entry {
+	name: string,
+	error?: Error,
+	width: number,
+	height: number,
 	result?: Res,
 	size: number,
+	ratio: number,
 	id: number,
 	file: File,
 	options: Options

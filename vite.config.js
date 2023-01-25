@@ -10,7 +10,7 @@ const config = {
 		include: ['src/**/*.{test,spec}.{js,ts}']
 	},
 	optimizeDeps: {
-		exclude: ["scale-image", "scaimages"]
+		exclude: ["scale-image"]
 	}
 };
 

@@ -17,7 +17,6 @@ export const http = <Type>(data: object, auth = false): Promise<Type> => {
 	// if (auth) {
 	// 	model_object[Object.keys(model_object)[0]].token = get(token);
 	// }
-	console.log(data)
 	let body
 	try {
 		body = JSON.stringify(data)

@@ -47,7 +47,7 @@
 				];
 			})
 			.catch((e) => {
-				console.log(e);
+				console.error(e);
 				alert('an error occured');
 			})
 			.finally(() => (loading = false));

@@ -1,2 +1,19 @@
-actual datetime of send
-mimetype
+option to show thumbnail of images
+    maybe export thumbnail function from 'scale-images' crate
+error toast notification
+    edit options_for_all
+        component - params
+        options_for_all
+        button to show options_for_all
+        on -button click, hide options for others
+        Resize for all button
+
+    each entry has it's own error
+    on input in FileImage, error string = null
+    if error string, error toast notification
+edit extension
+
+test with 'scale-image' package
+
+issues
+    error doesn't seem to show up immediately
