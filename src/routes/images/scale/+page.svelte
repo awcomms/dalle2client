@@ -146,9 +146,8 @@
 	};
 </script>
 
-<FileUpload on:change={change} multiple />
-
 <div class="all">
+	<FileUpload on:change={change} multiple />
 	{#if entries.length > 2}
 		<Button on:click={() => (edit_for_all = !edit_for_all)}
 			>Edit options for all</Button
