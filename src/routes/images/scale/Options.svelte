@@ -1,38 +1,50 @@
 <script lang="ts">
-	export let options: import('./types').Options,
+	export let options: import('$lib/util/image/scale').Options,
 		width = 0,
 		height = 0,
 		ratio = 1;
 
-	import { TextInput, Toggle, Select, SelectItem } from 'carbon-components-svelte';
+	import {
+		TextInput,
+		Toggle,
+		Select,
+		SelectItem
+	} from 'carbon-components-svelte';
 	import Span from './Span.svelte';
 
-	let filter_types = ['Nearest', 'Triangle', 'CatmullRom', 'Gaussian', 'Lanczos3'],
+	let filter_types = [
+			'Nearest',
+			'Triangle',
+			'CatmullRom',
+			'Gaussian',
+			'Lanczos3'
+		],
 		ratio_lock = true;
 
-	const change_width = (h: number) => {
-		// console.log('w');
+	const change_width = (e: CustomEvent) => {
+		console.log(e.detail);
 		if (ratio_lock) {
 			// console.log('-w');
-			// ratio_width(h);
+			ratio_width(e.detail);
 		}
 	};
 
-	const change_height = (w: number) => {
-		// console.log('h');
+	const change_height = (e: CustomEvent) => {
+		console.log(e.detail);
 		if (ratio_lock) {
 			// console.log('-h');
-			// ratio_height(w);
+			ratio_height(e.detail);
 		}
 	};
 
 	const ratio_width = (h: number) => {
-		// console.log('--w');
+		console.log('--w');
 		options.width = h * ratio;
 	};
 
 	const ratio_height = (w: number) => {
-		// console.log('--h');
+		console.log('--h');
+		console.log(ratio, w, w / ratio);
 		options.height = w / ratio;
 	};
 
@@ -46,7 +58,9 @@
 	};
 
 	const ratio_base = (side: boolean) => {
-		side ? ratio_width(options.height) : ratio_height(options.width);
+		side
+			? ratio_width(options.height)
+			: ratio_height(options.width);
 	};
 </script>
 
@@ -65,14 +79,14 @@
 />
 <Span
 	on:input
-	on:input={() => change_height(options.width)}
+	on:span_change={change_height}
 	bind:value={options.width}
 	label="width"
 	base_value={width}
 />
 <Span
 	on:input
-	on:input={() => change_width(options.height)}
+	on:span_change={change_width}
 	bind:value={options.height}
 	label="height"
 	base_value={height}

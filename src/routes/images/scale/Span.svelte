@@ -3,25 +3,38 @@
 		label: string = '',
 		base_value: number = 1;
 
-	import { NumberInput, Row, Column } from 'carbon-components-svelte';
-	let factor = 1;
+	import {
+		NumberInput,
+		Row,
+		Column
+	} from 'carbon-components-svelte';
+	import { createEventDispatcher } from 'svelte';
+
+	const dispatch = createEventDispatcher();
 
 	$: change_factor(value);
+
+	let factor = 1;
 
 	const change_factor = (v: number) => {
 		factor = v / base_value;
 	};
 
-	const change_value = (f: number) => {
-		value = base_value * factor;
+	const change_value = (v: number) => {
+		console.log(base_value, v)
+		value = base_value * v;
+		dispatch('span_change', value);
 	};
 </script>
 
 <Row>
 	<Column>
 		<NumberInput
+			min={0}
 			on:input
-			on:input={() => change_value(factor)}
+			on:input={(e) => {
+				if (e.detail) change_value(e.detail);
+			}}
 			bind:value={factor}
 			label="{label} factor"
 			size="sm"
@@ -29,9 +42,15 @@
 	</Column>
 	<Column>
 		<NumberInput
-			min={1}
+			min={0}
 			on:input
-			on:input={() => change_factor(value)}
+			on:input={(e) => {
+				console.log(e.detail)
+				if (e.detail) dispatch('span_change', e.detail);
+			}}
+			on:input={(e) => {
+				if (e.detail) change_factor(e.detail);
+			}}
 			bind:value
 			{label}
 			size="sm"
