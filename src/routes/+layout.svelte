@@ -8,7 +8,7 @@
 		navigator.serviceWorker.ready.then((registration) => registration.update());
 </script>
 
-<Theme persist theme="g100" />
+<Theme theme="g100" />
 <Header />
 <Content style="background: none; padding: 1rem">
 	<Grid>

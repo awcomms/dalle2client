@@ -1,0 +1,13 @@
+{
+	"files.autoSaveDelay": 3700,
+	"vite.port": 3737,
+	"vite.showTerminal": true,
+	"vite.vitepressAutoRouting": true,
+	"vite.https": false,
+	"vite.devCommand": "",
+	"svelte.plugin.svelte.defaultScriptLanguage": "ts",
+	"svelte.trace.server": "verbose",
+	"svelte.ui.svelteKitFilesContextMenu.enable": "always",
+	"vite.autoStart": true,
+	"vite.browserType": "system"
+}

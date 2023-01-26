@@ -1,16 +1,26 @@
 <script lang="ts">
-	import { download_blob, average } from '$lib/util';
-	import type { Entry, Options as _Options } from './types';
+	import {
+		download_blob,
+		average,
+		create_blob
+	} from '$lib/util';
+	import type { Entry } from './types';
+	import type { Options as _Options } from '$lib/util/image/scale';
 	import FileImage from './Image.svelte';
 	import FileUpload from '$lib/components/FileUpload.svelte';
-	import { Button } from 'carbon-components-svelte';
+	import {
+		Row,
+		Column,
+		Button,
+		InlineLoading
+	} from 'carbon-components-svelte';
 	import JSZip from 'jszip';
-	import { scale, get_filter_type } from 'scale-image';
-	import { dev } from '$app/environment';
+	import { parse_res, scale } from '$lib/util/image/scale';
 	import Options from './Options.svelte';
 
 	let entries: Entry[] = [],
-		next_id: number = 0,
+		next_id = 0,
+		scaling = false,
 		options: _Options = {
 			width: 1,
 			height: 1,
@@ -21,54 +31,58 @@
 		},
 		edit_for_all = false;
 
-	const scale_all = () => {
+	const scale_all = async () => {
 		let all = entries.map((e) => {
 			let _e = e;
 			_e.options = options;
 			_e.options.bytes = e.options.bytes;
 			return _e;
 		});
-		act(all);
+		await act(all);
 	};
 
 	const get_res = (e: Entry): [Blob, string] => {
 		if (!e.result) throw null;
-		let blob_options = {};
-		if (e.result.mime_type) {
-			blob_options.mime_type = e.result.mime_type;
-		}
-		let extension = e.result.extension || e.options.extension;
-		return [new Blob([e.result.bytes], blob_options), extension];
+		let [bytes, extension, type] = parse_res(e.result);
+		return [
+			create_blob(bytes, type),
+			extension || e.options.extension
+		];
 	};
 
 	const act = async (entries: Entry[]) => {
+		scaling = true;
 		if (!entries.length) return;
 		let date = new Date().toUTCString();
 
-		entries.forEach((e) => {
-			try {
-				let filter_type;
-				try {
-					filter_type = get_filter_type(e.options.filter_type);
-				} catch (error) {
+		let to_download: Entry[] = [];
+
+		for (let e of entries) {
+			await scale(e.options)
+				.then((r) => {
+					e.result = r;
+					to_download.push(e);
+				})
+				.catch((error) => {
 					e.error = { error, date: new Date() };
-					console.log(error);
-					return;
-				}
-				e.result = scale(
-					e.options.width,
-					e.options.height,
-					e.options.exact,
-					e.options.bytes,
-					e.options.extension,
-					filter_type
-				);
-			} catch (error) {
-				e.error = { error, date: new Date() };
-				console.error(error);
-			}
-		});
-		let to_download = entries.filter((e) => e.result);
+					console.error(error);
+				});
+		}
+		to_download = to_download.filter((e) => e.result);
+
+		// let to_download = entries
+		// 	.map((e) => {
+		// 		return await scale(e.options)
+		// 			.then((r) => {
+		// 				e.result = r;
+		// 				return e;
+		// 			})
+		// 			.catch((error) => {
+		// 				e.error = { error, date: new Date() };
+		// 				console.error(error);
+		// 			});
+		// 	})
+		// 	.filter((e) => e && e.result);
 		let zip = new JSZip();
 		if (to_download.length > 1) {
 			to_download.forEach((e) => {
@@ -82,15 +96,23 @@
 			let e = to_download[0];
 			if (!e) return;
 			let [blob, extension] = get_res(e);
-			download_blob(blob, `${e.file.name} - resize - ${date}.${extension}`);
+			download_blob(
+				blob,
+				`${e.file.name} - resize - ${date}.${extension}`
+			);
 		}
+		scaling = false;
 	};
 
 	const del = (id: number) => {
 		entries = entries.filter((e) => e.id !== id);
 	};
 
-	const change = ({ detail: files }: { detail: FileList }) => {
+	const change = ({
+		detail: files
+	}: {
+		detail: FileList;
+	}) => {
 		console.log(files.length);
 		for (let file of files) {
 			let ext_dot_index = file.name.lastIndexOf('.');
@@ -108,7 +130,9 @@
 						exact: false,
 						width: 1,
 						height: 1,
-						extension: file.name.substring(ext_dot_index + 1),
+						extension: file.name.substring(
+							ext_dot_index + 1
+						),
 						bytes: new Uint8Array(),
 						filter_type: 'Nearest'
 					}
@@ -124,33 +148,53 @@
 
 <FileUpload on:change={change} multiple />
 
-{#if entries.length}
-	<Button on:click={() => (edit_for_all = !edit_for_all)}>Edit for all</Button>
-{/if}
+<div class="all">
+	{#if entries.length > 2}
+		<Button on:click={() => (edit_for_all = !edit_for_all)}
+			>Edit options for all</Button
+		>
+	{/if}
 
-{#if edit_for_all && entries.length}
-	<Options
-		bind:options
-		width={options.width}
-		height={options.height}
-		ratio={options.width / options.height}
-	/>
-	<Button on:click={scale_all}>Scale All</Button>
-{/if}
+	{#if edit_for_all && entries.length}
+		<Options
+			bind:options
+			width={options.width}
+			height={options.height}
+			ratio={options.width / options.height}
+		/>
+		<Button on:click={scale_all}>Scale All</Button>
+	{/if}
 
-<div class="entries">
-	{#each entries as entry}
-		<FileImage on:delete={({ detail: id }) => del(id)} bind:entry />
-	{/each}
+	<div class="entries">
+		{#each entries as entry}
+			<Row>
+				<Column>
+					<FileImage
+						on:delete={({ detail: id }) => del(id)}
+						bind:entry
+					/>
+				</Column>
+			</Row>
+		{/each}
+	</div>
+
+	{#if entries.length}
+		<Button disabled={scaling} on:click={() => act(entries)}
+			>Resize</Button
+		>
+		{#if scaling}
+			<InlineLoading />
+		{/if}
+	{/if}
 </div>
 
-{#if entries.length}
-	<Button on:click={() => act(entries)}>Resize</Button>
-{/if}
-
 <style lang="sass">
-	.entries
+	.all
 		display: flex
 		flex-direction: column
 		row-gap: 1rem
+	.entries
+		display: flex
+		flex-direction: column
+		row-gap: 2rem
 </style>

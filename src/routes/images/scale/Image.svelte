@@ -10,11 +10,18 @@
 	 */
 	export let entry: Entry;
 
-	import { Button, ToastNotification } from 'carbon-components-svelte';
+	import {
+		Row,
+		Column,
+		Button,
+		ToastNotification
+	} from 'carbon-components-svelte';
 	import TrashCan from 'carbon-icons-svelte/lib/TrashCan.svelte';
 	import type { Entry } from './types';
 	import { onMount, createEventDispatcher } from 'svelte';
 	import Options from './Options.svelte';
+	import { create_blob } from '$lib/util';
+	import { scale, parse_res } from '$lib/util/image/scale';
 
 	const dispatch = createEventDispatcher();
 
@@ -22,7 +29,8 @@
 		entry.error = undefined;
 	};
 
-	let open = false;
+	let open = true,
+		thumbnail: string;
 
 	onMount(() => {
 		const img = new Image();
@@ -34,9 +42,10 @@
 			entry.width = entry.options.width;
 			entry.height = entry.options.height;
 
-			dispatch('img', [entry.width, entry.height])
+			dispatch('img', [entry.width, entry.height]);
 
-			entry.ratio = entry.options.width / entry.options.height;
+			entry.ratio =
+				entry.options.width / entry.options.height;
 		};
 
 		const reader = new FileReader();
@@ -44,15 +53,27 @@
 		reader.onload = () => {
 			if (!reader.result) return;
 			if (typeof reader.result === 'string') {
-				console.error('reader.result is a string not an arraybuffer');
+				console.error(
+					'reader.result is a string not an arraybuffer'
+				);
 				return;
 			}
 			entry.options.bytes = new Uint8Array(reader.result);
+
+			scale({
+				...entry.options,
+				width: 48,
+				height: 48
+			}).then((res) => {
+				let [bytes, _, type] = parse_res(res);
+				let blob = create_blob(bytes, type);
+				thumbnail = window.URL.createObjectURL(blob);
+			});
 		};
 	});
 </script>
 
-<div>
+<div class="entry">
 	{#if entry.error}
 		<ToastNotification
 			fullWidth
@@ -61,35 +82,46 @@
 			caption={entry.error.date.toUTCString()}
 		/>
 	{/if}
-
-	<div class="entry">
-		<div class="line">
-			<Button size="small" kind="ghost" on:click={() => (open = !open)}>{entry.file.name}</Button>
+	<div class="left">
+		<Row>
+			<div class="img">
+				<img src={thumbnail} alt="" width="48" height="48" />
+			</div>
+			<Button
+				size="small"
+				kind="ghost"
+				on:click={() => (open = !open)}
+				>{entry.file.name}</Button
+			>
 			<Button
 				iconDescription="delete"
 				on:click={() => dispatch('delete', entry.id)}
 				icon={TrashCan}
 			/>
-		</div>
-		{#if open}
-			<div class="details">
-				<Options
-					on:input={clear_error}
-					bind:options={entry.options}
-					width={entry.width}
-					height={entry.height}
-					ratio={entry.ratio}
-				/>
-			</div>
-		{/if}
+		</Row>
 	</div>
+	{#if open}
+		<Options
+			on:input={clear_error}
+			bind:options={entry.options}
+			width={entry.width}
+			height={entry.height}
+			ratio={entry.ratio}
+		/>
+	{/if}
 </div>
 
 <style lang="sass">
-	.details
-		margin-left: 0.37rem
+	.left
+		padding-left: 1rem
+	.img
+		max-block-size: 100%
+		inline-size: auto
+		display: flex
+		align-items: center
+		justify-content: center
 	.entry
 		display: flex
 		flex-direction: column
-		row-gap: .37rem
+		row-gap: 1rem
 </style>

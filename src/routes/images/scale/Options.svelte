@@ -52,8 +52,17 @@
 
 <!-- <p>{size} bytes</p> -->
 <!-- <Toggle bind:toggled={ratio_lock} labelText="Ratio lock" /> -->
-<Toggle bind:toggled={options.exact} labelText="Exact" />
-<TextInput on:input size="sm" bind:value={options.extension} labelText="extension" />
+<Toggle
+	bind:toggled={options.exact}
+	labelText="Scale to exact dimensions, ignoring aspect ratio"
+/>
+<TextInput
+	helperText="Change this to receive the scaled image as a different format"
+	on:input
+	size="sm"
+	bind:value={options.extension}
+	labelText="extension"
+/>
 <Span
 	on:input
 	on:input={() => change_height(options.width)}

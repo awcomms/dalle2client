@@ -1,5 +1,7 @@
+`adding` state variable
 option to show thumbnail of images
-    maybe export thumbnail function from 'scale-images' crate
+    rescale to 48px on add
+line dividing options_for_all from entries
 error toast notification
     edit options_for_all
         component - params
@@ -7,6 +9,8 @@ error toast notification
         button to show options_for_all
         on -button click, hide options for others
         Resize for all button
+    
+    set all entry's options to options_for_all
 
     each entry has it's own error
     on input in FileImage, error string = null

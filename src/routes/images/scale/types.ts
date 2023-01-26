@@ -1,15 +1,12 @@
+import type { Options } from '$lib/util/image/scale';
 import type { Res } from 'scale-image';
-export interface Options {
-	width: number;
-	height: number;
-	exact: boolean;
-	bytes: Uint8Array;
-	extension: string;
-	filter_type: FilterType;
+
+export interface Product {
+	name: string,
 }
 
 export interface Error {
-	error: unknown,
+	error: string,
 	date: Date
 }
 
@@ -25,5 +22,3 @@ export interface Entry {
 	file: File,
 	options: Options
 }
-
-export type FilterType = 'Nearest' | 'Triangle' | 'CatmullRom' | 'Gaussian' | 'Lanczos3';
