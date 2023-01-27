@@ -65,7 +65,7 @@
 </script>
 
 <!-- <p>{size} bytes</p> -->
-<!-- <Toggle bind:toggled={ratio_lock} labelText="Ratio lock" /> -->
+<Toggle bind:toggled={ratio_lock} labelText="Keep ratio while editing dimensions" />
 <Toggle
 	bind:toggled={options.exact}
 	labelText="Scale to exact dimensions, ignoring aspect ratio"

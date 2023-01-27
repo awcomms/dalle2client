@@ -12,13 +12,26 @@
 		Row,
 		Column,
 		Button,
+		ButtonSet,
 		InlineLoading
 	} from 'carbon-components-svelte';
 	import JSZip from 'jszip';
+	import Minimize from 'carbon-icons-svelte/lib/Minimize.svelte';
+	import Maximize from 'carbon-icons-svelte/lib/Maximize.svelte';
 	import { parse_res, scale } from '$lib/util/image/scale';
 	import Options from './Options.svelte';
+	import { onMount } from 'svelte';
+
+	onMount(() => {
+		height = `${(window.innerHeight * 79) / 100}px`;
+	});
+
+	$: if (typeof window !== 'undefined')
+		height = `${(window.innerHeight * 79) / 100}px`;
 
 	let entries: Entry[] = [],
+		all_maximized: boolean,
+		all_minimized: boolean,
 		next_id = 0,
 		scaling = false,
 		options: _Options = {
@@ -29,6 +42,7 @@
 			filter_type: 'Nearest',
 			bytes: new Uint8Array()
 		},
+		height = '670px',
 		edit_for_all = false;
 
 	const scale_all = async () => {
@@ -39,6 +53,11 @@
 			return _e;
 		});
 		await act(all);
+	};
+
+	const check_all_options_open = () => {
+		all_maximized = !entries.find(e => !e.options_open)
+		all_minimized = !entries.find(e => e.options_open)
 	};
 
 	const get_res = (e: Entry): [Blob, string] => {
@@ -121,6 +140,7 @@
 				{
 					id: next_id,
 					name: file.name.substring(0, ext_dot_index),
+					options_open: true,
 					size: file.size,
 					ratio: 1,
 					width: 1,
@@ -146,48 +166,89 @@
 	};
 </script>
 
-<div class="all">
-	<FileUpload on:change={change} multiple />
-	{#if entries.length > 2}
-		<Button on:click={() => (edit_for_all = !edit_for_all)}
-			>Edit options for all</Button
-		>
-	{/if}
-
-	{#if edit_for_all && entries.length}
-		<Options
-			bind:options
-			width={options.width}
-			height={options.height}
-			ratio={options.width / options.height}
-		/>
-		<Button on:click={scale_all}>Scale All</Button>
-	{/if}
-
-	<div class="entries">
-		{#each entries as entry}
-			<Row>
-				<Column>
-					<FileImage
-						on:delete={({ detail: id }) => del(id)}
-						bind:entry
+<Row>
+	<Column>
+		<div style={`height: ${height}`} class="all">
+			<FileUpload on:change={change} multiple />
+			{#if entries.length > 1}
+				<Button on:click={() => (edit_for_all = !edit_for_all)}
+					>{edit_for_all
+						? 'Hide options for all'
+						: 'Edit options for all'}</Button
+				>
+			{/if}
+	
+			{#if edit_for_all && entries.length}
+				<div class="for_all">
+					<Options
+						bind:options
+						width={options.width}
+						height={options.height}
+						ratio={options.width / options.height}
 					/>
-				</Column>
-			</Row>
-		{/each}
-	</div>
-
-	{#if entries.length}
-		<Button disabled={scaling} on:click={() => act(entries)}
-			>Resize</Button
-		>
-		{#if scaling}
-			<InlineLoading />
-		{/if}
-	{/if}
-</div>
+					<Button on:click={scale_all}
+						>Scale all with these options</Button
+					>
+				</div>
+			{/if}
+	
+			{#if entries.length > 1}
+					<Button
+						disabled={all_minimized}
+						icon={Minimize}
+						iconDescription="Minimize all"
+						on:click={() => {
+							entries = entries.map((e) => {
+								e.options_open = false;
+								return e;
+							});
+						}}
+					/>
+					<Button
+						disabled={all_maximized}
+						icon={Maximize}
+						iconDescription="Maximize all"
+						on:click={() => {
+							entries = entries.map((e) => {
+								e.options_open = true;
+								return e;
+							});
+						}}
+					/>
+			{/if}
+	
+			<div class="entries">
+				{#each entries as entry}
+					<Row>
+						<Column>
+							<FileImage
+								on:options_open_change={check_all_options_open}
+								on:delete={({ detail: id }) => del(id)}
+								bind:entry
+							/>
+						</Column>
+					</Row>
+				{/each}
+			</div>
+	
+			{#if entries.length}
+				<Button disabled={scaling} on:click={() => act(entries)}
+					>{entries.length < 1 ? 'Scale' : 'Scale all'}</Button
+				>
+				{#if scaling}
+					<InlineLoading />
+				{/if}
+			{/if}
+		</div>
+	</Column>
+</Row>
 
 <style lang="sass">
+	.for_all
+		padding-bottom: 3.7rem
+		display: flex
+		flex-direction: column
+		row-gap: 2rem
 	.all
 		display: flex
 		flex-direction: column
@@ -196,4 +257,6 @@
 		display: flex
 		flex-direction: column
 		row-gap: 2rem
+		// overflow-x: visible
+		// overflow-y: scroll
 </style>

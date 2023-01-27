@@ -11,6 +11,7 @@ export interface Error {
 }
 
 export interface Entry {
+	options_open: boolean
 	name: string,
 	error?: Error,
 	width: number,

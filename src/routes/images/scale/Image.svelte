@@ -31,8 +31,9 @@
 		entry.error = undefined;
 	};
 
-	let open = true,
-		thumbnail: string;
+	$: dispatch('options_open_change', entry.options_open)
+
+	let thumbnail: string;
 
 	onMount(() => {
 		const img = new Image();
@@ -86,7 +87,10 @@
 	<div class="left">
 		<Row>
 			<div class="img">
-				<ImageLoader src={thumbnail} alt="thumbnail for {entry.file.name}">
+				<ImageLoader
+					src={thumbnail}
+					alt="thumbnail for {entry.file.name}"
+				>
 					<svelte:fragment slot="loading">
 						<InlineLoading />
 					</svelte:fragment>
@@ -99,7 +103,8 @@
 			<Button
 				size="small"
 				kind="ghost"
-				on:click={() => (open = !open)}
+				on:click={() =>
+					(entry.options_open = !entry.options_open)}
 				>{entry.file.name}</Button
 			>
 			<Button
@@ -109,7 +114,7 @@
 			/>
 		</Row>
 	</div>
-	{#if open}
+	{#if entry.options_open}
 		<Options
 			on:input={clear_error}
 			bind:options={entry.options}
@@ -132,5 +137,5 @@
 	.entry
 		display: flex
 		flex-direction: column
-		row-gap: 1rem
+		row-gap: 1.7rem
 </style>

@@ -1,5 +1,8 @@
+dropdown for available formats
+    function from 'scale-image' that returns list of available formats
+
 `adding` state variable
-line dividing options_for_all from entries
+/line dividing options_for_all from entries
 error toast notification
     edit options_for_all
         component - params
@@ -13,9 +16,9 @@ error toast notification
     each entry has it's own error
     on input in FileImage, error string = null
     if error string, error toast notification
-edit extension
 
 test with 'scale-image' package
 
-issues
+fix
     error doesn't seem to show up immediately
+    delete then add same file not work
