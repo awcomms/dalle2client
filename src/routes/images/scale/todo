@@ -1,6 +1,4 @@
 `adding` state variable
-option to show thumbnail of images
-    rescale to 48px on add
 line dividing options_for_all from entries
 error toast notification
     edit options_for_all

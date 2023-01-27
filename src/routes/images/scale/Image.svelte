@@ -12,9 +12,10 @@
 
 	import {
 		Row,
-		Column,
 		Button,
-		ToastNotification
+		ImageLoader,
+		InlineLoading,
+		InlineNotification
 	} from 'carbon-components-svelte';
 	import TrashCan from 'carbon-icons-svelte/lib/TrashCan.svelte';
 	import type { Entry } from './types';
@@ -22,6 +23,7 @@
 	import Options from './Options.svelte';
 	import { create_blob } from '$lib/util';
 	import { scale, parse_res } from '$lib/util/image/scale';
+	import { Error } from 'carbon-icons-svelte';
 
 	const dispatch = createEventDispatcher();
 
@@ -75,17 +77,24 @@
 
 <div class="entry">
 	{#if entry.error}
-		<ToastNotification
-			fullWidth
+		<InlineNotification
 			kind="error"
 			title={entry.error.error}
-			caption={entry.error.date.toUTCString()}
+			subtitle={entry.error.date.toUTCString()}
 		/>
 	{/if}
 	<div class="left">
 		<Row>
 			<div class="img">
-				<img src={thumbnail} alt="" width="48" height="48" />
+				<ImageLoader src={thumbnail} alt="thumbnail for {entry.file.name}">
+					<svelte:fragment slot="loading">
+						<InlineLoading />
+					</svelte:fragment>
+					<svelte:fragment slot="error">
+						<Error />
+					</svelte:fragment>
+				</ImageLoader>
+				<!-- <img src={thumbnail} alt="" width="48" height="48" /> -->
 			</div>
 			<Button
 				size="small"
