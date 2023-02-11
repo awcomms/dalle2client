@@ -18,12 +18,12 @@
 		InlineNotification
 	} from 'carbon-components-svelte';
 	import TrashCan from 'carbon-icons-svelte/lib/TrashCan.svelte';
+	import Error from 'carbon-icons-svelte/lib/Error.svelte';
 	import type { Entry } from './types';
 	import { onMount, createEventDispatcher } from 'svelte';
 	import Options from './Options.svelte';
 	import { create_blob } from '$lib/util';
 	import { scale, parse_res } from '$lib/util/image/scale';
-	import { Error } from 'carbon-icons-svelte';
 
 	const dispatch = createEventDispatcher();
 

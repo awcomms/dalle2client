@@ -6,7 +6,7 @@
   export let menuItem = false
   export let isSelected = $page.url.pathname === href
 
-  import { isSideNavOpen } from "$lib/store";
+  import { isSideNavOpen } from "./store";
   import { SideNavLink, SideNavMenuItem } from "carbon-components-svelte";
 
   let component = menuItem ? SideNavMenuItem : SideNavLink

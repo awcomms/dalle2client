@@ -5,7 +5,7 @@
 	import Settings from "carbon-icons-svelte/lib/Settings.svelte"
 	import { Button, InlineLoading, TextInput, Form, Modal, NumberInput } from 'carbon-components-svelte';
 	import { onMount } from 'svelte';
-	import type { Parameters } from './types';
+	import type { Parameters } from '../../../lib/components/completions/types';
 
 	onMount(() => {
 		height = `${window.innerHeight * 79/100}px`

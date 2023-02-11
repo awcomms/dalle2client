@@ -1,6 +1,6 @@
 <script lang="ts">
-	export let show = false;
 	import SideNavLink from './SideNavLink.svelte';
+	import { showA2HS } from './store';
 
 	let installPrompt: BeforeInstallPromptEvent;
 
@@ -13,11 +13,11 @@
 	}
 
 	const installed = () => {
-		show = false;
+		$showA2HS = false;
 	};
 
 	const before = (e: BeforeInstallPromptEvent) => {
-		show = true;
+		$showA2HS = true;
 		e.preventDefault();
 		installPrompt = e;
 	};
@@ -26,7 +26,7 @@
 		installPrompt.prompt();
 		installPrompt.userChoice.then((choice) => {
 			if (choice === 'accepted') {
-				show = false;
+				$showA2HS = false;
 			}
 		});
 	};
@@ -34,6 +34,6 @@
 
 <svelte:window on:appinstalled={installed} on:beforeinstallprompt={before} />
 
-{#if show}
+{#if $showA2HS}
 	<SideNavLink on:click={install} href={null} text="Add To Homescreen" />
 {/if}

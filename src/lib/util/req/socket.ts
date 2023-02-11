@@ -1,8 +1,8 @@
 import { v4 as uuidv4 } from 'uuid';
 import { get } from 'svelte/store';
 import { token } from '$lib/store';
-import { BACKEND_SOCKET } from '$lib/env';
 import iso_ws from 'isomorphic-ws';
+import { PUBLIC_BACKEND_SOCKET } from '$env/static/public';
 
 const reqs = new Map();
 
@@ -11,7 +11,7 @@ interface Res {
 	data: string;
 }
 
-const socket = new iso_ws(BACKEND_SOCKET);
+const socket = new iso_ws(PUBLIC_BACKEND_SOCKET);
 
 // TODO error notification if response error
 

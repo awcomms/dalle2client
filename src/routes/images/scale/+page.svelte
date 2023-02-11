@@ -22,6 +22,8 @@
 	import Options from './Options.svelte';
 	import { onMount } from 'svelte';
 
+	$: console.log(scaling)
+
 	onMount(() => {
 		height = `${(window.innerHeight * 79) / 100}px`;
 	});
@@ -56,8 +58,8 @@
 	};
 
 	const check_all_options_open = () => {
-		all_maximized = !entries.find(e => !e.options_open)
-		all_minimized = !entries.find(e => e.options_open)
+		all_maximized = !entries.find((e) => !e.options_open);
+		all_minimized = !entries.find((e) => e.options_open);
 	};
 
 	const get_res = (e: Entry): [Blob, string] => {
@@ -168,17 +170,20 @@
 
 <Row>
 	<Column>
-		<div style={`height: ${height}`} class="all">
-			<FileUpload on:change={change} multiple />
+		<div class="all">
+			<h3>A tool to scale images</h3>
+			<FileUpload label="Add images" on:change={change} multiple />
 			{#if entries.length > 1}
-				<Button on:click={() => (edit_for_all = !edit_for_all)}
+				<Button
+					on:click={() => (edit_for_all = !edit_for_all)}
 					>{edit_for_all
 						? 'Hide options for all'
 						: 'Edit options for all'}</Button
 				>
 			{/if}
-	
-			{#if edit_for_all && entries.length}
+
+			{#if edit_for_all && entries.length > 1}
+				<hr style="width: 100%" />
 				<div class="for_all">
 					<Options
 						bind:options
@@ -190,54 +195,65 @@
 						>Scale all with these options</Button
 					>
 				</div>
+				<hr style="width: 100%" />
 			{/if}
-	
+
 			{#if entries.length > 1}
-					<Button
-						disabled={all_minimized}
-						icon={Minimize}
-						iconDescription="Minimize all"
-						on:click={() => {
-							entries = entries.map((e) => {
-								e.options_open = false;
-								return e;
-							});
-						}}
-					/>
-					<Button
-						disabled={all_maximized}
-						icon={Maximize}
-						iconDescription="Maximize all"
-						on:click={() => {
-							entries = entries.map((e) => {
-								e.options_open = true;
-								return e;
-							});
-						}}
-					/>
+				<Button
+					disabled={all_minimized}
+					icon={Minimize}
+					iconDescription="Minimize all"
+					on:click={() => {
+						entries = entries.map((e) => {
+							e.options_open = false;
+							return e;
+						});
+					}}
+				/>
+				<Button
+					disabled={all_maximized}
+					icon={Maximize}
+					iconDescription="Maximize all"
+					on:click={() => {
+						entries = entries.map((e) => {
+							e.options_open = true;
+							return e;
+						});
+					}}
+				/>
 			{/if}
-	
-			<div class="entries">
-				{#each entries as entry}
-					<Row>
-						<Column>
-							<FileImage
-								on:options_open_change={check_all_options_open}
-								on:delete={({ detail: id }) => del(id)}
-								bind:entry
-							/>
-						</Column>
-					</Row>
-				{/each}
+
+			<div class="entries-wrapper">
+				<div class="entries">
+					{#each entries as entry}
+						<Row>
+							<Column>
+								<FileImage
+									on:options_open_change={check_all_options_open}
+									on:delete={({ detail: id }) => del(id)}
+									bind:entry
+								/>
+							</Column>
+						</Row>
+					{/each}
+				</div>
 			</div>
-	
+
 			{#if entries.length}
-				<Button disabled={scaling} on:click={() => act(entries)}
-					>{entries.length < 1 ? 'Scale' : 'Scale all'}</Button
-				>
-				{#if scaling}
-					<InlineLoading />
-				{/if}
+				<Button disabled={scaling} as let:props>
+					<button
+						on:click={() => act(entries)}
+						{...props}
+					>
+						<p>
+							{entries.length < 1 ? 'Scale' : 'Scale all'}
+						</p>
+						{#if scaling}
+							<InlineLoading />
+						{/if}
+					</button>
+				</Button>
+				<!-- <ButtonLoading loading={scaling} text></ButtonLoading> -->
 			{/if}
 		</div>
 	</Column>
@@ -245,7 +261,7 @@
 
 <style lang="sass">
 	.for_all
-		padding-bottom: 3.7rem
+		// padding-bottom: 3.7rem
 		display: flex
 		flex-direction: column
 		row-gap: 2rem
@@ -253,10 +269,12 @@
 		display: flex
 		flex-direction: column
 		row-gap: 1rem
+		// max-height: 70vh
+		// height: 100%
+	.entries-wrapper
+		flex-grow: 1
 	.entries
 		display: flex
 		flex-direction: column
 		row-gap: 2rem
-		// overflow-x: visible
-		// overflow-y: scroll
 </style>

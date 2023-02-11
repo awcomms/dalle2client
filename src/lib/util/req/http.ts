@@ -1,6 +1,8 @@
 // import { get } from 'svelte/store';
+
+import { PUBLIC_BACKEND_HTTP } from "$env/static/public";
+
 // import { token } from '$lib/store';
-import { BACKEND_HTTP } from '$lib/env';
 
 const json_or_string = (v: string) => {
 	let res;
@@ -23,7 +25,7 @@ export const http = <Type>(data: object, auth = false): Promise<Type> => {
 	} catch {
 		console.log('nahhhhhh');
 	}
-	return fetch(`${BACKEND_HTTP}`, {
+	return fetch(`${PUBLIC_BACKEND_HTTP}`, {
 		method: 'POST',
 		headers: {
 			'Content-Type': 'application/json'

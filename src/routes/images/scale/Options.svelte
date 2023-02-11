@@ -91,7 +91,7 @@
 	label="height"
 	base_value={height}
 />
-<Select on:input bind:selected={options.filter_type}>
+<Select labelText="Sampling Filter" on:input bind:selected={options.filter_type}>
 	{#each filter_types as ft}
 		<SelectItem value={ft} text={ft} />
 	{/each}
