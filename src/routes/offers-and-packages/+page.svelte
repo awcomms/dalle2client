@@ -1,1 +1,0 @@
-<p>Offers and Packages</p>
