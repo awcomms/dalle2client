@@ -90,13 +90,6 @@
 	<p>{previous}</p>
 	{#if loading}
 		<InlineLoading />
-		<!-- {:else if src}
-		<img
-			alt="last DallE2 generation result"
-			{src}
-			width={size.substring(0, size.indexOf('x'))}
-			height={size.substring(0, size.indexOf('x'))}
-		/> -->
 	{/if}
 	
 	{#if srcs?.length}

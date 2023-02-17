@@ -15,3 +15,8 @@ export interface Parameters {
     best_of?: number,
     logit_bias?: Record<string, number>,
 }
+
+export interface Chat {
+    id: number,
+    chat: string
+}

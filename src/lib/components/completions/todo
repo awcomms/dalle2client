@@ -1,0 +1,18 @@
+save definition
+    local storage array of definitions
+    on set
+        add to array
+save chat
+    local storage array of chats
+        chat: string
+        id: number - get last id from array of chats
+
+    on chat change
+        chats.find(c.id = id).chat = chat
+
+
+set definition
+    choose from store
+        list of definitions
+            on:click=select
+            delete button
