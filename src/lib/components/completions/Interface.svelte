@@ -14,7 +14,7 @@
 	} from 'carbon-components-svelte';
 	import { onMount } from 'svelte';
 	import { openai } from '$lib/openai';
-	import { definitions } from './store';
+	import { descriptions } from './store';
 	// import { encode } from 'gpt-3-encoder';
 	import type { CreateCompletionRequest } from 'openai';
 	import { download_blob } from '$lib/util';
@@ -31,10 +31,11 @@
 		// id: number = $chats.reduce((a, b) => Math.max(a, b.id), 1),
 		height = '670px',
 		parameters_open = false,
-		definition_open = true,
+		description_open = true,
+		chat_container: HTMLElement,
 		value = '',
-		user = 'Actor2',
-		definition = '',
+		user = 'You',
+		description = '',
 		name = 'Character',
 		suffix = `\n\n${user}: `,
 		prefix = `\n\n${name}: `,
@@ -75,15 +76,15 @@
 		);
 	};
 
-	const set_definition = () => {
-		console.log('s');
-		chat = `Consider ${name} with the following description: ${definition}.\n\nThe following is a conversation between ${name} and ${user}`;
-		$definitions = [...$definitions, definition];
-		definition_open = false;
+	const set_description = () => {
+		chat = `Consider an entity, hereby referred to as ${name}, with the following description: ${description}.\n\nThe following is a conversation between ${name} and an entity referred to as ${user}:`;
+		if (!$descriptions.includes(description))
+			$descriptions = [...$descriptions, description];
+		description_open = false;
 	};
 
-	const delete_definition = (d: string) => {
-		$definitions = $definitions.filter((_d) => _d !== d);
+	const delete_description = (d: string) => {
+		$descriptions = $descriptions.filter((_d) => _d !== d);
 	};
 
 	const send = async () => {
@@ -95,19 +96,22 @@
 		let request = parameters;
 
 		request.prompt = `${chat}${suffix}${value}${prefix}`;
-		request.max_tokens =
-			4096 -
-			Number(
-				await fetch('/token_count', { method: 'POST' })
-			);
-		console.log(request);
+		let l = await fetch('/token_count', {
+			method: 'POST',
+			body: request.prompt
+		}).then(async (r) => await r.text());
+		request.max_tokens = 4096 - Number(l);
+		console.log('request', request);
 		await openai
 			.createCompletion(request)
 			.then((r) => {
-				console.log(r.data.choices[0].text);
+				console.log('response', r.data.choices[0].text);
 				chat = `${request.prompt}${r.data.choices[0].text}`;
+				chat_container.scrollTop =
+					chat_container.scrollHeight;
 				value = '';
 			})
+			.catch((e) => console.log('error response', e))
 			.finally(() => (loading = false));
 	};
 </script>
@@ -115,27 +119,30 @@
 <svelte:window on:keydown={keydown} />
 
 <Modal
-	bind:open={definition_open}
+	bind:open={description_open}
 	modalHeading="Describe the conversation partner"
 	primaryButtonText="Set"
 	secondaryButtonText="Cancel"
-	on:click:button--primary={set_definition}
+	on:click:button--primary={set_description}
 	hasForm
 >
-	<!-- <TextInput bind:value={name} /> -->
-	{#if $definitions.length}
+	<TextInput
+		labelText="Give the conversation partner a name"
+		bind:value={name}
+	/>
+	{#if $descriptions.length}
 		<ComboBox
-			titleText="Select a previously used definition"
-			items={$definitions.map((text, id) => ({ id, text }))}
+			titleText="Select a previously used description"
+			items={$descriptions.map((text, id) => ({ id, text }))}
 			let:item
 			on:select={({ detail }) =>
-				(definition = detail.selectedItem.text)}
+				(description = detail.selectedItem.text)}
 		>
-			<div class="definition_option">
+			<div class="description_option">
 				<Truncate>{item.text}</Truncate>
 				<Button
 					size="small"
-					on:click={() => delete_definition(item.text)}
+					on:click={() => delete_description(item.text)}
 					icon={TrashCan}
 					iconDescription="Delete this description from local storage"
 				/>
@@ -143,20 +150,20 @@
 		</ComboBox>
 	{/if}
 	<!-- <Select
-		bind:selected={definition}
+		bind:selected={description}
 	>
-		{#each $definitions as d}
+		{#each $descriptions as d}
 			<SelectItem text={d} value={d} />
 			<Button
-				on:click={() => delete_definition(d)}
+				on:click={() => delete_description(d)}
 				icon={TrashCan}
 				iconDescription="Delete this description from local storage"
 			/>
 		{/each}
 	</Select> -->
 	<TextArea
-		labelText="create a new definition"
-		bind:value={definition}
+		labelText="Describe the partner"
+		bind:value={description}
 	/>
 </Modal>
 
@@ -184,16 +191,16 @@
 	<ButtonSet>
 		<Button
 			size="small"
-			on:click={() => (definition_open = true)}
-			>Edit definition</Button
+			on:click={() => (description_open = true)}
+			>Edit description</Button
 		><Button
 			size="small"
 			on:click={() => (parameters_open = true)}
 			>Edit Parameters</Button
 		><Button size="small" on:click={save}>Save</Button>
 	</ButtonSet>
-	<div class="responses">
-		<pre>{chat}</pre>
+	<div bind:this={chat_container} class="chat_container">
+		<pre class="chat">{chat}</pre>
 	</div>
 
 	{#if loading}
@@ -203,7 +210,7 @@
 	<div class="input">
 		<TextInput bind:ref bind:value />
 		<Button
-			disabled={loading || !value || !definition}
+			disabled={loading || !value || !description}
 			size="field"
 			on:click={send}
 			icon={Send}
@@ -218,7 +225,7 @@
 </div>
 
 <style lang="sass">
-	.definition_option
+	.description_option
 		display: flex
 		flex-direction: row
 	.all
@@ -229,11 +236,14 @@
 		display: flex
 		flex-grow: 0
 		flex-direction: row
-	.responses
+	.chat_container
 		display: flex
 		flex-grow: 2
 		flex-direction: column
 		height: 100%
+		width: 100%
 		overflow-y: scroll
 		row-gap: .37rem
+	.chat
+		white-space: pre-wrap
 </style>

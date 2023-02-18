@@ -1,5 +1,5 @@
-save definition
-    local storage array of definitions
+save description
+    local storage array of descriptions
     on set
         add to array
 save chat
@@ -11,8 +11,8 @@ save chat
         chats.find(c.id = id).chat = chat
 
 
-set definition
+set description
     choose from store
-        list of definitions
+        list of descriptions
             on:click=select
             delete button

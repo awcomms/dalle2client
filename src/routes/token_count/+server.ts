@@ -4,5 +4,6 @@ import type { RequestHandler } from "./$types"
 
 export const POST = (async ({ request }) => {
     const t = await request.text()
-    return text(String(encode(t).length))
+    const r = encode(t).length
+    return text(String(r))
 }) satisfies RequestHandler;
