@@ -1,3 +1,5 @@
+import type { CreateCompletionRequest } from "openai";
+
 export interface Parameters {
     model: string,
     prompts: string[],
@@ -16,7 +18,15 @@ export interface Parameters {
     logit_bias?: Record<string, number>,
 }
 
+export interface _Chat {
+    id: number
+    chat: string
+}
+
 export interface Chat {
     id: number,
-    chat: string
+    chat: string,
+    name: string,
+    description: string,
+    parameters: CreateCompletionRequest
 }

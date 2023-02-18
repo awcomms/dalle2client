@@ -9,26 +9,40 @@
 		Modal,
 		ButtonSet,
 		NumberInput,
+		Row,
+		Column,
 		ComboBox,
 		Truncate
 	} from 'carbon-components-svelte';
 	import { onMount } from 'svelte';
 	import { openai } from '$lib/openai';
-	import { descriptions } from './store';
+	import { chats, descriptions } from './store';
 	// import { encode } from 'gpt-3-encoder';
 	import type { CreateCompletionRequest } from 'openai';
 	import { download_blob } from '$lib/util';
 	import TrashCan from 'carbon-icons-svelte/lib/TrashCan.svelte';
+	import type { Chat } from './types';
 
-	$: update_chat(chat);
+	$: update_chat({
+		id,
+		chat,
+		name,
+		description,
+		parameters
+	});
 
 	onMount(() => {
 		height = `${(window.innerHeight * 79) / 100}px`;
 	});
 
+	console.log($chats, $descriptions);
+
 	let loading = false,
-		id: number = 1,
-		// id: number = $chats.reduce((a, b) => Math.max(a, b.id), 1),
+		// id: number = 1,
+		id: number = $chats.reduce(
+			(a, b) => Math.max(a, b.id),
+			1
+		),
 		height = '670px',
 		parameters_open = false,
 		description_open = true,
@@ -37,11 +51,8 @@
 		user = 'You',
 		description = '',
 		name = 'Character',
-		suffix = `\n\n${user}: `,
-		prefix = `\n\n${name}: `,
 		parameters: CreateCompletionRequest = {
 			model: 'text-davinci-003',
-			prompt: '',
 			temperature: 1,
 			top_p: 1
 		},
@@ -56,11 +67,11 @@
 		}
 	};
 
-	const update_chat = (c: string) => {
-		// let _c = $chats.find((c) => c.id === id);
-		// if (_c) {
-		// 	_c.chat = c
-		// }
+	const update_chat = (c: Chat) => {
+		let index = $chats.findIndex((c) => c.id === id);
+		if (index > -1) {
+			$chats[index] = c;
+		}
 	};
 
 	// const send = () => {
@@ -83,8 +94,8 @@
 		description_open = false;
 	};
 
-	const delete_description = (d: string) => {
-		$descriptions = $descriptions.filter((_d) => _d !== d);
+	const delete_chat = (id: number) => {
+		$chats = $chats.filter((c) => c.id !== id);
 	};
 
 	const send = async () => {
@@ -95,7 +106,7 @@
 		}
 		let request = parameters;
 
-		request.prompt = `${chat}${suffix}${value}${prefix}`;
+		request.prompt = `${chat}\n\n${user}: ${value}$\n\n${name}: `;
 		let l = await fetch('/token_count', {
 			method: 'POST',
 			body: request.prompt
@@ -130,41 +141,57 @@
 		labelText="Give the conversation partner a name"
 		bind:value={name}
 	/>
-	{#if $descriptions.length}
-		<ComboBox
-			titleText="Select a previously used description"
-			items={$descriptions.map((text, id) => ({ id, text }))}
-			let:item
-			on:select={({ detail }) =>
-				(description = detail.selectedItem.text)}
-		>
-			<div class="description_option">
-				<Truncate>{item.text}</Truncate>
-				<Button
-					size="small"
-					on:click={() => delete_description(item.text)}
-					icon={TrashCan}
-					iconDescription="Delete this description from local storage"
-				/>
-			</div>
-		</ComboBox>
-	{/if}
-	<!-- <Select
-		bind:selected={description}
+	<ComboBox
+		titleText="Load previous chat"
+		items={$chats.map((c) => ({
+			id: c.id,
+			text: `${c.name}: ${c.description}`
+		}))}
+		let:item
+		on:select={({ detail }) => {
+			let c = $chats.find(
+				(_c) => (_c.id = detail.selectedId)
+			);
+			if (c) {
+				({ description, chat, name, parameters } = c);
+				description_open = false;
+			}
+		}}
 	>
-		{#each $descriptions as d}
-			<SelectItem text={d} value={d} />
+		<div class="description_option">
+			<Truncate>{item.text}</Truncate>
 			<Button
-				on:click={() => delete_description(d)}
+				size="small"
+				on:click={() => delete_chat(item.id)}
 				icon={TrashCan}
-				iconDescription="Delete this description from local storage"
+				iconDescription="Delete this chat from local storage"
 			/>
-		{/each}
-	</Select> -->
+		</div>
+	</ComboBox>
 	<TextArea
 		labelText="Describe the partner"
 		bind:value={description}
 	/>
+	<ComboBox
+		titleText="Select a previously used description"
+		items={$chats.map((c) => ({
+			id: c.id,
+			text: `${c.name}: ${c.description}`
+		}))}
+		let:item
+		on:select={({ detail }) =>
+			(description = detail.selectedItem.text)}
+	>
+		<div class="description_option">
+			<Truncate>{item.text}</Truncate>
+			<!-- <Button
+					size="small"
+					on:click={() => delete_chat(item.text)}
+					icon={TrashCan}
+					iconDescription="Delete this description from local storage"
+				/> -->
+		</div>
+	</ComboBox>
 </Modal>
 
 <Modal
@@ -185,46 +212,61 @@
 		max={1}
 		bind:value={parameters.top_p}
 	/>
+	<NumberInput
+		label="frequency_penalty"
+		min={0}
+		max={5}
+		bind:value={parameters.frequency_penalty}
+	/>
+	<NumberInput
+		label="presence_penalty"
+		min={0}
+		max={5}
+		bind:value={parameters.presence_penalty}
+	/>
 </Modal>
 
-<div style={`height: ${height}`} class="all">
-	<ButtonSet>
-		<Button
-			size="small"
-			on:click={() => (description_open = true)}
-			>Edit description</Button
-		><Button
-			size="small"
-			on:click={() => (parameters_open = true)}
-			>Edit Parameters</Button
-		><Button size="small" on:click={save}>Save</Button>
-	</ButtonSet>
-	<div bind:this={chat_container} class="chat_container">
-		<pre class="chat">{chat}</pre>
-	</div>
-
-	{#if loading}
-		<InlineLoading />
-	{/if}
-
-	<div class="input">
-		<TextInput bind:ref bind:value />
-		<Button
-			disabled={loading || !value || !description}
-			size="field"
-			on:click={send}
-			icon={Send}
-		/>
-		<Button
-			size="field"
-			on:click={() => (parameters_open = true)}
-			icon={Settings}
-		/>
-		<!-- </Form> -->
-	</div>
-</div>
+<Row>
+	<Column>
+		<div style={`height: ${height}`} class="all">
+			<ButtonSet>
+				<Button
+					size="small"
+					on:click={() => (description_open = true)}
+					>Edit description</Button
+				><Button
+					size="small"
+					on:click={() => (parameters_open = true)}
+					>Edit Parameters</Button
+				><Button size="small" on:click={save}>Save</Button>
+			</ButtonSet>
+			<div bind:this={chat_container} class="chat_container">
+				<pre class="chat">{chat}</pre>
+			</div>
+			{#if loading}
+				<InlineLoading />
+			{/if}
+			<div class="input">
+				<TextInput bind:ref bind:value />
+				<Button
+					disabled={loading || !value || !description}
+					size="field"
+					on:click={send}
+					icon={Send}
+				/>
+				<Button
+					size="field"
+					on:click={() => (parameters_open = true)}
+					icon={Settings}
+				/>
+				<!-- </Form> -->
+			</div>
+		</div>
+	</Column>
+</Row>
 
 <style lang="sass">
+	@use '@carbon/colors'
 	.description_option
 		display: flex
 		flex-direction: row
@@ -244,6 +286,13 @@
 		width: 100%
 		overflow-y: scroll
 		row-gap: .37rem
-	.chat
+	.chat, .chat_container
 		white-space: pre-wrap
+	.chat_container::-webkit-scrollbar
+		background-color: colors.$gray-100
+		width: .7rem
+	.chat_container::-webkit-scrollbar-thumb
+		background-color: colors.$gray-80
+	.chat_container::-webkit-scrollbar-corner, .chat_container::-webkit-scrollbar:horizontal
+		display: none
 </style>

@@ -10,6 +10,11 @@ save chat
     on chat change
         chats.find(c.id = id).chat = chat
 
+save character
+    name
+    description
+    parameters
+
 
 set description
     choose from store
