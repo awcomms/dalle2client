@@ -9,12 +9,13 @@
 		Modal,
 		ButtonSet,
 		NumberInput,
-		Select,
-		SelectItem
+		ComboBox,
+		Truncate
 	} from 'carbon-components-svelte';
 	import { onMount } from 'svelte';
 	import { openai } from '$lib/openai';
-	import { chats, definitions } from './store';
+	import { definitions } from './store';
+	// import { encode } from 'gpt-3-encoder';
 	import type { CreateCompletionRequest } from 'openai';
 	import { download_blob } from '$lib/util';
 	import TrashCan from 'carbon-icons-svelte/lib/TrashCan.svelte';
@@ -26,7 +27,8 @@
 	});
 
 	let loading = false,
-		id: number = $chats.reduce((a, b) => Math.max(a, b.id), 1),
+		id: number = 1,
+		// id: number = $chats.reduce((a, b) => Math.max(a, b.id), 1),
 		height = '670px',
 		parameters_open = false,
 		definition_open = true,
@@ -38,7 +40,9 @@
 		prefix = `\n\n${name}: `,
 		parameters: CreateCompletionRequest = {
 			model: 'text-davinci-003',
-			prompt: ''
+			prompt: '',
+			temperature: 1,
+			top_p: 1
 		},
 		chat = '';
 
@@ -52,10 +56,10 @@
 	};
 
 	const update_chat = (c: string) => {
-		let _c = $chats.find((c) => c.id === id);
-		if (_c) {
-			_c.chat = c
-		}
+		// let _c = $chats.find((c) => c.id === id);
+		// if (_c) {
+		// 	_c.chat = c
+		// }
 	};
 
 	// const send = () => {
@@ -72,7 +76,8 @@
 	};
 
 	const set_definition = () => {
-		chat = `Consider ${name} with the following description:\n\n${definition}.\n\nThe following is a conversation between ${name} and ${user}`;
+		console.log('s');
+		chat = `Consider ${name} with the following description: ${definition}.\n\nThe following is a conversation between ${name} and ${user}`;
 		$definitions = [...$definitions, definition];
 		definition_open = false;
 	};
@@ -90,12 +95,18 @@
 		let request = parameters;
 
 		request.prompt = `${chat}${suffix}${value}${prefix}`;
-		console.log(request.prompt);
+		request.max_tokens =
+			4096 -
+			Number(
+				await fetch('/token_count', { method: 'POST' })
+			);
+		console.log(request);
 		await openai
 			.createCompletion(request)
 			.then((r) => {
 				console.log(r.data.choices[0].text);
-				chat += `${r.data.choices[0].text}`;
+				chat = `${request.prompt}${r.data.choices[0].text}`;
+				value = '';
 			})
 			.finally(() => (loading = false));
 	};
@@ -112,8 +123,26 @@
 	hasForm
 >
 	<!-- <TextInput bind:value={name} /> -->
-	<Select
-		labelText="Select a previously used definition"
+	{#if $definitions.length}
+		<ComboBox
+			titleText="Select a previously used definition"
+			items={$definitions.map((text, id) => ({ id, text }))}
+			let:item
+			on:select={({ detail }) =>
+				(definition = detail.selectedItem.text)}
+		>
+			<div class="definition_option">
+				<Truncate>{item.text}</Truncate>
+				<Button
+					size="small"
+					on:click={() => delete_definition(item.text)}
+					icon={TrashCan}
+					iconDescription="Delete this description from local storage"
+				/>
+			</div>
+		</ComboBox>
+	{/if}
+	<!-- <Select
 		bind:selected={definition}
 	>
 		{#each $definitions as d}
@@ -124,8 +153,11 @@
 				iconDescription="Delete this description from local storage"
 			/>
 		{/each}
-	</Select>
-	<TextArea bind:value={definition} />
+	</Select> -->
+	<TextArea
+		labelText="create a new definition"
+		bind:value={definition}
+	/>
 </Modal>
 
 <Modal
@@ -135,11 +167,13 @@
 	passiveModal
 >
 	<NumberInput
+		label="temperature"
 		min={0}
 		max={1}
 		bind:value={parameters.temperature}
 	/>
 	<NumberInput
+		label="top_p"
 		min={0}
 		max={1}
 		bind:value={parameters.top_p}
@@ -184,6 +218,9 @@
 </div>
 
 <style lang="sass">
+	.definition_option
+		display: flex
+		flex-direction: row
 	.all
 		display: flex
 		flex-direction: column
