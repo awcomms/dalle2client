@@ -1,5 +1,24 @@
 save description
-    local storage array of descriptions
+    each description is an ipfs object
+
+    D
+        id
+        name
+        text
+        embedding
+    
+    save
+        create object
+        add cid to another object, an array
+
+    search(query)
+        server
+            get query embedding
+            get all CIDs
+            all.map(get object)
+            all.sort(cosine_similarity(a.embedding, query embedding))
+            return top 7
+
     on set
         add to array
 save chat

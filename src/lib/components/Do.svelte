@@ -12,12 +12,15 @@
 		SelectItem
 	} from 'carbon-components-svelte';
 	import Prompt from './Prompt.svelte';
-	import { openai } from '$lib/openai';
+	import { getOpenAI } from '$lib/openai';
+	import { openai_key } from '$lib/store';
 	import type {
 		CreateImageRequestSizeEnum,
 		ImagesResponseDataInner
 	} from 'openai';
 	import { browser } from '$app/environment';
+
+	openai = getOpenAI($openai_key)
 
 	let value = '',
 		auto_download = true,

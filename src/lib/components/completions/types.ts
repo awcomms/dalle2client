@@ -18,15 +18,25 @@ export interface Parameters {
     logit_bias?: Record<string, number>,
 }
 
+export type Id = string
+
 export interface _Chat {
-    id: number
+    id: Id
     chat: string
+    description: Id
+}
+
+export interface Description {
+    id: Id,
+    name: string,
+    embedding?: number[]
+    text: string
 }
 
 export interface Chat {
-    id: number,
+    id: string,
     chat: string,
     name: string,
-    description: string,
+    description: Id,
     parameters: CreateCompletionRequest
 }

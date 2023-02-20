@@ -1,7 +1,7 @@
 import { arrayStore } from '$lib/store';
-import type { Chat } from './types';
+import type { Chat, Description } from './types';
 
-export const descriptions = arrayStore<string>(
+export const descriptions = arrayStore<Description>(
 	'descriptions',
 	[]
 );
