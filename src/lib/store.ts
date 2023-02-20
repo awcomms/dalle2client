@@ -109,6 +109,8 @@ export const objectStore = (
 	return s;
 };
 
+export const openai_key = stringStore("openai_key");
+
 export const loginOpen = booleanStore('loginOpen');
 
 export const previousPage = stringStore('previousPage', '/');

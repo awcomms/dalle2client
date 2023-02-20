@@ -20,8 +20,10 @@
 	// import { encode } from 'gpt-3-encoder';
 	import type { CreateCompletionRequest } from 'openai';
 	import { download_blob } from '$lib/util';
+	import { openai_key } from '$lib/store';
 	import TrashCan from 'carbon-icons-svelte/lib/TrashCan.svelte';
 	import type { Chat } from './types';
+	import ApiKey from '$lib/openai/ApiKey.svelte';
 
 	$: update_chat({
 		id,
@@ -33,9 +35,8 @@
 
 	onMount(() => {
 		height = `${(window.innerHeight * 79) / 100}px`;
+		while (!$openai_key) openai_key_modal_open = true
 	});
-
-	console.log($chats, $descriptions);
 
 	let loading = false,
 		// id: number = 1,
@@ -44,6 +45,7 @@
 			1
 		),
 		height = '670px',
+		openai_key_modal_open = false,
 		parameters_open = false,
 		description_open = true,
 		chat_container: HTMLElement,
@@ -100,13 +102,13 @@
 
 	const send = async () => {
 		loading = true;
-		if (!value) {
+		if (!value || !openai) {
 			loading = false;
 			return;
 		}
 		let request = parameters;
 
-		request.prompt = `${chat}\n\n${user}: ${value}$\n\n${name}: `;
+		request.prompt = `${chat}\n\n${user}: ${value}\n\n${name}: `;
 		let l = await fetch('/token_count', {
 			method: 'POST',
 			body: request.prompt
@@ -128,6 +130,8 @@
 </script>
 
 <svelte:window on:keydown={keydown} />
+
+<ApiKey bind:open={openai_key_modal_open} />
 
 <Modal
 	bind:open={description_open}
