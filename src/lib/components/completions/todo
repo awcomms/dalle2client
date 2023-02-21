@@ -34,6 +34,10 @@ save character
     description
     parameters
 
+stop
+    append to end of prompt
+    strip from response
+
 
 set description
     choose from store

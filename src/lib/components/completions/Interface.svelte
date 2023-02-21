@@ -23,10 +23,10 @@
 	import { openai_key } from '$lib/store';
 	import TrashCan from 'carbon-icons-svelte/lib/TrashCan.svelte';
 	import type { Chat } from './types';
-	import { v4 } from "uuid";
+	import { v4 } from 'uuid';
 	import ApiKey from '$lib/openai/ApiKey.svelte';
 
-	$: openai = getOpenAI($openai_key)
+	$: openai = getOpenAI($openai_key);
 
 	$: update_chat({
 		id,
@@ -55,6 +55,7 @@
 		parameters: CreateCompletionRequest = {
 			model: 'text-davinci-003',
 			temperature: 1,
+			// stop: 'qX7vkChVkR6gPtkfR',
 			top_p: 1,
 			presence_penalty: 0,
 			frequency_penalty: 0
@@ -92,8 +93,11 @@
 
 	const set_description = () => {
 		chat = `Consider an entity, hereby referred to as ${name}, with the following description: ${description}.\n\nThe following is a conversation between ${name} and an entity referred to as ${user}.`;
-		if (!$descriptions.find(d => d.text !== description))
-			$descriptions = [...$descriptions, {id: v4(), name, text: description}];
+		if (!$descriptions.find((d) => d.text !== description))
+			$descriptions = [
+				...$descriptions,
+				{ id: v4(), name, text: description }
+			];
 		description_open = false;
 	};
 
@@ -108,9 +112,9 @@
 			return;
 		}
 		if (!openai) {
-			loading = false
-			openai_key_modal_open = true
-			return
+			loading = false;
+			openai_key_modal_open = true;
+			return;
 		}
 		let request = parameters;
 
@@ -257,7 +261,7 @@
 				<InlineLoading />
 			{/if}
 			<div class="input">
-				<TextArea cols={1} bind:ref bind:value />
+				<TextArea rows={1} bind:ref bind:value />
 				<Button
 					disabled={loading || !value || !description}
 					size="field"
