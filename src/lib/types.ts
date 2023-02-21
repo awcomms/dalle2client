@@ -22,3 +22,6 @@ export interface Entry {
 	text: string[] | string,
 	date: Date
 }
+
+export type Id = string
+export type Embedding = number[];

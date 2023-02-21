@@ -1,5 +1,5 @@
 import { browser } from '$app/environment';
-import { req } from '$lib/util';
+// import { req } from '$lib/util';
 import type { User } from './types';
 import { v4 as uuidv4 } from 'uuid';
 import { writable, derived } from 'svelte/store';

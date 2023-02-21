@@ -1,6 +1,5 @@
 <script lang="ts">
-	export let open = false,
-		require = false;
+	export let open = false;
 	import { openai_key } from '$lib/store';
 	import {
 		Modal,

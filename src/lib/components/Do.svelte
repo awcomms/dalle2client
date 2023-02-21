@@ -14,18 +14,20 @@
 	import Prompt from './Prompt.svelte';
 	import { getOpenAI } from '$lib/openai';
 	import { openai_key } from '$lib/store';
+	import ApiKey from '$lib/openai/ApiKey.svelte';
 	import type {
 		CreateImageRequestSizeEnum,
 		ImagesResponseDataInner
 	} from 'openai';
 	import { browser } from '$app/environment';
 
-	openai = getOpenAI($openai_key)
+	$: openai = getOpenAI($openai_key);
 
 	let value = '',
 		auto_download = true,
 		previous = '',
 		loading = false,
+		openai_key_modal_open = false,
 		src = '',
 		srcs: ImagesResponseDataInner[] = [],
 		n = 1,
@@ -51,6 +53,10 @@
 	const _do = async () => {
 		loading = true;
 		previous = value;
+		if (!openai) {
+			openai_key_modal_open = true;
+			return;
+		}
 		await openai
 			.createImage({ prompt: value, n, size })
 			.then((r) => {
@@ -71,6 +77,7 @@
 	modalHeading="Edit generation prompt"
 >
 </Modal> -->
+<ApiKey bind:open={openai_key_modal_open} />
 <div class="all">
 	<Prompt bind:value />
 	<NumberInput
@@ -88,13 +95,13 @@
 		<!-- <Button on:click={() => (open = true)}>Edit</Button> -->
 		<Button size="small" on:click={_do}>Submit</Button>
 	</ButtonSet>
-	
+
 	<br />
 	<p>{previous}</p>
 	{#if loading}
 		<InlineLoading />
 	{/if}
-	
+
 	{#if srcs?.length}
 		<div class="imgs">
 			{#each srcs as { url: src }}

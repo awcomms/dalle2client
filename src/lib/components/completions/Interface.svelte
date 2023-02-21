@@ -140,7 +140,7 @@
 
 <svelte:window on:keydown={keydown} />
 
-<ApiKey require bind:open={openai_key_modal_open} />
+<ApiKey bind:open={openai_key_modal_open} />
 
 <Modal
 	bind:open={description_open}

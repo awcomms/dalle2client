@@ -1,3 +1,4 @@
+import type { Id } from "$lib/types";
 import type { CreateCompletionRequest } from "openai";
 
 export interface Parameters {
@@ -18,7 +19,6 @@ export interface Parameters {
     logit_bias?: Record<string, number>,
 }
 
-export type Id = string
 
 export interface _Chat {
     id: Id

@@ -1,6 +1,6 @@
 <script lang="ts">
 	import type { PromptResponse } from '$lib/types';
-	import { req } from '$lib/util';
+	// import { req } from '$lib/util';
 	import Send from "carbon-icons-svelte/lib/Send.svelte"
 	import Settings from "carbon-icons-svelte/lib/Settings.svelte"
 	import { Button, InlineLoading, TextInput, Form, Modal, NumberInput } from 'carbon-components-svelte';
@@ -30,27 +30,27 @@
 		let request = parameters
 		let date = new Date();
 		loading = true;
-		req<string>({ OpenAI: {Completions: parameters} })
-			.then((r) => {
-				responses = [
-					...responses,
-					{
-						prompt: {
-							date: date,
-							text: request.prompts[0]
-						},
-						response: {
-							date: new Date(),
-							text: r
-						}
-					}
-				];
-			})
-			.catch((e) => {
-				console.error(e);
-				alert('an error occured');
-			})
-			.finally(() => (loading = false));
+		// req<string>({ OpenAI: {Completions: parameters} })
+		// 	.then((r) => {
+		// 		responses = [
+		// 			...responses,
+		// 			{
+		// 				prompt: {
+		// 					date: date,
+		// 					text: request.prompts[0]
+		// 				},
+		// 				response: {
+		// 					date: new Date(),
+		// 					text: r
+		// 				}
+		// 			}
+		// 		];
+		// 	})
+		// 	.catch((e) => {
+		// 		console.error(e);
+		// 		alert('an error occured');
+		// 	})
+		// 	.finally(() => (loading = false));
 	};
 </script>
 
