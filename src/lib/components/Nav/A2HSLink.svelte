@@ -32,7 +32,7 @@
 	};
 </script>
 
-<svelte:window on:appinstalled={installed} on:beforeinstallprompt={before} />
+<!-- <svelte:window on:appinstalled={installed} on:beforeinstallprompt={before} /> -->
 
 {#if $showA2HS}
 	<SideNavLink on:click={install} href={null} text="Add To Homescreen" />

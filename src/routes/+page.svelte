@@ -26,8 +26,7 @@
 			</div>
 
 			<p>
-				Please note that you will have to provide an OpenAI
-				API key to use OpenAI related features
+				OpenAI related features will require an OpenAI key
 			</p>
 		</div>
 	</Column>
