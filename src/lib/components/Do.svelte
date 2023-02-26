@@ -39,15 +39,17 @@
 		size: CreateImageRequestSizeEnum = sizes[0],
 		open = false;
 
-	export const download_from_url = (
+	export const download_from_url = async (
 		url: string,
-		name: string = `DALLE2 result - ${value} - ${new Date().toUTCString()}`
+		name: string = `DALLE2 - ${value} - ${new Date().toUTCString()}`
 	) => {
 		if (!browser) return; // TODO-error
 		const a = document.createElement('a');
-		a.href = url;
+		a.href = await fetch(url)
+			.then((r) => r.blob())
+			.then((b) => URL.createObjectURL(b));
 		a.download = name;
-		// a.click();
+		a.click();
 	};
 
 	const _do = async () => {
@@ -61,8 +63,8 @@
 			.createImage({ prompt: value, n, size })
 			.then((r) => {
 				srcs = r.data.data;
-				srcs.forEach((s) => {
-					if (s.url) download_from_url(s.url);
+				srcs.forEach(async (s) => {
+					// if (s.url) await download_from_url(s.url);
 				});
 			})
 			.catch(() => alert('error generating image'))

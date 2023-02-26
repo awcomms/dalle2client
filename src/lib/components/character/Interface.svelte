@@ -1,6 +1,8 @@
 <script lang="ts">
 	import Send from 'carbon-icons-svelte/lib/Send.svelte';
 	import Settings from 'carbon-icons-svelte/lib/Settings.svelte';
+	import Edit from 'carbon-icons-svelte/lib/Edit.svelte';
+	import Save from 'carbon-icons-svelte/lib/Save.svelte';
 	import {
 		Button,
 		InlineLoading,
@@ -240,20 +242,16 @@
 	/>
 </Modal>
 
-<Row>
+<Row noGutter>
 	<Column>
 		<div style={`height: ${height}`} class="all">
-			<ButtonSet>
+			<!-- <ButtonSet>
 				<Button
 					size="small"
 					on:click={() => (description_open = true)}
 					>Edit description</Button
-				><Button
-					size="small"
-					on:click={() => (parameters_open = true)}
-					>Edit Parameters</Button
 				><Button size="small" on:click={save}>Save</Button>
-			</ButtonSet>
+			</ButtonSet> -->
 			<div bind:this={chat_container} class="chat_container">
 				<pre class="chat">{chat}</pre>
 			</div>
@@ -272,6 +270,16 @@
 					size="field"
 					on:click={() => (parameters_open = true)}
 					icon={Settings}
+				/><Button
+					size="field"
+					on:click={() => (description_open = true)}
+					iconDescription="Edit"
+					icon={Edit}
+				/><Button
+					size="field"
+					on:click={save}
+					iconDescription="Save"
+					icon={Save}
 				/>
 				<!-- </Form> -->
 			</div>

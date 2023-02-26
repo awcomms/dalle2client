@@ -12,7 +12,7 @@
 		<A2HsLink />
 		<SideNavMenu text="OpenAI">
 			<SideNavLink menuItem text="Character" href="/openai/character" />
-			<SideNavLink menuItem text="Completions" href="/openai/completions" />
+			<!-- <SideNavLink menuItem text="Completions" href="/openai/completions" /> -->
 			<SideNavLink menuItem text="DALLE2" href="/openai/dalle2" />
 		</SideNavMenu>
 		<SideNavMenu text="Images">
