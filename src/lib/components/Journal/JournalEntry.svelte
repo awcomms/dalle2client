@@ -3,9 +3,10 @@
 	import Jounal from './Journal.svelte';
 	import type { Journal as _Journal } from './types';
 
-	export let journal: _Journal;
+	export let id: string;
+	// export let journal: _Journal;
 </script>
 
 <div>
-    <Link href="/journal/{journal.id}">{journal.name}</Link>
+    <!-- <Link href="/journal/{journal.id}">{journal.name}</Link> -->
 </div>

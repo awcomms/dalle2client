@@ -26,39 +26,39 @@
 	const window_keydown = (e: KeyboardEvent) => {
 		switch (e.key) {
 			case 'Enter':
-				if (text) create();
+				// if (text) create();
 		}
 	};
 
-	const create = async () => {
-		if (!openai) {
-			openai_key_modal_open = true;
-			return;
-		}
-		let id = v4();
-		await openai
-			.createEmbedding({
-				model: 'text-embedding-ada-002',
-				input: text
-			})
-			.then((r) => {
-				let entry = {
-					id,
-					text,
-					embedding: r.data.data[0].embedding,
-					date: new Date()
-				};
-				$entries = [...$entries, entry];
-				let _j_index = $journals.findIndex(
-					(j) => j.id === journal.id
-				);
-				if (_j_index) {
-					let _j = $journals[_j_index];
-					_j.entries = [..._j.entries, entry.id];
-					$journals[_j_index] = _j;
-				}
-			});
-	};
+	// const create = async () => {
+	// 	if (!openai) {
+	// 		openai_key_modal_open = true;
+	// 		return;
+	// 	}
+	// 	let id = v4();
+	// 	await openai
+	// 		.createEmbedding({
+	// 			model: 'text-embedding-ada-002',
+	// 			input: text
+	// 		})
+	// 		.then((r) => {
+	// 			let entry = {
+	// 				id,
+	// 				text,
+	// 				embedding: r.data.data[0].embedding,
+	// 				date: new Date()
+	// 			};
+	// 			$entries = [...$entries, entry];
+	// 			let _j_index = $journals.findIndex(
+	// 				(j) => j.id === journal.id
+	// 			);
+	// 			if (_j_index) {
+	// 				let _j = $journals[_j_index];
+	// 				_j.entries = [..._j.entries, entry.id];
+	// 				$journals[_j_index] = _j;
+	// 			}
+	// 		});
+	// };
 </script>
 
 <ApiKey bind:open={openai_key_modal_open} />

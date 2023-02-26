@@ -14,14 +14,14 @@
 	};
 
 	const create = () => {
-		$journals = [
-			...$journals,
-			{
-				id: v4(),
-				name: value,
-				entries: []
-			}
-		];
+		// $journals = [
+		// 	...$journals,
+		// 	{
+		// 		id: v4(),
+		// 		name: value,
+		// 		entries: []
+		// 	}
+		// ];
 	};
 </script>
 
@@ -29,6 +29,6 @@
 
 <TextInput bind:value labelText="New Entry" />
 
-{#each $journals as journal}
-	<JournalEntry {journal} />
+{#each $journals as id}
+	<JournalEntry {id} />
 {/each}
