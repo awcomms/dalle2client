@@ -288,6 +288,8 @@
 		display: flex
 		flex-direction: column
 		row-gap: .37rem
+	.chat
+		font-size: 1rem
 	.input
 		display: flex
 		flex-grow: 0

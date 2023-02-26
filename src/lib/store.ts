@@ -1,8 +1,9 @@
 import { browser } from '$app/environment';
 // import { req } from '$lib/util';
-import type { User } from './types';
+// import type { User } from './types';
 import { v4 as uuidv4 } from 'uuid';
 import { writable, derived } from 'svelte/store';
+import { PUBLIC_OPENAI } from '$env/static/public';
 
 export const booleanStore = (
 	key = uuidv4(),

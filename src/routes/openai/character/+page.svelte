@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { Completions } from '$lib/components';
+	import { Character } from '$lib/components';
 </script>
 
-<Completions />
+<Character />
