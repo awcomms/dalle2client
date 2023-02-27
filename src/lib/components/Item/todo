@@ -1,0 +1,6 @@
+item
+    id
+    name: string
+    text: string
+    items: cid to list file
+

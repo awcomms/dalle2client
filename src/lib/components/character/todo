@@ -1,4 +1,5 @@
 check if description has been added
+toast notification if no description
 save description
     each description is an ipfs object
 

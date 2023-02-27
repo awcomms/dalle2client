@@ -2,7 +2,7 @@
 	import Send from 'carbon-icons-svelte/lib/Send.svelte';
 	import Settings from 'carbon-icons-svelte/lib/Settings.svelte';
 	import Edit from 'carbon-icons-svelte/lib/Edit.svelte';
-	import Save from 'carbon-icons-svelte/lib/Save.svelte';
+	import Download from 'carbon-icons-svelte/lib/Download.svelte';
 	import {
 		Button,
 		InlineLoading,
@@ -14,7 +14,8 @@
 		Row,
 		Column,
 		ComboBox,
-		Truncate
+		Truncate,
+		Toggle
 	} from 'carbon-components-svelte';
 	import { onMount } from 'svelte';
 	import { getOpenAI } from '$lib/openai';
@@ -28,6 +29,7 @@
 	import { v4 } from 'uuid';
 	import ApiKey from '$lib/openai/ApiKey.svelte';
 
+	$: can_send = !loading && value && description
 	$: openai = getOpenAI($openai_key);
 
 	$: update_chat({
@@ -54,6 +56,7 @@
 		user = 'You',
 		description = '',
 		name = 'Character',
+		submit_on_enter = false,
 		parameters: CreateCompletionRequest = {
 			model: 'text-davinci-003',
 			temperature: 1,
@@ -62,14 +65,13 @@
 			presence_penalty: 0,
 			frequency_penalty: 0
 		},
-		chat = '';
-
-	let ref: HTMLTextAreaElement;
+		chat = '',
+		ref: HTMLTextAreaElement;
 
 	const keydown = (e: KeyboardEvent) => {
 		switch (e.key) {
 			case 'Enter':
-				send();
+				if (submit_on_enter) send();
 		}
 	};
 
@@ -108,6 +110,7 @@
 	};
 
 	const send = async () => {
+		if (!can_send) return
 		loading = true;
 		if (!value) {
 			loading = false;
@@ -206,40 +209,53 @@
 	</ComboBox>
 </Modal>
 
+<!-- Settings -->
 <Modal
-	modalHeading="Parameters"
+	modalHeading="Settings"
 	bind:open={parameters_open}
 	hasForm
 	passiveModal
 >
-	<NumberInput
-		label="temperature"
-		min={0}
-		max={2}
-		hideSteppers
-		bind:value={parameters.temperature}
-	/>
-	<NumberInput
-		label="top_p"
-		min={0}
-		max={2}
-		hideSteppers
-		bind:value={parameters.top_p}
-	/>
-	<NumberInput
-		label="frequency_penalty"
-		min={-2.0}
-		max={2.0}
-		hideSteppers
-		bind:value={parameters.frequency_penalty}
-	/>
-	<NumberInput
-		label="presence_penalty"
-		min={-2.0}
-		max={2.0}
-		hideSteppers
-		bind:value={parameters.presence_penalty}
-	/>
+	<div class="in_modal">
+		<div>
+			<p>OpenAI Completions Parameters</p>
+			<NumberInput
+				label="temperature"
+				min={0}
+				max={2}
+				hideSteppers
+				bind:value={parameters.temperature}
+			/>
+			<NumberInput
+				label="top_p"
+				min={0}
+				max={2}
+				hideSteppers
+				bind:value={parameters.top_p}
+			/>
+			<NumberInput
+				label="frequency_penalty"
+				min={-2.0}
+				max={2.0}
+				hideSteppers
+				bind:value={parameters.frequency_penalty}
+			/>
+			<NumberInput
+				label="presence_penalty"
+				min={-2.0}
+				max={2.0}
+				hideSteppers
+				bind:value={parameters.presence_penalty}
+			/>
+		</div>
+		<div>
+			<p>Options</p>
+			<Toggle
+				bind:toggled={submit_on_enter}
+				labelText="Submit on Enter"
+			/>
+		</div>
+	</div>
 </Modal>
 
 <Row noGutter>
@@ -259,16 +275,25 @@
 				<InlineLoading />
 			{/if}
 			<div class="input">
-				<TextArea rows={1} bind:ref bind:value />
+				<TextArea
+					on:keydown={(e) => {
+						if (e.key ==="Enter" && submit_on_enter) e.preventDefault();
+					}}
+					rows={1}
+					bind:ref
+					bind:value
+				/>
 				<Button
-					disabled={loading || !value || !description}
+					disabled={!can_send}
 					size="field"
 					on:click={send}
+					iconDescription={"Send"}
 					icon={Send}
 				/>
 				<Button
 					size="field"
 					on:click={() => (parameters_open = true)}
+					iconDescription="Settings"
 					icon={Settings}
 				/><Button
 					size="field"
@@ -278,8 +303,8 @@
 				/><Button
 					size="field"
 					on:click={save}
-					iconDescription="Save"
-					icon={Save}
+					iconDescription="Download chat"
+					icon={Download}
 				/>
 				<!-- </Form> -->
 			</div>
@@ -289,6 +314,10 @@
 
 <style lang="sass">
 	@use '@carbon/colors'
+	.in_modal
+		display: flex
+		flex-direction: column
+		row-gap: 1.369rem
 	.description_option
 		display: flex
 		flex-direction: row
