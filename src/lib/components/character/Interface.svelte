@@ -15,7 +15,8 @@
 		Column,
 		ComboBox,
 		Truncate,
-		Toggle
+		Toggle,
+		ToastNotification
 	} from 'carbon-components-svelte';
 	import { onMount } from 'svelte';
 	import { getOpenAI } from '$lib/openai';
@@ -29,7 +30,7 @@
 	import { v4 } from 'uuid';
 	import ApiKey from '$lib/openai/ApiKey.svelte';
 
-	$: can_send = !loading && value && description
+	$: can_send = !loading && value && description;
 	$: openai = getOpenAI($openai_key);
 
 	$: update_chat({
@@ -48,6 +49,7 @@
 		// id: number = 1,
 		id = v4(),
 		height = '670px',
+		add_description_error = false,
 		openai_key_modal_open = false,
 		parameters_open = false,
 		description_open = true,
@@ -71,7 +73,9 @@
 	const keydown = (e: KeyboardEvent) => {
 		switch (e.key) {
 			case 'Enter':
-				if (submit_on_enter) send();
+				if (submit_on_enter) {
+					send();
+				}
 		}
 	};
 
@@ -110,7 +114,12 @@
 	};
 
 	const send = async () => {
-		if (!can_send) return
+		if (!can_send) {
+			if (!description) {
+				add_description_error = true;
+				return;
+			}
+		}
 		loading = true;
 		if (!value) {
 			loading = false;
@@ -146,6 +155,10 @@
 <svelte:window on:keydown={keydown} />
 
 <ApiKey bind:open={openai_key_modal_open} />
+
+{#if add_description_error}
+	<!-- <ToastNotification /> -->
+{/if}
 
 <Modal
 	bind:open={description_open}
@@ -258,7 +271,7 @@
 	</div>
 </Modal>
 
-<Row noGutter>
+<Row>
 	<Column>
 		<div style={`height: ${height}`} class="all">
 			<!-- <ButtonSet>
@@ -277,7 +290,8 @@
 			<div class="input">
 				<TextArea
 					on:keydown={(e) => {
-						if (e.key ==="Enter" && submit_on_enter) e.preventDefault();
+						if (e.key === 'Enter' && submit_on_enter)
+							e.preventDefault();
 					}}
 					rows={1}
 					bind:ref
@@ -287,7 +301,7 @@
 					disabled={!can_send}
 					size="field"
 					on:click={send}
-					iconDescription={"Send"}
+					iconDescription={'Send'}
 					icon={Send}
 				/>
 				<Button
