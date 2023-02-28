@@ -1,12 +1,15 @@
 <script lang="ts">
+	import { objectStore } from '$lib/store';
 	import { Link } from 'carbon-components-svelte';
 	import Jounal from './Journal.svelte';
 	import type { Journal as _Journal } from './types';
 
 	export let id: string;
-	// export let journal: _Journal;
+	let journal = objectStore<_Journal | null>(id, null)
 </script>
 
-<div>
-    <!-- <Link href="/journal/{journal.id}">{journal.name}</Link> -->
-</div>
+{#if $journal}
+	<div>
+	    <Link href="/journals/{id}">{$journal.name}</Link>
+	</div>
+{/if}

@@ -66,7 +66,7 @@ export const stringStore = (
 
 export const arrayStore = <Type>(
 	key = uuidv4(),
-	initialValue: Type[]
+	initialValue: Type[] = []
 ) => {
 	let previousValue: Array<Type>;
 	if (browser) {
@@ -87,11 +87,11 @@ export const arrayStore = <Type>(
 	return s;
 };
 
-export const objectStore = (
+export const objectStore = <Type = object>(
 	key = uuidv4(),
-	initialValue: object
+	initialValue: Type
 ) => {
-	let previousValue: object;
+	let previousValue: Type;
 	if (browser) {
 		const fromLocalStorage = localStorage.getItem(key);
 		if (fromLocalStorage) {
@@ -102,7 +102,7 @@ export const objectStore = (
 	} else {
 		previousValue = initialValue;
 	}
-	const s = writable<object>(previousValue);
+	const s = writable<Type>(previousValue);
 	if (browser)
 		s.subscribe((v) =>
 			localStorage.setItem(key, JSON.stringify(v))

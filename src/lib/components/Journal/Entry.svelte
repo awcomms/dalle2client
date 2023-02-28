@@ -1,12 +1,18 @@
 <script lang="ts">
-    export let entry: import("./types").Entry
+	import { objectStore } from '$lib/store';
+	import type { Id } from '$lib/types';
+	import Entries from './Entries.svelte';
+	import type { Entry } from './types';
+
+	export let id: Id;
+
+	$: entry = objectStore<Entry | null>(id, null);
 </script>
 
-<div class="entry">
-    {entry.text}
-</div>
+{#if $entry}
+	<h1>{$entry.name}</h1>
 
-<style lang="sass">
-    .entry
-        border-radius: .369rem
-</style>
+	<Entries id={$entry.entries} />
+{:else}
+	<h1>Error: Entry not available</h1>
+{/if}

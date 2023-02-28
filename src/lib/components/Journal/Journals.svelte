@@ -1,33 +1,42 @@
 <script lang="ts">
-	export let value = '';
+	import {
+		arrayStore,
+		objectStore,
+	} from '$lib/store';
 
 	import { TextInput } from 'carbon-components-svelte';
 	import { v4 } from 'uuid';
-	import JournalEntry from './JournalEntry.svelte';
-	import { journals } from './store';
+	import JournalEntry from './JournalItem.svelte';
+	import { journals_id } from './store';
+	import type { Entry, Journal } from './types';
 
 	const window_keydown = (e: KeyboardEvent) => {
 		switch (e.key) {
 			case 'Enter':
-				if (value) create();
+				console.log('e')
+				if (name) create();
 		}
 	};
 
+	let journals = arrayStore<string>($journals_id),
+		name: string = '';
+
 	const create = () => {
-		// $journals = [
-		// 	...$journals,
-		// 	{
-		// 		id: v4(),
-		// 		name: value,
-		// 		entries: []
-		// 	}
-		// ];
+		console.log('s')
+		let id = v4();
+		let entries = v4();
+		arrayStore<Entry>(entries);
+		objectStore<Journal>(id, {
+			name,
+			entries
+		});
+		$journals = [...$journals, id]
 	};
 </script>
 
 <svelte:window on:keydown={window_keydown} />
 
-<TextInput bind:value labelText="New Entry" />
+<TextInput bind:value={name} labelText="New Journal" />
 
 {#each $journals as id}
 	<JournalEntry {id} />

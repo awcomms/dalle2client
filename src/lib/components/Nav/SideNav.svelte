@@ -18,5 +18,8 @@
 		<SideNavMenu text="Images">
 			<SideNavLink menuItem text="Scale" href="/images/scale" />
 		</SideNavMenu>
+		<SideNavMenu text="Journals">
+			<SideNavLink menuItem text="Journals" />
+		</SideNavMenu>
 	</SideNavItems>
 </SideNav>

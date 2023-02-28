@@ -1,14 +1,19 @@
-import type { Id, Embedding } from '$lib/types';
+import type {
+	Id,
+	// Embedding
+} from '$lib/types';
 
 export interface Journal {
-	id: Id,
-	name: string,
-	entries: Id[];
+	// id: Id;
+	name: string;
+	entries: Id;
 }
 
 export interface Entry {
 	id: Id;
+	name: string;
 	text: string;
-	embedding: Embedding;
+	// embedding: Embedding;
 	date: Date;
+	entries: Id;
 }
