@@ -37,6 +37,7 @@
 		};
 		objectStore(new_id, entry); //TODO-refactor?
 		$entries = [...$entries, new_id];
+		new_name = "";
 		console.log($entries);
 	};
 </script>
