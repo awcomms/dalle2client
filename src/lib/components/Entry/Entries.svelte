@@ -7,6 +7,7 @@
 		TextInput
 	} from 'carbon-components-svelte';
 	import { v4 } from 'uuid';
+	import List from '$lib/components/List.svelte';
 	import EntryItem from './EntryItem.svelte';
 
 	export let id: Id;
@@ -16,6 +17,8 @@
 
 	let entries = arrayStore<Id>(id),
 		new_name = '';
+
+	console.log($entries)
 
 	const window_keydown = (e: KeyboardEvent) => {
 		switch (e.key) {
@@ -47,8 +50,14 @@
 			labelText="Add new entry"
 		/>
 
-		{#each $entries as id}
+		<List items={$entries}>
+			<svelte:fragment let:item={id}>
+				<EntryItem {id} />
+			</svelte:fragment>
+		</List>
+
+		<!-- {#each $entries as id}
 			<EntryItem {id} />
-		{/each}
+		{/each} -->
 	</Column>
 </Row>
