@@ -12,13 +12,13 @@
 
 <div class="entry">
     {#if $entry}
-        <Link href="items/{id}">{$entry.text}</Link>
+        <Link href="/entries/{id}">{$entry.name}</Link>
     {:else}
-        <p>Entry unavailable</p>
+        <p>Entry {id} unavailable</p>
     {/if}
 </div>
 
 <style lang="sass">
-    .entry
-        border-radius: .369rem
+    // .entry
+    //     border-radius: .369rem
 </style>

@@ -3,7 +3,6 @@ import { browser } from '$app/environment';
 // import type { User } from './types';
 import { v4 as uuidv4 } from 'uuid';
 import { writable, derived } from 'svelte/store';
-import { PUBLIC_OPENAI } from '$env/static/public';
 
 export const booleanStore = (
 	key = uuidv4(),
@@ -13,7 +12,7 @@ export const booleanStore = (
 	if (browser) {
 		const fromLocalStorage = localStorage.getItem(key);
 		if (fromLocalStorage) {
-			previousValue = JSON.parse(fromLocalStorage);
+			previousValue = Boolean(fromLocalStorage);
 		} else {
 			previousValue = initialValue;
 		}
@@ -34,7 +33,8 @@ export const numberStore = (
 	if (browser) {
 		const fromLocalStorage = localStorage.getItem(key);
 		if (fromLocalStorage) {
-			previousValue = JSON.parse(fromLocalStorage);
+			previousValue = Number(fromLocalStorage);
+			// if (isNaN(previousValue)) ...
 		} else {
 			previousValue = initialValue;
 		}
@@ -72,7 +72,11 @@ export const arrayStore = <Type>(
 	if (browser) {
 		const fromLocalStorage = localStorage.getItem(key);
 		if (fromLocalStorage) {
-			previousValue = JSON.parse(fromLocalStorage);
+			try {
+				previousValue = JSON.parse(fromLocalStorage);
+			} catch {
+				previousValue = initialValue;
+			}
 		} else {
 			previousValue = initialValue;
 		}
@@ -95,7 +99,11 @@ export const objectStore = <Type = object>(
 	if (browser) {
 		const fromLocalStorage = localStorage.getItem(key);
 		if (fromLocalStorage) {
-			previousValue = JSON.parse(fromLocalStorage);
+			try {
+				previousValue = JSON.parse(fromLocalStorage);
+			} catch {
+				previousValue = initialValue;
+			}
 		} else {
 			previousValue = initialValue;
 		}
@@ -110,7 +118,7 @@ export const objectStore = <Type = object>(
 	return s;
 };
 
-export const openai_key = stringStore("openai_key");
+export const openai_key = stringStore('openai_key');
 
 export const loginOpen = booleanStore('loginOpen');
 

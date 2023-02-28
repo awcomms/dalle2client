@@ -5,6 +5,7 @@
 	import type { Entry } from './types';
 
 	export let id: Id;
+	console.log(id)
 
 	$: entry = objectStore<Entry | null>(id, null);
 </script>

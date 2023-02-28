@@ -80,10 +80,10 @@
 	};
 
 	const update_chat = (c: Chat) => {
-		let index = $chats.findIndex((c) => c.id === id);
-		if (index > -1) {
-			$chats[index] = c;
-		}
+		// let index = $chats.findIndex((c) => c.id === id);
+		// if (index > -1) {
+		// 	$chats[index] = c;
+		// }
 	};
 
 	// const send = () => {
@@ -101,16 +101,16 @@
 
 	const set_description = () => {
 		chat = `Consider an entity, hereby referred to as ${name}, with the following description: ${description}.\n\nThe following is a conversation between ${name} and an entity referred to as ${user}.`;
-		if (!$descriptions.find((d) => d.text !== description))
-			$descriptions = [
-				...$descriptions,
-				{ id: v4(), name, text: description }
-			];
+		// if (!$descriptions.find((d) => d.text !== description))
+			// $descriptions = [
+			// 	...$descriptions,
+			// 	{ id: v4(), name, text: description }
+			// ];
 		description_open = false;
 	};
 
 	const delete_chat = (id: string) => {
-		$chats = $chats.filter((c) => c.id !== id);
+		// $chats = $chats.filter((c) => c.id !== id);
 	};
 
 	const send = async () => {
@@ -205,7 +205,6 @@
 	/>
 	<ComboBox
 		titleText="Select a previously used description"
-		items={$descriptions}
 		let:item
 		on:select={({ detail }) =>
 			(description = detail.selectedItem.text)}
