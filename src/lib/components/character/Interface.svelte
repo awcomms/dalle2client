@@ -9,23 +9,20 @@
 		TextInput,
 		TextArea,
 		Modal,
-		ButtonSet,
 		NumberInput,
 		Row,
 		Column,
 		ComboBox,
 		Truncate,
-		Toggle,
-		ToastNotification
+		Toggle
 	} from 'carbon-components-svelte';
 	import { onMount } from 'svelte';
 	import { getOpenAI } from '$lib/openai';
-	import { chats, descriptions } from './store';
-	// import { encode } from 'gpt-3-encoder';
 	import type { CreateCompletionRequest } from 'openai';
 	import { download_blob } from '$lib/util';
 	import { openai_key } from '$lib/store';
-	import TrashCan from 'carbon-icons-svelte/lib/TrashCan.svelte';
+	import SelectEntries from './SelectEntries.svelte';
+	// import TrashCan from 'carbon-icons-svelte/lib/TrashCan.svelte';
 	import type { Chat } from './types';
 	import { v4 } from 'uuid';
 	import ApiKey from '$lib/openai/ApiKey.svelte';
@@ -48,6 +45,7 @@
 	let loading = false,
 		// id: number = 1,
 		id = v4(),
+		entries_id: string,
 		height = '670px',
 		add_description_error = false,
 		openai_key_modal_open = false,
@@ -102,10 +100,10 @@
 	const set_description = () => {
 		chat = `Consider an entity, hereby referred to as ${name}, with the following description: ${description}.\n\nThe following is a conversation between ${name} and an entity referred to as ${user}.`;
 		// if (!$descriptions.find((d) => d.text !== description))
-			// $descriptions = [
-			// 	...$descriptions,
-			// 	{ id: v4(), name, text: description }
-			// ];
+		// $descriptions = [
+		// 	...$descriptions,
+		// 	{ id: v4(), name, text: description }
+		// ];
 		description_open = false;
 	};
 
@@ -203,6 +201,9 @@
 		labelText="Describe the partner"
 		bind:value={description}
 	/>
+
+	<SelectEntries bind:id={entries_id} />
+
 	<ComboBox
 		titleText="Select a previously used description"
 		let:item

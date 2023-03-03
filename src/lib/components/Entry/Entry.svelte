@@ -15,5 +15,5 @@
 
 	<Entries id={$entry.entries} />
 {:else}
-	<h1>Error: Entry not available</h1>
+	<h1>Entry not available</h1>
 {/if}

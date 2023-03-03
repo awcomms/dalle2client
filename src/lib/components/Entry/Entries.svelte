@@ -9,16 +9,18 @@
 	import { v4 } from 'uuid';
 	import List from '$lib/components/List.svelte';
 	import EntryItem from './EntryItem.svelte';
+	import embedding from '$lib/openai/embedding';
+	import ApiKey from '$lib/openai/ApiKey.svelte';
+	import { post } from '$lib/fetch';
 
-	export let id: Id;
+	export let id: Id,
+		openai_key_modal_open = false;
 	$: console.log(id);
 
 	$: can_create = new_name;
 
 	let entries = arrayStore<Id>(id),
 		new_name = '';
-
-	console.log($entries)
 
 	const window_keydown = (e: KeyboardEvent) => {
 		switch (e.key) {
@@ -29,20 +31,55 @@
 
 	const create = async () => {
 		let new_id = v4();
+		let new_date = new Date();
+		let new_text = '';
 		let entry = {
-			text: '',
+			text: new_text,
 			name: new_name,
-			date: new Date(),
+			date: new_date,
 			entries: v4()
 		};
+		await embedding(
+			`Date: ${new_date.toUTCString()}\nName: ${new_name}\nText: ${new_text}`
+		)
+			.then(async (values) => {
+				await post('/embedding/add', {
+					namespace: 'entries',
+					vectors: [
+						{
+							id: new_id,
+							values,
+							metadata: { parent: [id] }
+						}
+					]
+				})
+					.then((r) => console.log('add embedding res', r))
+					.catch((e) =>
+						alert(
+							`error adding embedding for new entry: ${e}`
+						)
+					);
+			})
+			.catch((e) => {
+				switch (e) {
+					case '401':
+						openai_key_modal_open = true;
+						break;
+					default:
+						alert(
+							`error getting embedding for new entry: ${e}`
+						);
+				}
+			});
 		objectStore(new_id, entry); //TODO-refactor?
 		$entries = [...$entries, new_id];
-		new_name = "";
-		console.log($entries);
+		new_name = '';
 	};
 </script>
 
 <svelte:window on:keydown={window_keydown} />
+
+<ApiKey bind:open={openai_key_modal_open} />
 
 <Row>
 	<Column>

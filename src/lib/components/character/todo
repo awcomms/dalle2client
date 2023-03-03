@@ -1,3 +1,20 @@
+select_entries
+    export parent_id
+    combobox on keydown:enter
+        get embedding of current value
+        query embeddings
+        items = list of embeddings from ids res
+
+        on:select
+            parent_id = selected
+    on prompt
+        query embeddings with request prompt value and metadata parent_id: true
+        for id in response ids
+            get : summary :  `name: .., text: ..`
+            if token_length(summary) + token_length(entire_prompt) < 4096
+                add summary to context
+            else
+                break
 check if description has been added
 toast notification if no description
 save description
