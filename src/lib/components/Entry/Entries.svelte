@@ -43,6 +43,7 @@
 			`Date: ${new_date.toUTCString()}\nName: ${new_name}\nText: ${new_text}`
 		)
 			.then(async (values) => {
+				console.log(values)
 				await post('/embedding/add', {
 					namespace: 'entries',
 					vectors: [

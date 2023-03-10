@@ -1,3 +1,4 @@
+if content entry focus and keydown:upkey, content =  previous user message content
 select_entries
     export parent_id
     combobox on keydown:enter
@@ -16,7 +17,6 @@ select_entries
             else
                 break
 check if description has been added
-toast notification if no description
 save description
     each description is an ipfs object
 

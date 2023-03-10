@@ -11,29 +11,37 @@
 	import A2HsLink from './A2HSLink.svelte';
 </script>
 
-<SideNav bind:isOpen={$isSideNavOpen}>
+<SideNav
+	bind:isOpen={$isSideNavOpen}
+>
 	<SideNavItems>
 		<A2HsLink />
-		<SideNavMenu text="OpenAI">
+		<SideNavMenu text="AI Chat">
 			<SideNavLink
 				menuItem
-				text="Character"
-				href="/openai/character"
+				text="AI Assistant"
+				href="/chat/assistant"
+			/>
+			<SideNavLink
+				menuItem
+				text="Custom Character"
+				href="/chat/character"
 			/>
 			<!-- <SideNavLink menuItem text="Completions" href="/openai/completions" /> -->
-			<SideNavLink
-				menuItem
-				text="DALLE2"
-				href="/openai/dalle2"
-			/>
 		</SideNavMenu>
-		<SideNavMenu text="Images">
-			<SideNavLink
-				menuItem
-				text="Scale"
-				href="/images/scale"
-			/>
-		</SideNavMenu>
-		<SideNavLink text="Entries" />
+		<!-- <SideNavMenu text="Images"> -->
+		
+		<!-- </SideNavMenu> -->
+		<SideNavLink
+			menuItem
+			text="DALLE2"
+			href="/openai/dalle2"
+		/>
+		<SideNavLink
+			menuItem
+			text="Rescale Images"
+			href="/images/scale"
+		/>
+		<!-- <SideNavLink text="Entries" /> -->
 	</SideNavItems>
 </SideNav>
