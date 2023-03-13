@@ -26,7 +26,6 @@
 			'You may not send an empty message',
 		loading = false;
 
-	import axios from 'axios'
 	import Send from 'carbon-icons-svelte/lib/Send.svelte';
 	import Settings from 'carbon-icons-svelte/lib/Settings.svelte';
 	import Edit from 'carbon-icons-svelte/lib/Edit.svelte';
@@ -61,7 +60,7 @@
 	$: can_send =
 		!loading &&
 		content &&
-		(!allow_without_description && messages.find(m => m.role === "system")) &&
+		(allow_without_description || (!allow_without_description && messages.find(m => m.role === "system"))) &&
 		messages.length &&
 		!(messages[0].role === 'system');
 	$: if (recording_paused)
@@ -352,8 +351,7 @@
 		height: 100%
 		width: 100%
 		overflow-y: scroll
-		row-gap: .37rem
-	.chat_container
+		row-gap: 1rem
 		white-space: pre-wrap
 	.chat_container::-webkit-scrollbar
 		background-color: colors.$gray-100

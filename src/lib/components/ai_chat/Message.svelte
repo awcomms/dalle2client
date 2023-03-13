@@ -1,25 +1,54 @@
 <script lang="ts">
 	import type { ChatCompletionRequestMessage } from 'openai';
-	export let message: ChatCompletionRequestMessage;
+	export let message: ChatCompletionRequestMessage,
+		hide_system_messages = false;
+
+	let show =
+		message.role !== 'system'
+			? true
+			: message.role === 'system' &&
+			  !hide_system_messages
+			? true
+			: false;
 </script>
 
-<div>
-	{#if message.role !== 'system'}
-		<div class="message" class:user={message.role === "user"} class:assistant={message.role === "assistant"}>
-			{#if message.name}
-				<p class="name">
-					{message.name}
-				</p>
-			{/if}
-			<p class="content">
-				{message.content}
+{#if show}
+	<div
+		class="message"
+		class:user={message.role ===
+			'user'}
+		class:assistant={message.role ===
+			'assistant'}
+	>
+		<!-- {#if message.name}
+			<p class="name">
+				{message.name}
 			</p>
-		</div>
-	{/if}
-</div>
+		{/if} -->
+		<p class="content">
+			{message.content}
+		</p>
+	</div>
+{/if}
 
 <style lang="sass">
 	@use '@carbon/type'
+	@use '@carbon/colors'
+	@use '@carbon/themes'
+
+	.message
+		white-space: pre-wrap
+		word-break: break-all
+		width: fit-content
+		max-width: 74%
+		padding: 1rem
+
+	.user
+		align-self: flex-end
+		background-color: themes.$field-01
+
+	.assistant
+		background-color: colors.$blue-60
 
 	.name
 		@include type.type-style('label-01')
