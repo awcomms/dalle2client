@@ -91,6 +91,7 @@
 			case 'Enter':
 				if (
 					submit_on_enter &&
+					can_send &&
 					document &&
 					document.activeElement ===
 						ref
