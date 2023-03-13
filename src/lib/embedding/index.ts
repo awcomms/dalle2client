@@ -13,7 +13,7 @@ export const add = ({
 		id: string;
 		values: number[];
 		metadata?: object;
-	};
+	}[];
 	namespace: string;
 }) =>
 	post(
