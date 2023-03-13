@@ -1,18 +1,13 @@
 <script lang="ts">
-	import { getOpenAI } from '$lib/openai';
 	import type {
+		CreateChatCompletionResponse,
 		ChatCompletionRequestMessage,
 		CreateChatCompletionRequest
 	} from 'openai';
-	import {
-		arrayStore,
-		openai_key
-	} from '$lib/store';
+	import axios from 'axios';
 	import { openai_key_modal_open } from './store';
 	import Interface from './Interface.svelte';
 	import { download_blob } from '$lib/util';
-
-	$: openai = getOpenAI($openai_key);
 
 	const prefix = `Consider a chat represented by the following JSON array, wherein all elements of the array are messages sent by the value of the \`name\` member of the element
 -
@@ -39,22 +34,22 @@ that follow the description element and have their role member set to \`assistan
 			};
 
 	const join = () => {
-		return `${prefix}${JSON.stringify(messages)}`
-	}
+		return `${prefix}${JSON.stringify(
+			messages
+		)}`;
+	};
 
 	const save = () => {
-		download_blob(new Blob([join()]), `Chat between user ${user} and AI simulated entity ${name}`)
-	}
+		download_blob(
+			new Blob([join()]),
+			`Chat between user ${user} and AI simulated entity ${name}`
+		);
+	};
 
 	const send = async () => {
 		loading = true;
 		if (!content) {
 			loading = false;
-			return;
-		}
-		if (!openai) {
-			loading = false;
-			$openai_key_modal_open = true;
 			return;
 		}
 		let request = parameters;
@@ -87,8 +82,11 @@ that follow the description element and have their role member set to \`assistan
 			console.log('uhhh');
 		}
 		console.log(request);
-		await openai
-			.createChatCompletion(request)
+		await axios
+			.post<CreateChatCompletionResponse>(
+				'/openai/chat',
+				request
+			)
 			.then((r) => {
 				console.log('ha');
 				for (let c of r.data

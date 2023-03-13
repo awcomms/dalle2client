@@ -5,27 +5,22 @@
 		disable_description_edit = false,
 		description = '';
 
-	import { getOpenAI } from '$lib/openai';
 	import type {
 		ChatCompletionRequestMessage,
-		CreateChatCompletionRequest
+		CreateChatCompletionRequest,
+		CreateChatCompletionResponse
 	} from 'openai';
-	import {
-		openai_key
-	} from '$lib/store';
+	import axios from 'axios';
 	import { v4 } from 'uuid';
-	import { openai_key_modal_open } from './store';
 	import Interface from './Interface.svelte';
 	import { download_blob } from '$lib/util';
-
-	$: openai = getOpenAI($openai_key);
 
 	let loading = false,
 		id = v4(),
 		content = '',
 		chat_container: HTMLElement,
 		name = 'Assistant',
-		user = "You",
+		user = 'You',
 		messages: ChatCompletionRequestMessage[] =
 			[],
 		parameters: CreateChatCompletionRequest =
@@ -51,7 +46,8 @@
 		];
 	};
 
-	const save = () => download_blob(
+	const save = () =>
+		download_blob(
 			new Blob([
 				JSON.stringify(messages)
 			]),
@@ -62,11 +58,6 @@
 		loading = true;
 		if (!content) {
 			loading = false;
-			return;
-		}
-		if (!openai) {
-			loading = false;
-			$openai_key_modal_open = true;
 			return;
 		}
 		let request = parameters;
@@ -99,8 +90,11 @@
 			console.log('uhhh');
 		}
 		console.log(request);
-		await openai
-			.createChatCompletion(request)
+		await axios
+			.post<CreateChatCompletionResponse>(
+				'/openai/chat',
+				request
+			)
 			.then((r) => {
 				for (let c of r.data
 					.choices) {

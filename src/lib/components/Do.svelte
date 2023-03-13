@@ -1,74 +1,80 @@
 <script lang="ts">
 	// import { Todo } from '$lib/components';
 	import {
-		Link,
-		TextInput,
 		Button,
 		ButtonSet,
 		InlineLoading,
-		Modal,
 		NumberInput,
 		Select,
 		SelectItem
 	} from 'carbon-components-svelte';
 	import Prompt from './Prompt.svelte';
-	import { getOpenAI } from '$lib/openai';
-	import { openai_key } from '$lib/store';
 	import ApiKey from '$lib/openai/ApiKey.svelte';
 	import type {
+		CreateImageRequestResponseFormatEnum,
 		CreateImageRequestSizeEnum,
 		ImagesResponseDataInner
 	} from 'openai';
+	import axios from 'axios';
 	import { browser } from '$app/environment';
 
-	$: openai = getOpenAI($openai_key);
-
 	let value = '',
-		auto_download = true,
+		// auto_download = true,
 		previous = '',
 		loading = false,
 		openai_key_modal_open = false,
-		src = '',
-		srcs: ImagesResponseDataInner[] = [],
+		srcs: ImagesResponseDataInner[] =
+			[],
 		n = 1,
-		sizes: CreateImageRequestSizeEnum[] = [
-			'1024x1024',
-			'512x512',
-			'256x256'
-		],
-		size: CreateImageRequestSizeEnum = sizes[0],
+		sizes: CreateImageRequestSizeEnum[] =
+			[
+				'1024x1024',
+				'512x512',
+				'256x256'
+			],
+		size: CreateImageRequestSizeEnum =
+			sizes[0],
 		open = false;
 
-	export const download_from_url = async (
-		url: string,
-		name: string = `DALLE2 - ${value} - ${new Date().toUTCString()}`
-	) => {
-		if (!browser) return; // TODO-error
-		const a = document.createElement('a');
-		a.href = await fetch(url)
-			.then((r) => r.blob())
-			.then((b) => URL.createObjectURL(b));
-		a.download = name;
-		a.click();
-	};
+	export const download_from_url =
+		async (
+			url: string,
+			name: string = `DALLE2 - ${value} - ${new Date().toUTCString()}`
+		) => {
+			if (!browser) return; // TODO-error
+			const a =
+				document.createElement('a');
+			a.href = await fetch(url)
+				.then((r) => r.blob())
+				.then((b) =>
+					URL.createObjectURL(b)
+				);
+			a.download = name;
+			a.click();
+		};
 
 	const _do = async () => {
 		loading = true;
 		previous = value;
-		if (!openai) {
-			openai_key_modal_open = true;
-			return;
-		}
-		await openai
-			.createImage({ prompt: value, n, size })
+		await axios
+			.post( //TODO-type
+				'/openai/images/create',
+				{ prompt: value, n, size }
+			)
 			.then((r) => {
 				srcs = r.data.data;
 				srcs.forEach(async (s) => {
 					// if (s.url) await download_from_url(s.url);
 				});
 			})
-			.catch(() => alert('error generating image'))
-			.finally(() => (loading = false));
+			.catch(() =>
+				alert(
+					'error generating image'
+				)
+			)
+			.finally(
+				() => (loading = false)
+			);
 	};
 </script>
 
@@ -79,7 +85,9 @@
 	modalHeading="Edit generation prompt"
 >
 </Modal> -->
-<ApiKey bind:open={openai_key_modal_open} />
+<ApiKey
+	bind:open={openai_key_modal_open}
+/>
 <div class="all">
 	<Prompt bind:value />
 	<NumberInput
@@ -88,14 +96,23 @@
 		max={10}
 		bind:value={n}
 	/>
-	<Select labelText="Size" bind:selected={size}>
+	<Select
+		labelText="Size"
+		bind:selected={size}
+	>
 		{#each sizes as s}
-			<SelectItem value={s} text={s} />
+			<SelectItem
+				value={s}
+				text={s}
+			/>
 		{/each}
 	</Select>
 	<ButtonSet>
 		<!-- <Button on:click={() => (open = true)}>Edit</Button> -->
-		<Button size="small" on:click={_do}>Submit</Button>
+		<Button
+			size="small"
+			on:click={_do}>Submit</Button
+		>
 	</ButtonSet>
 
 	<br />
@@ -111,8 +128,14 @@
 					<img
 						alt="last DallE2 generation result"
 						{src}
-						width={size.substring(0, size.indexOf('x'))}
-						height={size.substring(0, size.indexOf('x'))}
+						width={size.substring(
+							0,
+							size.indexOf('x')
+						)}
+						height={size.substring(
+							0,
+							size.indexOf('x')
+						)}
 					/>
 				</div>
 			{/each}

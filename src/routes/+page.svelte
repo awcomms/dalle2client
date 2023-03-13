@@ -8,26 +8,24 @@
 
 <Row>
 	<Column>
-		<div class="all">
-			<div class="links">
-				<Link href="/openai/character"
-					>Create and chat with an AI chat partner - OpenAI's
-					GPT3</Link
-				>
-				<Link href="/openai/dalle2"
-					>Generate images with text - OpenAI's DALLE2</Link
-				>
-				<Link href="/images/scale"
-					>Scale an image to given dimensions</Link
-				>
-				<!-- <Link href="openai/completions">
+		<div class="links">
+			<Link href="/openai/assistant"
+				>Customize and chat with the
+				GPT3.5 Assistant</Link
+			>
+			<Link href="/chat/ai/character"
+				>Create and chat with an AI
+				chat partner</Link
+			>
+			<Link href="/openai/dalle2"
+				>Generate images with text</Link
+			>
+			<Link href="/images/scale"
+				>Rescale images</Link
+			>
+			<!-- <Link href="openai/completions">
                             Get completions to text prompts - OpenAI's GPT3
                         </Link> -->
-			</div>
-
-			<p>
-				OpenAI related features will require an OpenAI key
-			</p>
 		</div>
 	</Column>
 </Row>

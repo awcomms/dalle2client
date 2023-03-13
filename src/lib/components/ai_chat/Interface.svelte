@@ -3,7 +3,7 @@
 			[],
 		content = '',
 		name = 'Partner',
-		name_label="Name",
+		name_label = 'Name',
 		parameters:
 			| CreateChatCompletionRequest
 			| CreateCompletionRequest,
@@ -12,6 +12,7 @@
 		disable_name_edit = false,
 		disable_description_edit = false,
 		description = '',
+		description_open = false,
 		description_label =
 			'Description',
 		description_heading =
@@ -25,6 +26,7 @@
 			'You may not send an empty message',
 		loading = false;
 
+	import axios from 'axios'
 	import Send from 'carbon-icons-svelte/lib/Send.svelte';
 	import Settings from 'carbon-icons-svelte/lib/Settings.svelte';
 	import Edit from 'carbon-icons-svelte/lib/Edit.svelte';
@@ -48,12 +50,9 @@
 	} from 'openai';
 	import {
 		booleanStore,
-		openai_key
 	} from '$lib/store';
-	import ApiKey from '$lib/openai/ApiKey.svelte';
 	import Message from './Message.svelte';
 	import Record from '../Record.svelte';
-	import { openai_key_modal_open } from './store';
 	import { createEventDispatcher } from 'svelte';
 
 	const dispatch =
@@ -62,7 +61,7 @@
 	$: can_send =
 		!loading &&
 		content &&
-		allow_without_description &&
+		(!allow_without_description && messages.find(m => m.role === "system")) &&
 		messages.length &&
 		!(messages[0].role === 'system');
 	$: if (recording_paused)
@@ -80,7 +79,6 @@
 		recording_paused: boolean,
 		description_error = false,
 		parameters_open = false,
-		description_open = true,
 		submit_on_enter = booleanStore(
 			'submit-on-enter',
 			false
@@ -104,10 +102,6 @@
 	};
 
 	const transcribe = async () => {
-		if (!openai_key) {
-			$openai_key_modal_open = true;
-			return;
-		}
 		console.log(audio_mimeType);
 		let file = new File(
 			chunks,
@@ -122,44 +116,40 @@
 			'model',
 			'whisper-1'
 		);
-		await fetch(
-			'https://api.openai.com/v1/audio/transcriptions',
-			{
-				method: 'POST',
-				headers: {
-					Authorization: `Bearer ${$openai_key}`
-				},
-				body: form_data
-			}
-		).then(async (r) => {
-			let text = await r.text();
-			if (
-				String(r.status).startsWith(
-					'2'
-				)
-			) {
-				console.log(text);
-				let res;
-				try {
-					res = JSON.parse(text);
-				} catch {
-					console.log(
-						'non json',
-						text
-					);
-					return;
-				}
-				content += res.text;
-			} else {
-				console.error(text);
-				if (r.status === 401) {
-					$openai_key_modal_open =
-						true;
-					return;
-				}
-			}
-		});
-		chunks = [];
+		// await axios.post('/openai/audio/transcriptions', )
+		// await fetch(
+		// 	'https://api.openai.com/v1/audio/transcriptions',
+		// 	{
+		// 		method: 'POST',
+		// 		headers: {
+		// 			Authorization: `Bearer ${$openai_key}`
+		// 		},
+		// 		body: form_data
+		// 	}
+		// ).then(async (r) => {
+		// 	let text = await r.text();
+		// 	if (
+		// 		String(r.status).startsWith(
+		// 			'2'
+		// 		)
+		// 	) {
+		// 		console.log(text);
+		// 		let res;
+		// 		try {
+		// 			res = JSON.parse(text);
+		// 		} catch {
+		// 			console.log(
+		// 				'non json',
+		// 				text
+		// 			);
+		// 			return;
+		// 		}
+		// 		content += res.text;
+		// 	} else {
+		// 		console.error(text);
+		// 	}
+		// });
+		// chunks = [];
 	};
 
 	const save = () =>
@@ -184,21 +174,19 @@
 	on:keydown={keydown}
 />
 
-<ApiKey
-	bind:open={$openai_key_modal_open}
-/>
-
 <Modal
 	bind:open={description_open}
 	modalHeading={description_heading}
 	primaryButtonText="Set"
 	secondaryButtonText="Cancel"
 	shouldSubmitOnEnter={false}
-	on:click:button--primary={() =>
-		(messages = [
+	on:click:button--primary={() => {
+		messages = [
 			...messages,
-			{ role: 'system', content }
-		])}
+			{ role: 'system', content: description }
+		];
+		description_open = false;
+	}}
 	hasForm
 >
 	<div class="in_modal">
