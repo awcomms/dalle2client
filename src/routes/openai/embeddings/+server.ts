@@ -6,10 +6,12 @@ export const POST = (async ({
 	request
 }) => {
 	return json(
-		await openai.createChatCompletion(
-			await request.json()
-		).then(r => {
-			return r.data
-		})
-	)
+		await openai
+			.createEmbedding(
+				await request.json()
+			)
+			.then((r) => {
+				return r.data.data[0].embedding;
+			})
+	);
 }) satisfies RequestHandler;

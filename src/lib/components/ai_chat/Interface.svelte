@@ -26,6 +26,7 @@
 			'You may not send an empty message',
 		loading = false;
 
+	import axios from 'axios';
 	import Send from 'carbon-icons-svelte/lib/Send.svelte';
 	import Settings from 'carbon-icons-svelte/lib/Settings.svelte';
 	import Edit from 'carbon-icons-svelte/lib/Edit.svelte';
@@ -47,12 +48,11 @@
 		CreateChatCompletionRequest,
 		CreateCompletionRequest
 	} from 'openai';
-	import {
-		booleanStore,
-	} from '$lib/store';
+	import { booleanStore } from '$lib/store';
 	import Message from './Message.svelte';
 	import Record from '../Record.svelte';
 	import { createEventDispatcher } from 'svelte';
+	import Transcribe from './Transcribe.svelte';
 
 	const dispatch =
 		createEventDispatcher();
@@ -60,11 +60,11 @@
 	$: can_send =
 		!loading &&
 		content &&
-		(allow_without_description || (!allow_without_description && messages.find(m => m.role === "system"))) &&
-		messages.length &&
-		!(messages[0].role === 'system');
-	$: if (recording_paused)
-		transcribe();
+		(allow_without_description ||
+			(!allow_without_description &&
+				messages.find(
+					(m) => m.role === 'system'
+				)));
 
 	onMount(() => {
 		height = `${
@@ -72,10 +72,7 @@
 		}px`;
 	});
 
-	let chunks: Blob[],
-		audio_mimeType: string,
-		height = '670px',
-		recording_paused: boolean,
+	let height = '670px',
 		description_error = false,
 		parameters_open = false,
 		submit_on_enter = booleanStore(
@@ -90,66 +87,20 @@
 		switch (e.key) {
 			case 'Enter':
 				if (
-					submit_on_enter &&
 					can_send &&
 					document &&
 					document.activeElement ===
 						ref
 				) {
-					send();
+					if (e.ctrlKey) {
+						send();
+					} else if (
+						submit_on_enter
+					) {
+						send();
+					}
 				}
 		}
-	};
-
-	const transcribe = async () => {
-		console.log(audio_mimeType);
-		let file = new File(
-			chunks,
-			'file',
-			{
-				type: audio_mimeType
-			}
-		);
-		let form_data = new FormData();
-		form_data.append('file', file);
-		form_data.append(
-			'model',
-			'whisper-1'
-		);
-		// await axios.post('/openai/audio/transcriptions', )
-		// await fetch(
-		// 	'https://api.openai.com/v1/audio/transcriptions',
-		// 	{
-		// 		method: 'POST',
-		// 		headers: {
-		// 			Authorization: `Bearer ${$openai_key}`
-		// 		},
-		// 		body: form_data
-		// 	}
-		// ).then(async (r) => {
-		// 	let text = await r.text();
-		// 	if (
-		// 		String(r.status).startsWith(
-		// 			'2'
-		// 		)
-		// 	) {
-		// 		console.log(text);
-		// 		let res;
-		// 		try {
-		// 			res = JSON.parse(text);
-		// 		} catch {
-		// 			console.log(
-		// 				'non json',
-		// 				text
-		// 			);
-		// 			return;
-		// 		}
-		// 		content += res.text;
-		// 	} else {
-		// 		console.error(text);
-		// 	}
-		// });
-		// chunks = [];
 	};
 
 	const save = () =>
@@ -183,7 +134,10 @@
 	on:click:button--primary={() => {
 		messages = [
 			...messages,
-			{ role: 'system', content: description }
+			{
+				role: 'system',
+				content: description
+			}
 		];
 		description_open = false;
 	}}
@@ -298,13 +252,9 @@
 					iconDescription={'Send'}
 					icon={Send}
 				/>
-				<Record
-					buttonProps={{
-						size: 'field'
-					}}
-					bind:chunks
-					bind:mimeType={audio_mimeType}
-					bind:paused={recording_paused}
+				<Transcribe
+					on:text={({ detail }) =>
+						(content += detail)}
 				/>
 				<Button
 					size="field"

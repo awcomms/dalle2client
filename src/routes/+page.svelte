@@ -23,16 +23,6 @@
 			<Link href="/images/scale"
 				>Rescale images</Link
 			>
-			<!-- <Link href="openai/completions">
-                            Get completions to text prompts - OpenAI's GPT3
-                        </Link> -->
 		</div>
 	</Column>
 </Row>
-
-<style lang="sass">
-    .links, .all
-        display: flex
-        flex-direction: column
-        row-gap: 1.369rem
-</style>

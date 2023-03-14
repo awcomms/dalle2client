@@ -1,16 +1,18 @@
 <script lang="ts">
-	import { arrayStore, objectStore } from '$lib/store';
+	import {
+		arrayStore,
+		objectStore
+	} from '$lib/store';
 	import type { Id } from '$lib/types';
 	import {
 		Column,
 		Row,
 		TextInput
 	} from 'carbon-components-svelte';
+	import axios from 'axios';
 	import { v4 } from 'uuid';
 	import List from '$lib/components/List.svelte';
 	import EntryItem from './EntryItem.svelte';
-	import embedding from '$lib/openai/embedding';
-	import ApiKey from '$lib/openai/ApiKey.svelte';
 	import { post } from '$lib/fetch';
 
 	export let id: Id,
@@ -22,7 +24,9 @@
 	let entries = arrayStore<Id>(id),
 		new_name = '';
 
-	const window_keydown = (e: KeyboardEvent) => {
+	const window_keydown = (
+		e: KeyboardEvent
+	) => {
 		switch (e.key) {
 			case 'Enter':
 				if (can_create) create();
@@ -39,22 +43,35 @@
 			date: new_date,
 			entries: v4()
 		};
-		await embedding(
-			`Date: ${new_date.toUTCString()}\nName: ${new_name}\nText: ${new_text}`
-		)
+		await axios
+			.post('/openai/embeddings', {
+				model:
+					'text-embedding-ada-002',
+				input: `Date: ${new_date.toUTCString()}\nName: ${new_name}\nText: ${new_text}`
+			})
 			.then(async (values) => {
-				console.log(values)
-				await post('/embedding/add', {
-					namespace: 'entries',
-					vectors: [
-						{
-							id: new_id,
-							values,
-							metadata: { parent: [id] }
-						}
-					]
-				})
-					.then((r) => console.log('add embedding res', r))
+				console.log(values);
+				await post(
+					'/embedding/add',
+					{
+						namespace: 'entries',
+						vectors: [
+							{
+								id: new_id,
+								values,
+								metadata: {
+									parent: [id]
+								}
+							}
+						]
+					}
+				)
+					.then((r) =>
+						console.log(
+							'add embedding res',
+							r
+						)
+					)
 					.catch((e) =>
 						alert(
 							`error adding embedding for new entry: ${e}`
@@ -64,7 +81,8 @@
 			.catch((e) => {
 				switch (e) {
 					case '401':
-						openai_key_modal_open = true;
+						openai_key_modal_open =
+							true;
 						break;
 					default:
 						alert(
@@ -78,9 +96,9 @@
 	};
 </script>
 
-<svelte:window on:keydown={window_keydown} />
-
-<ApiKey bind:open={openai_key_modal_open} />
+<svelte:window
+	on:keydown={window_keydown}
+/>
 
 <Row>
 	<Column>

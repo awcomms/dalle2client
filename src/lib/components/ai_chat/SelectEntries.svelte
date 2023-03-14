@@ -1,7 +1,6 @@
 <script lang="ts">
+	import axios from 'axios';
 	import { post } from '$lib/fetch';
-	import embedding from '$lib/openai/embedding';
-	import { arrayStore } from '$lib/store';
 	import type { Id } from '$lib/types';
 	import { ComboBox } from 'carbon-components-svelte';
 	import type { ComboBoxItem } from 'carbon-components-svelte/types/ComboBox/ComboBox.svelte';
@@ -10,11 +9,14 @@
 		value: string = '',
 		items: ComboBoxItem[] = [];
 
-	const from_ids = (ids: Id[]): ComboBoxItem[] => {
+	const from_ids = (
+		ids: Id[]
+	): ComboBoxItem[] => {
 		let res = [];
 		for (let id of ids) {
 			if (!id) continue;
-			let s = localStorage.getItem(id);
+			let s =
+				localStorage.getItem(id);
 			if (!s) continue;
 			let r;
 			try {
@@ -23,7 +25,10 @@
 				continue;
 			}
 			if (s) {
-				res.push({ id, text: r.name });
+				res.push({
+					id,
+					text: r.name
+				});
 			} else {
 				continue;
 			}
@@ -32,22 +37,32 @@
 	};
 
 	const search = async () => {
-		await embedding(value).then(async (vector) => {
-			await post('/embedding/query', {
-				topK: 7,
-				namespace: 'entries',
-				vector
-				// filter: {"parent": {"$in": []}}
-			}).then((ids) => {
-				items = from_ids(ids);
+		await axios
+			.post('/openai/embeddings', {
+				model:
+					'text-embedding-ada-002',
+				input: value
+			})
+			.then(async (vector) => {
+				await post(
+					'/embedding/query',
+					{
+						topK: 7,
+						namespace: 'entries',
+						vector
+						// filter: {"parent": {"$in": []}}
+					}
+				).then((ids) => {
+					items = from_ids(ids);
+				});
 			});
-		});
 	};
 </script>
 
 <ComboBox
 	bind:value
-	on:select={({ detail }) => (id = detail.selectedId)}
+	on:select={({ detail }) =>
+		(id = detail.selectedId)}
 	titleText="Select an entry"
 	{items}
 	on:keydown={(e) => {

@@ -20,11 +20,6 @@
 		class:assistant={message.role ===
 			'assistant'}
 	>
-		<!-- {#if message.name}
-			<p class="name">
-				{message.name}
-			</p>
-		{/if} -->
 		<p class="content">
 			{message.content}
 		</p>
@@ -50,8 +45,6 @@
 	.assistant
 		background-color: colors.$blue-60
 
-	.name
-		@include type.type-style('label-01')
 	.content
 		@include type.type-style('body-01')
 </style>

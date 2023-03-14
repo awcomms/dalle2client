@@ -9,7 +9,6 @@
 		SelectItem
 	} from 'carbon-components-svelte';
 	import Prompt from './Prompt.svelte';
-	import ApiKey from '$lib/openai/ApiKey.svelte';
 	import type {
 		CreateImageRequestResponseFormatEnum,
 		CreateImageRequestSizeEnum,
@@ -85,9 +84,6 @@
 	modalHeading="Edit generation prompt"
 >
 </Modal> -->
-<ApiKey
-	bind:open={openai_key_modal_open}
-/>
 <div class="all">
 	<Prompt bind:value />
 	<NumberInput
