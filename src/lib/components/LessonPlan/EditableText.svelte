@@ -13,5 +13,22 @@
 		bind:value
 	/>
 {:else}
-	<p>{name}: {value}</p>
+	<div class="card">
+		<p class="name">{name}</p>
+		<p class="value">{value}</p>
+	</div>
 {/if}
+
+<style lang="sass">
+	@use '@carbon/colors'
+
+	.card
+		display: flex
+		flex-direction: column
+		row-gap: 0.111rem
+		background-color: colors.$gray-90
+		padding: 1rem
+
+	.name
+
+</style>
