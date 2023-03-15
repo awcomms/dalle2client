@@ -1,5 +1,5 @@
 <script lang="ts">
-	export let hide_edit_button =
+	export let hide_settings_button =
 			false,
 		disable_name_edit = false,
 		disable_description_edit = false,
@@ -124,10 +124,10 @@
 	bind:description
 	bind:parameters
 	bind:chat_container
-	description_heading="AI Assistant settings"
+	settings_heading="AI Assistant settings"
 	name_label="Give the Assistant a name"
 	description_label="Tell the Assistant how to behave"
-	{hide_edit_button}
+	{hide_settings_button}
 	{disable_name_edit}
 	{disable_description_edit}
 	on:save={save}

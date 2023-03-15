@@ -5,7 +5,7 @@
 		CreateChatCompletionRequest
 	} from 'openai';
 	import axios from 'axios';
-	import { openai_key_modal_open } from './store';
+	export let description_label = "Describe the character"
 	import Interface from './Interface.svelte';
 	import { download_blob } from '$lib/util';
 
@@ -117,6 +117,7 @@ that follow the description element and have their role member set to \`assistan
 	bind:chat_container
 	bind:messages
 	bind:content
+	{description_label}
 	on:save={save}
 	on:send={send}
 />

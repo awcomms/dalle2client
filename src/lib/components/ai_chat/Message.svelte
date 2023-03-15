@@ -33,7 +33,7 @@
 
 	.message
 		white-space: pre-wrap
-		word-break: break-all
+		word-break: normal
 		width: fit-content
 		max-width: 74%
 		padding: 1rem

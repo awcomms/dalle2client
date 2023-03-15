@@ -8,14 +8,14 @@
 			| CreateChatCompletionRequest
 			| CreateCompletionRequest,
 		chat_container: HTMLElement,
-		hide_edit_button = false,
+		hide_settings_button = false,
 		disable_name_edit = false,
 		disable_description_edit = false,
 		description = '',
-		description_open = false,
+		settings_open = false,
 		description_label =
 			'Description',
-		description_heading =
+		settings_heading =
 			'Conversation Partner Settings',
 		description_error_text =
 			'You may not send messages without setting description',
@@ -26,10 +26,8 @@
 			'You may not send an empty message',
 		loading = false;
 
-	import axios from 'axios';
 	import Send from 'carbon-icons-svelte/lib/Send.svelte';
 	import Settings from 'carbon-icons-svelte/lib/Settings.svelte';
-	import Edit from 'carbon-icons-svelte/lib/Edit.svelte';
 	import Download from 'carbon-icons-svelte/lib/Download.svelte';
 	import {
 		Button,
@@ -112,7 +110,7 @@
 			!description
 		) {
 			description_error = true;
-			description_open = true;
+			settings_open = true;
 			return;
 		} else if (!content) {
 			content_error = true;
@@ -126,8 +124,8 @@
 />
 
 <Modal
-	bind:open={description_open}
-	modalHeading={description_heading}
+	bind:open={settings_open}
+	modalHeading={settings_heading}
 	primaryButtonText="Set"
 	secondaryButtonText="Cancel"
 	shouldSubmitOnEnter={false}
@@ -139,74 +137,70 @@
 				content: description
 			}
 		];
-		description_open = false;
+		settings_open = false;
 	}}
 	hasForm
 >
 	<div class="in_modal">
-		<TextInput
-			labelText={name_label}
-			disabled={disable_name_edit}
-			bind:value={name}
-		/>
-		<TextArea
-			labelText={description_label}
-			invalid={description_error}
-			disabled={disable_description_edit}
-			invalidText={description_error_text}
-			on:input={() =>
-				(description_error = false)}
-			bind:value={description}
-		/>
-	</div>
-</Modal>
-
-<Modal
-	modalHeading="Settings"
-	bind:open={parameters_open}
-	hasForm
-	passiveModal
->
-	<div class="in_modal">
-		<div>
-			<p>
-				OpenAI Completions Parameters
-			</p>
-			<NumberInput
-				label="temperature"
-				min={0}
-				max={2}
-				hideSteppers
-				bind:value={parameters.temperature}
+		<div class="in_modal">
+			<TextInput
+				labelText={name_label}
+				disabled={disable_name_edit}
+				bind:value={name}
 			/>
-			<NumberInput
-				label="top_p"
-				min={0}
-				max={2}
-				hideSteppers
-				bind:value={parameters.top_p}
-			/>
-			<NumberInput
-				label="frequency_penalty"
-				min={-2.0}
-				max={2.0}
-				hideSteppers
-				bind:value={parameters.frequency_penalty}
-			/>
-			<NumberInput
-				label="presence_penalty"
-				min={-2.0}
-				max={2.0}
-				hideSteppers
-				bind:value={parameters.presence_penalty}
+			<TextArea
+				labelText={description_label}
+				invalid={description_error}
+				disabled={disable_description_edit}
+				invalidText={description_error_text}
+				rows={1}
+				on:input={() =>
+					(description_error = false)}
+				bind:value={description}
 			/>
 		</div>
-		<div>
-			<p>Options</p>
-			<Toggle
-				bind:toggled={$submit_on_enter}
-				labelText="Submit on Enter"
-			/>
+		<div class="in_modal">
+			<div>
+				<p>
+					OpenAI Completions
+					Parameters
+				</p>
+				<NumberInput
+					label="temperature"
+					min={0}
+					max={2}
+					hideSteppers
+					bind:value={parameters.temperature}
+				/>
+				<NumberInput
+					label="top_p"
+					min={0}
+					max={2}
+					hideSteppers
+					bind:value={parameters.top_p}
+				/>
+				<NumberInput
+					label="frequency_penalty"
+					min={-2.0}
+					max={2.0}
+					hideSteppers
+					bind:value={parameters.frequency_penalty}
+				/>
+				<NumberInput
+					label="presence_penalty"
+					min={-2.0}
+					max={2.0}
+					hideSteppers
+					bind:value={parameters.presence_penalty}
+				/>
+			</div>
+			<div>
+				<p>Options</p>
+				<Toggle
+					bind:toggled={$submit_on_enter}
+					labelText="Submit on Enter"
+				/>
+			</div>
 		</div>
 	</div>
 </Modal>
@@ -214,12 +208,12 @@
 <Row>
 	<Column>
 		<div
-			style={`height: ${height}`}
+			style={`height: calc(100vh - 7rem)`}
 			class="all"
 		>
 			<div
 				bind:this={chat_container}
-				class="chat_container"
+				class="messages"
 			>
 				{#each messages as message}
 					<Message {message} />
@@ -229,7 +223,12 @@
 				<InlineLoading />
 			{/if}
 			<div class="input">
+				<Transcribe
+					on:text={({ detail }) =>
+						(content += detail)}
+				/>
 				<TextArea
+					style="min-width: unset"
 					on:keydown={(e) => {
 						if (
 							e.key === 'Enter' &&
@@ -252,23 +251,13 @@
 					iconDescription={'Send'}
 					icon={Send}
 				/>
-				<Transcribe
-					on:text={({ detail }) =>
-						(content += detail)}
-				/>
-				<Button
-					size="field"
-					on:click={() =>
-						(parameters_open = true)}
-					iconDescription="Settings"
-					icon={Settings}
-				/>{#if !hide_edit_button}
+				{#if !hide_settings_button}
 					<Button
 						size="field"
 						on:click={() =>
-							(description_open = true)}
-						iconDescription="Edit"
-						icon={Edit}
+							(settings_open = true)}
+						iconDescription="Settings"
+						icon={Settings}
 					/>
 				{/if}<Button
 					size="field"
@@ -283,19 +272,21 @@
 
 <style lang="sass">
 	@use '@carbon/colors'
+
 	.in_modal
 		display: flex
 		flex-direction: column
-		row-gap: 1.369rem
+		row-gap: 1rem
 	.all
 		display: flex
 		flex-direction: column
 		row-gap: .37rem
 	.input
+		max-width: 100%
 		display: flex
 		flex-grow: 0
 		flex-direction: row
-	.chat_container
+	.messages
 		display: flex
 		flex-grow: 2
 		flex-direction: column
@@ -304,11 +295,11 @@
 		overflow-y: scroll
 		row-gap: 1rem
 		white-space: pre-wrap
-	.chat_container::-webkit-scrollbar
+	.messages::-webkit-scrollbar
 		background-color: colors.$gray-100
-		width: .7rem
-	.chat_container::-webkit-scrollbar-thumb
+		width: 1rem
+	.messages::-webkit-scrollbar-thumb
 		background-color: colors.$gray-80
-	.chat_container::-webkit-scrollbar-corner, .chat_container::-webkit-scrollbar:horizontal
+	.messages::-webkit-scrollbar-corner, .messages::-webkit-scrollbar:horizontal
 		display: none
 </style>

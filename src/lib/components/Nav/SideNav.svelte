@@ -25,7 +25,7 @@
 			<SideNavLink
 				menuItem
 				text="Custom Character"
-				href="/chat/character"
+				href="/chat/ai/character"
 			/>
 			<!-- <SideNavLink menuItem text="Completions" href="/openai/completions" /> -->
 		</SideNavMenu>
