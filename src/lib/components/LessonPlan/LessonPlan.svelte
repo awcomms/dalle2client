@@ -10,10 +10,11 @@
 		_default();
 
 	let _lesson_plan = to_(
-		lesson_plan
-	);
-	let old_lesson_plan = _lesson_plan;
-	let new_modal = false;
+			lesson_plan
+		),
+		edit_cache = _lesson_plan,
+		old_lesson_plan = _lesson_plan,
+		new_modal = false;
 
 	import type {
 		LessonPlan,
@@ -34,6 +35,16 @@
 
 	const dispatch =
 		createEventDispatcher();
+
+	const start_edit = () => {
+		edit_cache = _lesson_plan
+		$editing = true
+	}
+
+	const cancel_edit = () => {
+		_lesson_plan = edit_cache
+		$editing = false
+	}
 
 	const request_new = () => {
 		if (
@@ -80,11 +91,12 @@
 		<Row noGutter>
 			<Column>
 				<div class="entries">
-					<ButtonSet>
+					<ButtonSet stacked>
 						<Button
 							size="small"
 							on:click={() =>
-								($editing = !$editing)}
+								($editing =
+									!$editing)}
 							>{$editing
 								? 'Cancel Edit'
 								: 'Edit'}</Button
@@ -150,10 +162,10 @@
 							bind:items={_lesson_plan.reference_materials}
 							editing={$editing}
 						/>
+						<LessonDevelopment
+							bind:lesson_development={_lesson_plan.lesson_development}
+						/>
 					</ButtonSet>
-					<LessonDevelopment
-						bind:lesson_development={_lesson_plan.lesson_development}
-					/>
 				</div>
 			</FluidForm>
 		</Column>

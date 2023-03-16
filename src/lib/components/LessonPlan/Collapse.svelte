@@ -16,9 +16,9 @@
 	>
 		<div class="in_button">
 			{#if open}
-	<CaretUp />
+				<CaretUp />
 			{:else}
-	<CaretDown />
+				<CaretDown />
 			{/if}
 			<p>{name}</p>
 		</div>
@@ -33,6 +33,7 @@
 {/if}
 
 <style lang="sass">
+	@use '@carbon/layout'
 	.in_button
 		display: flex
 		flex-direction: row
@@ -42,6 +43,7 @@
 		display: flex
 		flex-direction: row
 		align-items: center
+		padding-bottom: layout.$spacing-03
 	.slot
 		padding-left: 1rem
 </style>

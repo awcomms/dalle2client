@@ -14,21 +14,36 @@
 	/>
 {:else}
 	<div class="card">
-		<p class="name">{name}</p>
-		<p class="value">{value}</p>
+		<div class="card_inner">
+			<p class="name">{name}</p>
+			<p class="value">{value}</p>
+		</div>
 	</div>
 {/if}
 
 <style lang="sass">
 	@use '@carbon/colors'
+	@use '@carbon/themes'
+	@use '@carbon/type'
+	@use '@carbon/layout'
 
 	.card
 		display: flex
 		flex-direction: column
-		row-gap: 0.111rem
+		justify-content: center
 		background-color: colors.$gray-90
-		padding: 1rem
+		height: layout.$spacing-10
+		padding: .8125rem layout.$spacing-05
+
+	.card_inner
+		display: flex
+		flex-direction: column
 
 	.name
+		@include type.type-style('label-01')
+		color: themes.$text-secondary
+		padding-bottom: layout.$spacing-02
 
+	.value
+		@include type.type-style('body-compact-01')
 </style>

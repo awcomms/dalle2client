@@ -31,7 +31,6 @@
 	import { Collapse } from '$lib/components/LessonPlan';
 	import {
 		Row,
-		Column,
 		TextInput,
 		Button
 	} from 'carbon-components-svelte';
@@ -57,16 +56,6 @@
 </script>
 
 <Collapse bind:open {name}>
-	<div slot="head-before">
-		{#if editing}
-			<Button
-				kind={button_kind}
-				size="small"
-				on:click={add}
-				icon={Add}
-			/>
-		{/if}
-	</div>
 	<div slot="content">
 		{#if items.length === 0}
 			<p class="item">No items</p>
@@ -88,9 +77,7 @@
 									icon={TrashCan}
 								/>
 							{:else}
-								<p
-									class="style"
-								>
+								<p class="style">
 									{value}
 								</p>
 							{/if}
@@ -100,19 +87,34 @@
 			</div>
 		{/if}
 	</div>
+	<div slot="head-after">
+		{#if editing}
+			<Button
+				kind={button_kind}
+				size="small"
+				on:click={add}
+				icon={Add}
+			/>
+		{/if}
+	</div>
 </Collapse>
 
 <style lang="sass">
 	@use '@carbon/colors'
+	@use '@carbon/layout'
+	@use '@carbon/themes'
+	@use '@carbon/type'
 	.items
-		padding: .3rem 0
+		padding: layout.$spacing-03 0
 		display: flex
 		flex-direction: column
-		row-gap: .3rem
+		row-gap: layout.$spacing-03
 	.style
-		background-color: colors.$gray-70
-		padding: .3rem
+		@include type.type-style('body-compact-01')
+		background-color: colors.$gray-90
+		padding: layout.$spacing-03
 		max-width: 100%
+		color: themes.$text-primary
 		// overflow-wrap: anywhere
 		word-break: break-all
 	.item
