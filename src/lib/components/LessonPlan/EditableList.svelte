@@ -5,6 +5,7 @@
 	}
 	export let name: string = '',
 		editing = false,
+		open = false,
 		items: Array<Item> = [];
 
 	let current_id = 0;
@@ -13,8 +14,6 @@
 		++current_id;
 		return current_id;
 	};
-
-	let open = false;
 
 	export let button_kind:
 		| 'ghost'
@@ -61,13 +60,13 @@
 			<p class="item">No items</p>
 		{:else}
 			<div class="items">
-				{#each items as { value, id } (id)}
+				{#each items as { value, id }}
 					<div class="item">
 						<Row>
 							{#if editing}
 								<TextInput
 									bind:value
-									labelText="{name} {id}"
+									hideLabel
 								/>
 								<Button
 									kind={button_kind}
@@ -87,7 +86,7 @@
 			</div>
 		{/if}
 	</div>
-	<div slot="head-after">
+	<div slot="head-before">
 		{#if editing}
 			<Button
 				kind={button_kind}

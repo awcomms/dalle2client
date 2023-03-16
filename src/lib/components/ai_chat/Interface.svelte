@@ -4,10 +4,20 @@
 		content = '',
 		name = 'Partner',
 		name_label = 'Name',
-		parameters:
-			| CreateChatCompletionRequest
-			| CreateCompletionRequest,
-		chat_container: HTMLElement,
+		parameters: CreateChatCompletionRequest =
+			{
+				model: 'gpt-3.5-turbo',
+				temperature: 1,
+				top_p: 1,
+				messages: [],
+				presence_penalty: 0,
+				frequency_penalty: 0
+			},
+		send_function:
+			| (() => Promise<void>)
+			| null = null,
+		chat_container: HTMLElement | null =
+			null,
 		hide_settings_button = false,
 		disable_name_edit = false,
 		disable_description_edit = false,
@@ -19,6 +29,7 @@
 			'Conversation Partner Settings',
 		description_error_text =
 			'You may not send messages without setting description',
+		allow_without_content = false,
 		allow_without_description =
 			false,
 		content_error = false,
@@ -48,21 +59,13 @@
 	} from 'openai';
 	import { booleanStore } from '$lib/store';
 	import Message from './Message.svelte';
-	import Record from '../Record.svelte';
 	import { createEventDispatcher } from 'svelte';
 	import Transcribe from './Transcribe.svelte';
 
 	const dispatch =
 		createEventDispatcher();
 
-	$: can_send =
-		!loading &&
-		content &&
-		(allow_without_description ||
-			(!allow_without_description &&
-				messages.find(
-					(m) => m.role === 'system'
-				)));
+	$: can_send = !loading;
 
 	onMount(() => {
 		height = `${
@@ -72,7 +75,6 @@
 
 	let height = '670px',
 		description_error = false,
-		parameters_open = false,
 		submit_on_enter = booleanStore(
 			'submit-on-enter',
 			false
@@ -106,15 +108,33 @@
 
 	const send = async () => {
 		if (
-			!allow_without_description &&
-			!description
+			!(
+				allow_without_description ||
+				(!allow_without_description &&
+					messages.find(
+						(m) =>
+							m.role === 'system'
+					))
+			)
 		) {
+			dispatch(
+				'send_attempt_without_description'
+			);
 			description_error = true;
-			settings_open = true;
 			return;
-		} else if (!content) {
+		} else if (
+			!allow_without_content &&
+			!content
+		) {
 			content_error = true;
+			return;
 		}
+		if (send_function)
+			send_function().then(() => {
+				if (chat_container)
+					chat_container.scrollTop =
+						chat_container.scrollHeight;
+			});
 		dispatch('send', content);
 	};
 </script>

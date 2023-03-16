@@ -32,7 +32,7 @@
 		flex-direction: column
 		justify-content: center
 		background-color: colors.$gray-90
-		height: layout.$spacing-10
+		// height: layout.$spacing-10
 		padding: .8125rem layout.$spacing-05
 
 	.card_inner

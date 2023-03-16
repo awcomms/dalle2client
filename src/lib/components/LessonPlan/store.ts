@@ -1,3 +1,3 @@
 import { booleanStore } from '$lib/store'
 
-export const editing = booleanStore("editing")
+export const editing = booleanStore("editing", false)

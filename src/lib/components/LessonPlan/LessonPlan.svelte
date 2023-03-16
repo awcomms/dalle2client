@@ -6,6 +6,8 @@
 	import { editing } from './store';
 	import { _default } from './default';
 
+	$editing = false;
+
 	export let lesson_plan: LessonPlan =
 		_default();
 
@@ -21,10 +23,13 @@
 		Column,
 		Modal,
 		FluidForm,
-		ButtonSet
+		ButtonSet,
+		Accordion
 	} from 'carbon-components-svelte';
 	import { EditableText } from '$lib/components/LessonPlan';
 	import { createEventDispatcher } from 'svelte';
+	import Assistant from './Assistant.svelte';
+	import { download_blob } from '$lib/util';
 
 	const dispatch =
 		createEventDispatcher();
@@ -32,6 +37,8 @@
 	let _lesson_plan = to_(
 			lesson_plan
 		),
+		old: _LessonPlan[] = [],
+		assistant_open = false,
 		edit_cache: null | _LessonPlan =
 			null,
 		old_edit_cache: null | _LessonPlan =
@@ -70,6 +77,20 @@
 		lesson_plan = _default();
 	};
 
+	const download = () => {
+		download_blob(
+			new Blob([
+				JSON.stringify(_lesson_plan)
+			]),
+			`lesson_plan ${new Date().toUTCString()}`
+		);
+	};
+
+	const edit = (e: CustomEvent) => {
+		old = [...old, _lesson_plan];
+		_lesson_plan = e.detail;
+	};
+
 	const save = async () => {
 		const options = from_(
 			_lesson_plan
@@ -80,6 +101,8 @@
 		dispatch('save', lesson_plan);
 		$editing = false;
 	};
+
+	$: console.log(_lesson_plan);
 </script>
 
 <Modal
@@ -98,12 +121,31 @@
 		currently viewed lesson plan
 	</p>
 </Modal>
+
+<Modal
+	modalHeading="Assistant"
+	hasForm
+	passiveModal
+	bind:open={assistant_open}
+>
+	<Assistant
+		{_lesson_plan}
+		on:edit={edit}
+	/>
+</Modal>
+
 <div class="all">
 	<div class="actions">
 		<Row noGutter>
 			<Column>
 				<div class="entries">
 					<ButtonSet stacked>
+						<Button
+							size="small"
+							on:click={() =>
+								(assistant_open = true)}
+							>Assistant</Button
+						>
 						{#if $editing}
 							{#if old_edit_cache}
 								<Button
@@ -134,6 +176,11 @@
 							on:click={request_new}
 							>New</Button
 						>
+						<Button
+							size="small"
+							on:click={download}
+							>Download</Button
+						>
 					</ButtonSet>
 					<p>Lesson Plan</p>
 				</div>
@@ -162,7 +209,7 @@
 							bind:value={_lesson_plan.summary}
 						/>
 					</div>
-					<ButtonSet stacked>
+					<Accordion>
 						<EditableList
 							name="Prerequisite Knowledge"
 							bind:items={_lesson_plan.pre_requirements}
@@ -183,10 +230,10 @@
 							bind:items={_lesson_plan.reference_materials}
 							editing={$editing}
 						/>
-						<LessonDevelopment
-							bind:lesson_development={_lesson_plan.lesson_development}
-						/>
-					</ButtonSet>
+					</Accordion>
+					<LessonDevelopment
+						bind:lesson_development={_lesson_plan.lesson_development}
+					/>
 				</div>
 			</FluidForm>
 		</Column>

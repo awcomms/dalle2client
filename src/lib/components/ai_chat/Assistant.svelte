@@ -23,15 +23,7 @@
 		user = 'You',
 		messages: ChatCompletionRequestMessage[] =
 			[],
-		parameters: CreateChatCompletionRequest =
-			{
-				model: 'gpt-3.5-turbo',
-				temperature: 1,
-				top_p: 1,
-				messages: [],
-				presence_penalty: 0,
-				frequency_penalty: 0
-			};
+		parameters: CreateChatCompletionRequest
 
 	const set_description = (
 		content: string
@@ -56,12 +48,7 @@
 
 	const send = async () => {
 		loading = true;
-		if (!content) {
-			loading = false;
-			return;
-		}
 		let request = parameters;
-
 		messages = [
 			...messages,
 			{
@@ -89,7 +76,6 @@
 		} else {
 			console.log('uhhh');
 		}
-		console.log(request);
 		await axios
 			.post<CreateChatCompletionResponse>(
 				'/openai/chat',

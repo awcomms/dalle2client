@@ -1,15 +1,20 @@
 <script lang="ts">
 	export let name = '',
+		disabled = false,
 		open = false;
 
 	import CaretUp from 'carbon-icons-svelte/lib/CaretUp.svelte';
 	import CaretDown from 'carbon-icons-svelte/lib/CaretDown.svelte';
-	import { Button } from 'carbon-components-svelte';
+	import {
+		Accordion,
+		AccordionItem,
+		Button,
+		Row
+	} from 'carbon-components-svelte';
 </script>
 
 <div class="same-line">
-	<slot name="head-before" />
-	<Button
+	<!-- <Button
 		size="small"
 		on:click={() => (open = !open)}
 		class="same-line"
@@ -22,23 +27,36 @@
 			{/if}
 			<p>{name}</p>
 		</div>
-	</Button>
-	<slot name="head-after" />
+	</Button> -->
 </div>
 
-{#if open}
+<!-- {#if open}
 	<div class="slot">
 		<slot name="content" />
 	</div>
-{/if}
+{/if} -->
+
+	<slot name="head-before" />
+<!-- <div class="same-line"> -->
+	<AccordionItem
+		bind:open
+		bind:disabled
+		title={name}
+	>
+		<div class="slot">
+			<slot name="content" />
+		</div>
+	</AccordionItem>
+<!-- </div>	 -->
+	<slot name="head-after" />
 
 <style lang="sass">
 	@use '@carbon/layout'
-	.in_button
-		display: flex
-		flex-direction: row
-		column-gap: 1rem
-		align-items: center
+	// .in_button
+	// 	display: flex
+	// 	flex-direction: row
+	// 	column-gap: 1rem
+	// 	align-items: center
 	.same-line
 		display: flex
 		flex-direction: row

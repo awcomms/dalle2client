@@ -1,0 +1,267 @@
+{
+	"name": "Learning about Flowers",
+	"rationale": "This lesson plan is designed to help students learn about the different types of flowers and their characteristics.",
+	"summary": "In this lesson, students will learn about flowers and their characteristics, and will be able to identify different types of flowers based on their physical appearance.",
+	"lesson_development": {
+		"introduction": {
+			"teacher_activities": [
+				{
+					"id": 1,
+					"value": "Introduce the topic of flowers and ask students what they know about them."
+				},
+				{
+					"id": 2,
+					"value": "Show pictures of different types of flowers and ask students to identify them."
+				}
+			],
+			"student_pupil_activities": [
+				{
+					"id": 1,
+					"value": "Listen to the teacher's introduction and participate in the discussion."
+				},
+				{
+					"id": 2,
+					"value": "Look at the pictures of flowers and try to identify them."
+				}
+			],
+			"learning_points": [
+				{
+					"id": 1,
+					"value": "Students will be able to identify different types of flowers based on their physical appearance."
+				}
+			]
+		},
+		"presentation": {
+			"teacher_activities": [
+				{
+					"id": 1,
+					"value": "Present information about different types of flowers and their characteristics."
+				},
+				{
+					"id": 2,
+					"value": "Show examples of different types of flowers and their characteristics."
+				}
+			],
+			"student_pupil_activities": [
+				{
+					"id": 1,
+					"value": "Listen to the teacher's presentation and take notes."
+				},
+				{
+					"id": 2,
+					"value": "Look at the examples of flowers and their characteristics."
+				}
+			],
+			"learning_points": [
+				{
+					"id": 1,
+					"value": "Students will learn about different types of flowers and their characteristics."
+				}
+			]
+		},
+		"step_2": {
+			"teacher_activities": [
+				{
+					"id": 1,
+					"value": "Provide a list of flowers and ask students to identify them based on their physical appearance."
+				},
+				{
+					"id": 2,
+					"value": "Show pictures of flowers and ask students to identify them based on their physical appearance."
+				}
+			],
+			"student_pupil_activities": [
+				{
+					"id": 1,
+					"value": "Identify different types of flowers based on their physical appearance."
+				},
+				{
+					"id": 2,
+					"value": "Look at the pictures of flowers and try to identify them based on their physical appearance."
+				}
+			],
+			"learning_points": [
+				{
+					"id": 1,
+					"value": "Students will be able to identify different types of flowers based on their physical appearance."
+				}
+			]
+		},
+		"step_3": {
+			"teacher_activities": [
+				{
+					"id": 1,
+					"value": "Discuss the importance of flowers in our environment."
+				},
+				{
+					"id": 2,
+					"value": "Talk about the different uses of flowers, such as decoration and medicine."
+				}
+			],
+			"student_pupil_activities": [
+				{
+					"id": 1,
+					"value": "Listen to the teacher's discussion and take notes."
+				},
+				{
+					"id": 2,
+					"value": "Participate in the discussion and share their thoughts on the importance and uses of flowers."
+				}
+			],
+			"learning_points": [
+				{
+					"id": 1,
+					"value": "Students will understand the importance and uses of flowers."
+				}
+			]
+		},
+		"step_4": {
+			"teacher_activities": [
+				{
+					"id": 1,
+					"value": "Provide a worksheet with pictures of different types of flowers and ask students to identify them based on their physical appearance."
+				},
+				{
+					"id": 2,
+					"value": "Have students work in pairs to create a poster about a specific type of flower, including its characteristics and uses."
+				}
+			],
+			"student_pupil_activities": [
+				{
+					"id": 1,
+					"value": "Complete the worksheet by identifying different types of flowers based on their physical appearance."
+				},
+				{
+					"id": 2,
+					"value": "Work with a partner to create a poster about a specific type of flower, including its characteristics and uses."
+				}
+			],
+			"learning_points": [
+				{
+					"id": 1,
+					"value": "Students will be able to identify different types of flowers based on their physical appearance."
+				},
+				{
+					"id": 2,
+					"value": "Students will be able to create a poster about a specific type of flower, including its characteristics and uses."
+				}
+			]
+		},
+		"evaluation": {
+			"teacher_activities": [
+				{
+					"id": 1,
+					"value": "Evaluate students' understanding of flowers and their characteristics through a quiz."
+				},
+				{
+					"id": 2,
+					"value": "Evaluate students' ability to create a poster about a specific type of flower."
+				}
+			],
+			"student_pupil_activities": [
+				{
+					"id": 1,
+					"value": "Take a quiz to evaluate their understanding of flowers and their characteristics."
+				},
+				{
+					"id": 2,
+					"value": "Have their poster evaluated by the teacher."
+				}
+			],
+			"learning_points": [
+				{
+					"id": 1,
+					"value": "Students' understanding of flowers and their characteristics will be evaluated."
+				},
+				{
+					"id": 2,
+					"value": "Students' ability to create a poster about a specific type of flower will be evaluated."
+				}
+			]
+		},
+		"conclusion": {
+			"teacher_activities": [
+				{
+					"id": 1,
+					"value": "Review the key points of the lesson."
+				},
+				{
+					"id": 2,
+					"value": "Encourage students to continue learning about flowers and their characteristics."
+				}
+			],
+			"student_pupil_activities": [
+				{
+					"id": 1,
+					"value": "Review the key points of the lesson and ask any questions they may have."
+				},
+				{
+					"id": 2,
+					"value": "Be encouraged to continue learning about flowers and their characteristics."
+				}
+			],
+			"learning_points": [
+				{
+					"id": 1,
+					"value": "Students will have a better understanding of flowers and their characteristics."
+				},
+				{
+					"id": 2,
+					"value": "Students will be encouraged to continue learning about flowers and their characteristics."
+				}
+			]
+		}
+	},
+	"pre_requirements": [
+		{
+			"id": 1,
+			"value": "Students should have a basic understanding of plant biology."
+		},
+		{
+			"id": 2,
+			"value": "Students should be able to read and write at a basic level."
+		},
+		{
+			"id": 3,
+			"value": "Students should have access to pictures or samples of different types of flowers."
+		}
+	],
+	"learning_objectives": [
+		{
+			"id": 1,
+			"value": "Students will be able to identify different types of flowers based on their physical appearance."
+		},
+		{
+			"id": 2,
+			"value": "Students will understand the importance and uses of flowers."
+		},
+		{
+			"id": 3,
+			"value": "Students will be able to create a poster about a specific type of flower, including its characteristics and uses."
+		}
+	],
+	"learning_materials": [
+		{
+			"id": 1,
+			"value": "Pictures of different types of flowers"
+		},
+		{
+			"id": 2,
+			"value": "Worksheets"
+		},
+		{
+			"id": 3,
+			"value": "Poster-making materials"
+		}
+	],
+	"reference_materials": [
+		{
+			"id": 1,
+			"value": "https://www.gardeningknowhow.com/special/children/plant-lessons-for-kids.htm"
+		},
+		{
+			"id": 2,
+			"value": "https://www.kidsgardening.org/lesson-plans/"
+		}
+	]
+}

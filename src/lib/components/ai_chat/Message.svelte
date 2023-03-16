@@ -1,15 +1,13 @@
 <script lang="ts">
 	import type { ChatCompletionRequestMessage } from 'openai';
 	export let message: ChatCompletionRequestMessage,
-		hide_system_messages = false;
-
-	let show =
-		message.role !== 'system'
-			? true
-			: message.role === 'system' &&
-			  !hide_system_messages
-			? true
-			: false;
+		hide_system_messages = false,
+		show = message.role !== 'system';
+	// ? true
+	// : message.role === 'system' &&
+	//   !hide_system_messages
+	// ? true
+	// : false;
 </script>
 
 {#if show}

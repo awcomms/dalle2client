@@ -5,7 +5,8 @@
 		CreateChatCompletionRequest
 	} from 'openai';
 	import axios from 'axios';
-	export let description_label = "Describe the character"
+	export let description_label =
+		'Describe the character';
 	import Interface from './Interface.svelte';
 	import { download_blob } from '$lib/util';
 
@@ -18,6 +19,7 @@ that follow the description element and have their role member set to \`assistan
 
 	let loading = false,
 		chat_container: HTMLElement,
+		settings_open = false,
 		content = '',
 		user = 'You',
 		name = 'Character',
@@ -117,7 +119,10 @@ that follow the description element and have their role member set to \`assistan
 	bind:chat_container
 	bind:messages
 	bind:content
+	bind:settings_open
 	{description_label}
+	on:send_attempt_without_description={() =>
+		(settings_open = true)}
 	on:save={save}
 	on:send={send}
 />
