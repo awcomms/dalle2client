@@ -9,13 +9,6 @@
 	export let lesson_plan: LessonPlan =
 		_default();
 
-	let _lesson_plan = to_(
-			lesson_plan
-		),
-		edit_cache = _lesson_plan,
-		old_lesson_plan = _lesson_plan,
-		new_modal = false;
-
 	import type {
 		LessonPlan,
 		_LessonPlan
@@ -36,15 +29,34 @@
 	const dispatch =
 		createEventDispatcher();
 
+	let _lesson_plan = to_(
+			lesson_plan
+		),
+		edit_cache: null | _LessonPlan =
+			null,
+		old_edit_cache: null | _LessonPlan =
+			null,
+		old_lesson_plan = _lesson_plan,
+		new_modal = false;
+
 	const start_edit = () => {
-		edit_cache = _lesson_plan
-		$editing = true
-	}
+		edit_cache = _lesson_plan;
+		$editing = true;
+	};
 
 	const cancel_edit = () => {
-		_lesson_plan = edit_cache
-		$editing = false
-	}
+		old_edit_cache = _lesson_plan;
+		if (edit_cache)
+			_lesson_plan = edit_cache;
+		$editing = false;
+	};
+
+	const restore_old_edit_cache =
+		() => {
+			if (!old_edit_cache) return;
+			_lesson_plan = old_edit_cache;
+			old_edit_cache = null;
+		};
 
 	const request_new = () => {
 		if (
@@ -92,20 +104,29 @@
 			<Column>
 				<div class="entries">
 					<ButtonSet stacked>
-						<Button
-							size="small"
-							on:click={() =>
-								($editing =
-									!$editing)}
-							>{$editing
-								? 'Cancel Edit'
-								: 'Edit'}</Button
-						>
 						{#if $editing}
+							{#if old_edit_cache}
+								<Button
+									size="small"
+									on:click={restore_old_edit_cache}
+									>Restore Old Edit</Button
+								>
+							{/if}
+							<Button
+								size="small"
+								on:click={cancel_edit}
+								>Cancel Edit</Button
+							>
 							<Button
 								size="small"
 								on:click={save}
 								>Save</Button
+							>
+						{:else}
+							<Button
+								size="small"
+								on:click={start_edit}
+								>Edit</Button
 							>
 						{/if}
 						<Button
