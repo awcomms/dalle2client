@@ -8,7 +8,7 @@
 
 <Assistant
 	{description}
-	hide_edit_button={true}
+	hide_settings_button={true}
 	disable_description_edit={true}
 	disable_name_edit={true}
 />

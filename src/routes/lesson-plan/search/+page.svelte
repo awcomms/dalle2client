@@ -1,6 +1,5 @@
 <script lang='ts'>
 	import type { LessonPlan } from '$lib/types';
-	import { req } from '$lib/util';
 	import {
 		Row,
 		Column,
@@ -15,7 +14,7 @@
 	let items: Array<LessonPlan> = [];
 
 	const get = async () => {
-		items = await req({ LessonPlan: { action: 'All' } });
+		// items = await req({ LessonPlan: { action: 'All' } });
         console.log(items)
 	};
 </script>
@@ -31,7 +30,7 @@
 	<StructuredListBody>
 		{#each items as item}
 			<StructuredListRow>
-				<StructuredListCell>{item.options.name}</StructuredListCell>
+				<StructuredListCell>{item.name}</StructuredListCell>
 			</StructuredListRow>
 		{/each}
 	</StructuredListBody>
