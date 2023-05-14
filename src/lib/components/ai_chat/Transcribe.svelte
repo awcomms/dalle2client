@@ -2,36 +2,27 @@
 	import axios from 'axios';
 	import Record from '../Record.svelte';
 	import { createEventDispatcher } from 'svelte';
-
-	let model = 'whisper-1';
+	import { transcribe } from '$lib/util/transcribe';
 
 	const dispatch =
 		createEventDispatcher();
-
-	const transcribe = async (
-		e: CustomEvent
-	) => {
-		let { type, chunks } = e.detail;
-		console.log('type', type);
-		let audio = new Uint8Array(
-			await new Blob(chunks, {
-				type
-			}).arrayBuffer()
-		);
-		await axios
-			.post(
-				'/openai/audio/transcriptions',
-				{ audio, type, model }
-			)
-			.then((r) => {
-				dispatch('text', r.data);
-			});
-	};
 </script>
 
 <Record
 	buttonProps={{
 		size: 'field'
 	}}
-	on:pause={transcribe}
+	on:pause={async (e) => {
+		dispatch(
+			'text',
+			await transcribe(
+				await new Blob(
+					e.detail.chunks,
+					{
+						type: e.detail.type
+					}
+				)
+			)
+		);
+	}}
 />

@@ -10,6 +10,7 @@
 		Header,
 		SideNav
 	} from '$lib/components/Nav';
+	import Login from '$lib/components/Login.svelte';
 
 	if (
 		browser &&
@@ -22,6 +23,7 @@
 		);
 </script>
 
+<Login />
 <Theme theme="g100" />
 <Header />
 <Content

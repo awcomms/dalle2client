@@ -1,5 +1,5 @@
 import type { Id } from '$lib/types';
-import type { ChatCompletionRequestMessage, CreateCompletionRequest } from 'openai';
+import type { ChatCompletionRequestMessage, CreateChatCompletionRequest, CreateCompletionRequest } from 'openai';
 
 export interface Parameters {
 	model: string;
@@ -19,11 +19,10 @@ export interface Parameters {
 	logit_bias?: Record<string, number>;
 }
 
-export interface _Chat {
+export interface Chat {
 	id: Id;
-	chat: string;
-	messages: Message[];
-	description: Id;
+	messages: Id[];
+	parameters: CreateChatCompletionRequest
 }
 
 export interface Description {
@@ -35,14 +34,5 @@ export interface Description {
 
 export interface Message {
 	id: Id;
-	embedding: number[];
-	inner: ChatCompletionRequestMessage;
-}
-
-export interface Chat {
-	id: string;
-	chat: string;
-	name: string;
-	description: Id;
-	parameters: CreateCompletionRequest;
+	message: ChatCompletionRequestMessage;
 }

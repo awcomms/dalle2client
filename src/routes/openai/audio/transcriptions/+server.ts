@@ -6,27 +6,28 @@ import { OPENAI } from '$env/static/private';
 export const POST = (async ({
 	request
 }) => {
-	const {
-		audio,
-		type,
-		model
-	}: {
-		audio: Uint8Array;
-		type: string;
-		model: string;
-	} = await request.json();
-	const form = new FormData();
-	form.append(
-		'file',
-		new File(
-			[new Blob([audio])],
-			'file',
-			{
-				type
-			}
-		)
-	);
-	form.append('model', model);
+	// const {
+	// 	audio,
+	// 	type,
+	// 	model
+	// }: {
+	// 	audio: Uint8Array;
+	// 	type: string;
+	// 	model: string;
+	// } = await request.json();
+	// const form = new FormData();
+	// form.append(
+	// 	'file',
+	// 	new File(
+	// 		[new Blob([audio])],
+	// 		'file',
+	// 		{
+	// 			type
+	// 		}
+	// 	)
+	// );
+	// form.append('model', model);
+
 	return text(
 		await fetch(
 			'https://api.openai.com/v1/audio/transcriptions',
@@ -35,7 +36,7 @@ export const POST = (async ({
 				headers: {
 					Authorization: `Bearer ${OPENAI}`
 				},
-				body: form
+				body: await request.formData()
 			}
 		).then(async (r) => {
 			const text = await r.text();

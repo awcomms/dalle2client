@@ -6,7 +6,6 @@ export const POST = (async ({ request }) => {
 	const req = await request.json();
 	return await add(req)
 		.then((res) => {
-			console.log('yes', res)
 			return json(res);
 		})
 		.catch(async (e) => {

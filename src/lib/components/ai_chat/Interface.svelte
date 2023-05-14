@@ -55,12 +55,12 @@
 	import type {
 		ChatCompletionRequestMessage,
 		CreateChatCompletionRequest,
-		CreateCompletionRequest
 	} from 'openai';
 	import { booleanStore } from '$lib/store';
 	import Message from './Message.svelte';
 	import { createEventDispatcher } from 'svelte';
 	import Transcribe from './Transcribe.svelte';
+	import { v4 } from 'uuid';
 
 	const dispatch =
 		createEventDispatcher();
@@ -74,6 +74,7 @@
 	});
 
 	let height = '670px',
+		id = v4(),
 		description_error = false,
 		submit_on_enter = booleanStore(
 			'submit-on-enter',
@@ -105,6 +106,12 @@
 
 	const save = () =>
 		dispatch('save');
+
+	const _send = () => {
+		/**
+		 * add message
+		*/
+	}
 
 	const send = async () => {
 		if (

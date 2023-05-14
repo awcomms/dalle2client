@@ -16,6 +16,10 @@
 >
 	<SideNavItems>
 		<A2HsLink />
+		<SideNavLink
+			text="Call"
+			href="/call"
+		/>
 		<SideNavMenu text="AI Chat">
 			<SideNavLink
 				menuItem

@@ -3,7 +3,7 @@
 	"version": "0.0.1",
 	"private": true,
 	"scripts": {
-		"dev": "vite dev --port 3737",
+		"dev": "vite dev --port 6737",
 		"build": "vite build",
 		"preview": "vite preview",
 		"test": "playwright test",
@@ -38,6 +38,8 @@
 	},
 	"type": "module",
 	"dependencies": {
+		"@auth/core": "^0.5.1",
+		"@auth/sveltekit": "^0.3.0",
 		"@carbon/colors": "^11.13.0",
 		"@carbon/layout": "^11.12.0",
 		"@carbon/themes": "^11.17.0",

@@ -8,6 +8,7 @@
 
 {#if editing}
 	<TextInput
+		disabled
 		size="sm"
 		labelText={name}
 		bind:value
