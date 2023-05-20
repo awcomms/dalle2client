@@ -11,6 +11,14 @@
 		SideNav
 	} from '$lib/components/Nav';
 	import Login from '$lib/components/Login.svelte';
+	import { dev } from '$app/environment';
+	import { inject } from '@vercel/analytics';
+
+	inject({
+		mode: dev
+			? 'development'
+			: 'production'
+	});
 
 	if (
 		browser &&

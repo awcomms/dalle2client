@@ -9,3 +9,5 @@ push.ps1
 !.env.example
 vite.config.js.timestamp-*
 vite.config.ts.timestamp-*
+
+.vercel

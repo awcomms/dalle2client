@@ -7,11 +7,14 @@ export const POST = (async ({
 }) => {
 	return json(
 		await openai
-			.createEmbedding(
-				await request.json()
-			)
+			.createEmbedding({
+				model:
+					'text-embedding-ada-002',
+				input: [await request.text()]
+			})
 			.then((r) => {
-				return r.data.data[0].embedding;
+				return r.data.data[0]
+					.embedding;
 			})
 	);
 }) satisfies RequestHandler;
