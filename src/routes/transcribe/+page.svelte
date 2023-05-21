@@ -15,7 +15,7 @@
 		form.append('file', e.detail[0]);
 		await axios
 			.post(
-				'http://localhost:5000',
+				'http://localhost:3000',
 				// 'https://transcribe-eosin.vercel.app',
 				form,
 				{
@@ -37,6 +37,7 @@
 				console.log(e);
 			})
 			.finally(() => {
+				console.log('fin')
 				loading = false;
 			});
 	};
