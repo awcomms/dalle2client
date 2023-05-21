@@ -17,10 +17,10 @@
 			on:click={() =>
 				download_blob(
 					entry.blob,
-					entry.name
+					entry.result_name
 				)}
 		>
-			Download
+			Download result as a file
 		</Button>
 	{/if}
 </div>

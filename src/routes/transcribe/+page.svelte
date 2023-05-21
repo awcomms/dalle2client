@@ -7,6 +7,7 @@
 	import {
 		Button,
 		CopyButton,
+		InlineLoading,
 		RadioButton,
 		RadioButtonGroup
 	} from 'carbon-components-svelte';
@@ -42,7 +43,6 @@
 		loading = false;
 
 	const act = async (file: File) => {
-		let name = file.name;
 		loading = true;
 		if (!mode)
 			return alert(
@@ -76,7 +76,12 @@
 						history = [
 							...history,
 							{
-								name,
+								name: file.name,
+								result_name:
+									file.name.replace(
+										/\.[^/.]+$/,
+										`.txt`
+									),
 								text: r.data,
 								blob: new Blob(
 									[r.data],
@@ -91,7 +96,12 @@
 						history = [
 							...history,
 							{
-								name,
+								name: file.name,
+								result_name:
+									file.name.replace(
+										/\.[^/.]+$/,
+										`.srt`
+									),
 								blob: new Blob(
 									[r.data],
 									{
@@ -105,7 +115,9 @@
 						history = [
 							...history,
 							{
-								name,
+								name: file.name,
+								result_name:
+									file.name,
 								blob: new Blob(
 									[r.data],
 									{
@@ -127,49 +139,66 @@
 	};
 </script>
 
-{#if loading}
-	<p>loading...</p>
-{:else if history.length && history[0]}
-	{#if history.length > 1}
-		<Button
-			on:click={() =>
-				(show_history =
-					!show_history)}
-			>{show_history
-				? 'Hide history'
-				: 'Show history'}
-		</Button>
+<div class="column">
+	{#if loading}
+		<InlineLoading />
+	{:else if history.length && history[0]}
+		{#if history.length > 1}
+			<Button
+				on:click={() =>
+					(show_history =
+						!show_history)}
+				>{show_history
+					? `Hide this session's history`
+					: `Show this session's history`}
+			</Button>
+		{/if}
+		{#if show_history}
+			<div class="column">
+				{#each history as h}
+					<Result entry={h} />
+				{/each}
+			</div>
+		{/if}
+		<Result entry={history[0]} />
 	{/if}
-	{#if show_history}
-		{#each history as h}
-			<Result entry={h} />
-		{/each}
+	
+	{#if file}
+		<p>Uploaded file: {file.name}</p>
 	{/if}
-	<Result entry={history[0]} />
-{/if}
-
-<FileUpload
-	on:change={({ detail }) => {
-		file = detail[0];
-	}}
-/>
-
-<RadioButtonGroup
-	legendText="Action"
-	bind:selected={mode}
->
-	{#each modes as m}
-		<RadioButton
-			labelText={m.label}
-			value={m.value}
-		/>
-	{/each}
-</RadioButtonGroup>
-
-{#if file}
-	<Button
-		on:click={async () =>
-			await act(file)}
-		>Transcribe</Button
+	
+	<FileUpload
+		label={file ? "Change file" : "Upload file"}
+		on:change={({ detail }) => {
+			file = detail[0];
+		}}
+	/>
+	
+	<RadioButtonGroup
+		legendText="Action"
+		bind:selected={mode}
 	>
-{/if}
+		{#each modes as m}
+			<RadioButton
+				labelText={m.label}
+				value={m.value}
+			/>
+		{/each}
+	</RadioButtonGroup>
+	
+	{#if file}
+		<Button
+			on:click={async () =>
+				await act(file)}
+			>Transcribe</Button
+		>
+	{/if}
+</div>
+
+<style lang="scss">
+	.column {
+		display: flex;
+		flex-direction: column;
+		row-gap: 1rem;
+	}
+</style>

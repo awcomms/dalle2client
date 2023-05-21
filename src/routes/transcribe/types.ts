@@ -10,6 +10,7 @@ export interface Mode {
 
 export interface Result {
 	name: string;
+	result_name: string;
 	text?: string;
 	blob: Blob;
 }
