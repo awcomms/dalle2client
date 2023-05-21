@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { PUBLIC_PYTHON_API_ENDPOINT } from '$env/static/public';
 	import FileUpload from '$lib/components/FileUpload.svelte';
 	// import { transcribe } from '$lib/util/transcribe';
 	import axios from 'axios';
@@ -14,9 +15,7 @@
 		const form = new FormData();
 		form.append('file', e.detail[0]);
 		await axios
-			.post(
-				'http://localhost:3000',
-				// 'https://transcribe-eosin.vercel.app',
+			.post(PUBLIC_PYTHON_API_ENDPOINT,
 				form,
 				{
 					headers: {
