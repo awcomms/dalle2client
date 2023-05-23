@@ -1,3 +1,10 @@
+/// <reference types="@sveltejs/kit" />
+/// <reference no-default-lib="true"/>
+/// <reference lib="esnext" />
+/// <reference lib="webworker" />
+
+const sw = self as unknown as ServiceWorkerGlobalScope;
+
 import { version, files, build } from '$service-worker';
 
 const ASSETS = `cache${version}`;
@@ -10,10 +17,10 @@ const cached = new Set(to_cache);
 let notifications = 0;
 let ids: number[] = [];
 
-self.addEventListener('notificationclick', (ev: NotificationEvent) => {
+sw.addEventListener('notificationclick', (ev: NotificationEvent) => {
 	ev.notification.close();
 	ev.waitUntil(
-		self.clients.matchAll({ type: 'window' }).then((clients: readonly WindowClient[]) => {
+		sw.clients.matchAll({ type: 'window' }).then((clients: readonly WindowClient[]) => {
 			for (const client of clients) {
 				if (client.url == '/' && 'focus' in client) {
 					return client.focus();
@@ -25,9 +32,9 @@ self.addEventListener('notificationclick', (ev: NotificationEvent) => {
 	);
 });
 
-self.addEventListener('push', (ev: PushEvent) => {
+sw.addEventListener('push', (ev: PushEvent) => {
 	ev.waitUntil(
-		self.clients.matchAll({ type: 'window' }).then(async (clients) => {
+		sw.clients.matchAll({ type: 'window' }).then(async (clients) => {
 			if (!ev.data) return;
 			const id = ev.data.json().id;
 			if (!ids.includes(id)) ids.push(id);
@@ -36,30 +43,30 @@ self.addEventListener('push', (ev: PushEvent) => {
 					return;
 				}
 			}
-			const image = `${self.origin}/x369-144.png`;
+			const image = `${sw.origin}/x369-144.png`;
 			const options = {
 				badge: image,
 				icon: image
 			};
 			notifications++;
 			const title = `${notifications} ${notifications > 1 ? 'New messages' : 'New message'}`;
-			self.registration.showNotification(title, options);
+			sw.registration.showNotification(title, options);
 		})
 	);
 });
 
-self.addEventListener('install', (event: ExtendableEvent) => {
+sw.addEventListener('install', (event: ExtendableEvent) => {
 	event.waitUntil(
 		caches
 			.open(ASSETS)
 			.then((cache) => cache.addAll(to_cache))
 			.then(() => {
-				self.skipWaiting();
+				sw.skipWaiting();
 			})
 	);
 });
 
-self.addEventListener('activate', (event: ExtendableEvent) => {
+sw.addEventListener('activate', (event: ExtendableEvent) => {
 	event.waitUntil(
 		caches.keys().then(async (keys) => {
 			// delete old caches
@@ -67,12 +74,12 @@ self.addEventListener('activate', (event: ExtendableEvent) => {
 				if (key !== ASSETS) await caches.delete(key);
 			}
 
-			self.clients.claim();
+			sw.clients.claim();
 		})
 	);
 });
 
-self.addEventListener('fetch', (event: FetchEvent) => {
+sw.addEventListener('fetch', (event: FetchEvent) => {
 	if (event.request.method !== 'GET' || event.request.headers.has('range')) return;
 
 	const url = new URL(event.request.url);
@@ -81,10 +88,10 @@ self.addEventListener('fetch', (event: FetchEvent) => {
 	if (!url.protocol.startsWith('http')) return;
 
 	// ignore dev server requests
-	if (url.hostname === self.location.hostname && url.port !== self.location.port) return;
+	if (url.hostname === sw.location.hostname && url.port !== sw.location.port) return;
 
 	// always serve static files and bundler-generated assets from cache
-	if (url.host === self.location.host && cached.has(url.pathname)) {
+	if (url.host === sw.location.host && cached.has(url.pathname)) {
 		event.respondWith(caches.match(event.request).then(r => {
 			if (!r) return Promise.reject()
 			return r

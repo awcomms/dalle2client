@@ -10,7 +10,7 @@
 		Header,
 		SideNav
 	} from '$lib/components/Nav';
-	import Login from '$lib/components/Login.svelte';
+	// import Login from '$lib/components/Login.svelte';
 	import { dev } from '$app/environment';
 	import { inject } from '@vercel/analytics';
 
@@ -20,18 +20,18 @@
 			: 'production'
 	});
 
-	if (
-		browser &&
-		navigator &&
-		navigator.serviceWorker
-	)
-		navigator.serviceWorker.ready.then(
-			(registration) =>
-				registration.update()
-		);
+	// if (
+	// 	browser &&
+	// 	navigator &&
+	// 	navigator.serviceWorker
+	// )
+	// 	navigator.serviceWorker.ready.then(
+	// 		(registration) =>
+	// 			registration.update()
+	// 	);
 </script>
 
-<Login />
+<!-- <Login /> -->
 <Theme theme="g100" />
 <Header />
 <Content
