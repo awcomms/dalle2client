@@ -16,14 +16,15 @@
 	import { download_blob } from '$lib/util';
 
 	let loading = false,
-		id = v4(),
+		// id = v4(),
 		content = '',
+		settings_open = false,
 		chat_container: HTMLElement,
 		name = 'Assistant',
 		user = 'You',
 		messages: ChatCompletionRequestMessage[] =
 			[],
-		parameters: CreateChatCompletionRequest
+		parameters: CreateChatCompletionRequest;
 
 	const set_description = (
 		content: string
@@ -74,8 +75,10 @@
 		if (Number(token_count) < 3700) {
 			request.messages = messages;
 		} else {
+			console.log(token_count);
 			console.log('uhhh');
 		}
+		console.log(request);
 		await axios
 			.post<CreateChatCompletionResponse>(
 				'/openai/chat',
@@ -110,6 +113,7 @@
 	bind:description
 	bind:parameters
 	bind:chat_container
+	bind:settings_open
 	settings_heading="AI Assistant settings"
 	name_label="Give the Assistant a name"
 	description_label="Tell the Assistant how to behave"
@@ -118,5 +122,7 @@
 	{disable_description_edit}
 	on:save={save}
 	on:send={send}
+	on:send_attempt_without_description={() =>
+		(settings_open = true)}
 	allow_without_description={true}
 />

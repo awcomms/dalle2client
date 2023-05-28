@@ -32,7 +32,7 @@
 </script>
 
 <!-- <Login /> -->
-<Theme theme="g100" />
+<Theme theme="g100" />	
 <Header />
 <Content
 	style="background: none; padding: 1rem; height: 100%"
