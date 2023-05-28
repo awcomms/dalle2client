@@ -26,11 +26,11 @@
 				text="AI Assistant"
 				href="/openai/assistant"
 			/>
-			<SideNavLink
+			<!-- <SideNavLink
 				menuItem
 				text="Custom Character"
 				href="/chat/ai/character"
-			/>
+			/> -->
 			<!-- <SideNavLink menuItem text="Completions" href="/openai/completions" /> -->
 		</SideNavMenu>
 		<!-- <SideNavMenu text="Images"> -->

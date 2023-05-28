@@ -11,7 +11,7 @@
 		CreateChatCompletionResponse
 	} from 'openai';
 	import axios from 'axios';
-	import { v4 } from 'uuid';
+	// import { v4 } from 'uuid';
 	import Interface from './Interface.svelte';
 	import { download_blob } from '$lib/util';
 

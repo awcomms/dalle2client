@@ -19,6 +19,7 @@ that follow the description element and have their role member set to \`assistan
 
 	let loading = false,
 		chat_container: HTMLElement,
+		description: string,
 		settings_open = false,
 		content = '',
 		user = 'You',
@@ -47,6 +48,14 @@ that follow the description element and have their role member set to \`assistan
 			`Chat between user ${user} and AI simulated entity ${name}`
 		);
 	};
+
+	const to_chat = (messages: ChatCompletionRequestMessage[]) => {
+		return `Consider two entities, "${user}" and "${name}". "${name}" is described as follows:\n
+		${description}\n
+		Consider the following conversation between ${user} and ${name}:\n
+		${messages.filter(m => m.role === "assistant" || "user").map(m => `\n\n${m.name}: ${m.content}`)}
+		${name}:`
+	}
 
 	const send = async () => {
 		loading = true;
@@ -83,14 +92,15 @@ that follow the description element and have their role member set to \`assistan
 		} else {
 			console.log('uhhh');
 		}
+		// delete request.messages;
 		console.log(request);
 		await axios
 			.post<CreateChatCompletionResponse>(
-				'/openai/chat',
-				request
+				'/openai/completion',
+				{prompt: to_chat(messages), ...request}
 			)
 			.then((r) => {
-				console.log('ha');
+				console.log('ha', r);
 				for (let c of r.data
 					.choices) {
 					console.log(c);
@@ -117,6 +127,7 @@ that follow the description element and have their role member set to \`assistan
 	bind:loading
 	bind:parameters
 	bind:chat_container
+	bind:description
 	bind:messages
 	bind:content
 	bind:settings_open

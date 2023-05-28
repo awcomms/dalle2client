@@ -10,13 +10,12 @@
 	<Column>
 		<div class="links">
 			<Link href="/openai/assistant"
-				>Customize and chat with the
-				GPT3.5 Assistant</Link
+				>GPT Assistant Chat</Link
 			>
-			<Link href="/chat/ai/character"
+			<!-- <Link href="/chat/ai/character"
 				>Create and chat with an AI
 				chat partner</Link
-			>
+			> -->
 			<Link href="/openai/dalle2"
 				>Generate images with text</Link
 			>
@@ -26,3 +25,10 @@
 		</div>
 	</Column>
 </Row>
+
+<style lang="sass">
+	.links
+		display: flex
+		flex-direction: column
+		row-gap: 1rem
+</style>
