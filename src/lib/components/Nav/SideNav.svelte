@@ -39,12 +39,12 @@
 		<SideNavLink
 			menuItem
 			text="DALLE2"
-			href="/openai/dalle2"
+			href="/openai/images/create"
 		/>
 		<SideNavLink
 			menuItem
 			text="Rescale Images"
-			href="/openai/images/create"
+			href="/images/scale"
 		/>
 		<!-- <SideNavLink text="Entries" /> -->
 	</SideNavItems>
