@@ -44,7 +44,7 @@
 		<SideNavLink
 			menuItem
 			text="Rescale Images"
-			href="/images/scale"
+			href="/openai/images/create"
 		/>
 		<!-- <SideNavLink text="Entries" /> -->
 	</SideNavItems>

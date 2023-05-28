@@ -10,7 +10,6 @@
 	} from 'carbon-components-svelte';
 	import Prompt from './Prompt.svelte';
 	import type {
-		CreateImageRequestResponseFormatEnum,
 		CreateImageRequestSizeEnum,
 		ImagesResponseDataInner
 	} from 'openai';
@@ -21,7 +20,6 @@
 		// auto_download = true,
 		previous = '',
 		loading = false,
-		openai_key_modal_open = false,
 		srcs: ImagesResponseDataInner[] =
 			[],
 		n = 1,
@@ -56,7 +54,8 @@
 		loading = true;
 		previous = value;
 		await axios
-			.post( //TODO-type
+			.post(
+				//TODO-type
 				'/openai/images/create',
 				{ prompt: value, n, size }
 			)
@@ -107,7 +106,7 @@
 		<!-- <Button on:click={() => (open = true)}>Edit</Button> -->
 		<Button
 			size="small"
-			on:click={_do}>Submit</Button
+			on:click={_do}>Create</Button
 		>
 	</ButtonSet>
 
@@ -120,20 +119,29 @@
 	{#if srcs?.length}
 		<div class="imgs">
 			{#each srcs as { url: src }}
-				<div class="img">
-					<img
-						alt="last DallE2 generation result"
-						{src}
-						width={size.substring(
-							0,
-							size.indexOf('x')
-						)}
-						height={size.substring(
-							0,
-							size.indexOf('x')
-						)}
-					/>
-				</div>
+				{#if src}
+					<div class="img">
+						<img
+							alt="last DallE2 generation result"
+							{src}
+							width={size.substring(
+								0,
+								size.indexOf('x')
+							)}
+							height={size.substring(
+								0,
+								size.indexOf('x')
+							)}
+						/>
+						<!-- <Button
+							on:click={() =>
+								download_from_url(
+									src,
+									`DALL·E generation - ${value} - ${new Date().toUTCString()}`
+								)}>Download</Button
+						> -->
+					</div>
+				{/if}
 			{/each}
 		</div>
 	{/if}

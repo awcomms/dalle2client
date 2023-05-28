@@ -16,7 +16,7 @@
 				>Create and chat with an AI
 				chat partner</Link
 			> -->
-			<Link href="/openai/dalle2"
+			<Link href="/openai/images/create"
 				>Generate images with text</Link
 			>
 			<Link href="/images/scale"

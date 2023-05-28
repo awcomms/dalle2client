@@ -6,7 +6,9 @@ export const POST = (async ({
 	request
 }) =>
 	json(
-		await openai.createImage(
-			await request.json()
-		)
+		await openai
+			.createImage(
+				await request.json()
+			)
+			.then((r) => r.data)
 	)) satisfies RequestHandler;
