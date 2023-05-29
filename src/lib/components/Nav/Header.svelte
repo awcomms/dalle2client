@@ -1,9 +1,9 @@
 <script lang="ts">
 	import { navigating } from '$app/stores';
-	import { PUBLIC_PROJECT_GITHUB_REPOSITORY } from '$env/static/public';
 	import { isSideNavOpen } from './store';
 	// import { loginOpen } from '$lib/store';
 	// import { logout } from '$lib/logout';
+	import {page} from "$app/stores"
 	import {
 		InlineLoading,
 		SkipToContent,
@@ -54,7 +54,7 @@
 				>
 			</HeaderPanelLinks>
 		</HeaderAction> -->
-		<a href={PUBLIC_PROJECT_GITHUB_REPOSITORY} rel="noopener noreferrer" target="_blank" class="bx--header__action logo">
+		<a href={$page.data.github_repo} rel="noopener noreferrer" target="_blank" class="bx--header__action logo">
 			<LogoGithub size={20} />
 		</a>
 	</HeaderUtilities>

@@ -1,5 +1,4 @@
 <script lang="ts">
-	import { PUBLIC_PROJECT_GITHUB_REPOSITORY } from '$env/static/public';
 	import LogoGithub from 'carbon-icons-svelte/lib/LogoGithub.svelte';
 	import {
 		Row,
@@ -7,6 +6,7 @@
 		Link,
 		Button
 	} from 'carbon-components-svelte';
+	import {page} from "$app/stores"
 </script>
 
 <Row>
@@ -34,7 +34,7 @@
 			>
 				<a
 					{...props}
-					href={PUBLIC_PROJECT_GITHUB_REPOSITORY}
+					href={$page.data.github_repo}
 					target="_blank"
 					on:click
 					on:mouseover
