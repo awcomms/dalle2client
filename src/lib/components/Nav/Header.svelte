@@ -1,5 +1,6 @@
 <script lang="ts">
 	import { navigating } from '$app/stores';
+	import { PUBLIC_PROJECT_GITHUB_REPOSITORY } from '$env/static/public';
 	import { isSideNavOpen } from './store';
 	// import { loginOpen } from '$lib/store';
 	// import { logout } from '$lib/logout';
@@ -53,8 +54,16 @@
 				>
 			</HeaderPanelLinks>
 		</HeaderAction> -->
-		<HeaderGlobalAction aria-label="Github repository" icon={LogoGithub}>
-			<Link href="https://github.com/awcomms/stuff" />
-		</HeaderGlobalAction>
+		<a href={PUBLIC_PROJECT_GITHUB_REPOSITORY} rel="noopener noreferrer" target="_blank" class="bx--header__action logo">
+			<LogoGithub size={20} />
+		</a>
 	</HeaderUtilities>
 </Header>
+
+<style lang="sass">
+	.logo
+		display: flex
+		align-items: center
+		justify-content: center
+		padding-bottom: 2px
+</style>
