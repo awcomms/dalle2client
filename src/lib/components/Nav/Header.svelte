@@ -1,18 +1,25 @@
 <script lang="ts">
 	import { navigating } from '$app/stores';
 	import { isSideNavOpen } from './store';
-	import { loginOpen } from '$lib/store';
-	import { logout } from '$lib/logout';
+	// import { loginOpen } from '$lib/store';
+	// import { logout } from '$lib/logout';
 	import {
 		InlineLoading,
 		SkipToContent,
 		Header,
 		HeaderUtilities,
-		HeaderAction,
-		HeaderPanelLinks,
-		HeaderPanelLink
+		// HeaderAction,
+		// HeaderPanelLinks,
+		// HeaderPanelLink,
+
+		HeaderGlobalAction,
+
+		Link
+
+
 	} from 'carbon-components-svelte';
-	import UserAvatarFilledAlt from 'carbon-icons-svelte/lib/UserAvatarFilledAlt.svelte';
+	// import UserAvatarFilledAlt from 'carbon-icons-svelte/lib/UserAvatarFilledAlt.svelte';
+	import LogoGithub from 'carbon-icons-svelte/lib/LogoGithub.svelte';
 </script>
 
 <Header
@@ -30,7 +37,7 @@
 		<SkipToContent />
 	</svelte:fragment>
 	<HeaderUtilities>
-		<HeaderAction
+		<!-- <HeaderAction
 			icon={UserAvatarFilledAlt}
 			closeIcon={UserAvatarFilledAlt}
 		>
@@ -45,6 +52,9 @@
 					>Logout</HeaderPanelLink
 				>
 			</HeaderPanelLinks>
-		</HeaderAction>
+		</HeaderAction> -->
+		<HeaderGlobalAction aria-label="Github repository" icon={LogoGithub}>
+			<Link href="https://github.com/awcomms/stuff" />
+		</HeaderGlobalAction>
 	</HeaderUtilities>
 </Header>
