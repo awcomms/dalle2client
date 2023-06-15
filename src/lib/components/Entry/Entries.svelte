@@ -51,32 +51,32 @@
 			})
 			.then(async (values) => {
 				console.log(values);
-				await post(
-					'/embedding/add',
-					{
-						namespace: 'entries',
-						vectors: [
-							{
-								id: new_id,
-								values,
-								metadata: {
-									parent: [id]
-								}
-							}
-						]
-					}
-				)
-					.then((r) =>
-						console.log(
-							'add embedding res',
-							r
-						)
-					)
-					.catch((e) =>
-						alert(
-							`error adding embedding for new entry: ${e}`
-						)
-					);
+				// await post(
+				// 	'/embedding/add',
+				// 	{
+				// 		namespace: 'entries',
+				// 		vectors: [
+				// 			{
+				// 				id: new_id,
+				// 				values,
+				// 				metadata: {
+				// 					parent: [id]
+				// 				}
+				// 			}
+				// 		]
+				// 	}
+				// )
+				// 	.then((r) =>
+				// 		console.log(
+				// 			'add embedding res',
+				// 			r
+				// 		)
+				// 	)
+				// 	.catch((e) =>
+				// 		alert(
+				// 			`error adding embedding for new entry: ${e}`
+				// 		)
+				// 	);
 			})
 			.catch((e) => {
 				switch (e) {

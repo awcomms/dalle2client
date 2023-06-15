@@ -44,17 +44,17 @@
 				input: value
 			})
 			.then(async (vector) => {
-				await post(
-					'/embedding/query',
-					{
-						topK: 7,
-						namespace: 'entries',
-						vector
-						// filter: {"parent": {"$in": []}}
-					}
-				).then((ids) => {
-					items = from_ids(ids);
-				});
+				// await post(
+				// 	'/embedding/query',
+				// 	{
+				// 		topK: 7,
+				// 		namespace: 'entries',
+				// 		vector
+				// 		// filter: {"parent": {"$in": []}}
+				// 	}
+				// ).then((ids) => {
+				// 	items = from_ids(ids);
+				// });
 			});
 	};
 </script>
