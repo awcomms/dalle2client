@@ -9,27 +9,19 @@
 	} from 'carbon-components-svelte';
 	import type { PageData } from './$types';
 	import { page } from '$app/stores';
+	import Paystack from '$lib/components/Paystack.svelte';
 
 	export let data: PageData;
 
-	let bank: string,
-		amount: number,
-		name: string,
-		reason: string,
-		number: string;
-
-	export const pay = async () => {
-		const metadata = {
-			purpose: 'send_to_momo',
-			endpoint: $page.url.toString(),
-			args: {
-				amount,
-				name,
-				number,
-				bank,
-				reason
-			}
-		};
+	const metadata = {
+		endpoint: $page.url.toString(),
+		args: {
+			amount: 0,
+			name: '',
+			number: +233,
+			bank: data.banks[0],
+			reason: ''
+		}
 	};
 </script>
 
@@ -38,31 +30,42 @@
 		<div class="all">
 			<Select
 				labelText="Select the network"
-				bind:selected={bank}
+				bind:selected={metadata.args
+					.bank}
 			>
 				{#each data.banks as b}
 					<Select value={b} />
 				{/each}
 			</Select>
-			
+
 			<TextInput
-				bind:value={name}
+				bind:value={metadata.args
+					.name}
 				labelText="Mobile Money Account Name"
 			/>
 			<TextInput
-				bind:value={number}
+				bind:value={metadata.args
+					.number}
 				labelText="Mobile Money Account Number"
 			/>
 			<TextInput
-				bind:value={reason}
+				bind:value={metadata.args
+					.reason}
 				labelText="Reason for transfer"
 			/>
 			<NumberInput
-				bind:value={amount}
+				bind:value={metadata.args
+					.amount}
 				label="Amount to send"
 			/>
-			
-			<Button on:click={pay} />
+
+			<Paystack
+				{metadata}
+				amount={metadata.args.amount}
+				currency="GHS"
+				button_props={{}}
+				>Send</Paystack
+			>
 		</div>
 	</Column>
 </Row>

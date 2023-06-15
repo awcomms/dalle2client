@@ -3,7 +3,7 @@ import type { RequestHandler } from './$types';
 
 export const POST: RequestHandler =
 	async ({ request }) => {
-		const data =
+		const {data} =
 			await request.json();
 		if (
 			request.referrer.match(

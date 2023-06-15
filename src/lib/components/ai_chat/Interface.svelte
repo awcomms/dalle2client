@@ -6,7 +6,7 @@
 		name_label = 'Name',
 		parameters: CreateChatCompletionRequest =
 			{
-				model: 'gpt-3.5-turbo',
+				model: 'gpt-3.5-turbo-16k',
 				temperature: 1,
 				top_p: 1,
 				messages: [],
