@@ -17,13 +17,13 @@ export const POST = (async ({
 				if (r.statusText === 'OK') {
 					return r.data;
 				} else {
-					console.log(
+					console.error(
 						r.status,
 						r.data
 					);
 					throw error(
-						r.status,
-						JSON.stringify(r.data)
+						500,
+						'An error occured on our side. Please retry'
 					);
 				}
 			})

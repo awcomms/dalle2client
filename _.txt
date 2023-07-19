@@ -1,0 +1,4 @@
+loading indicator on send button
+add user message to messages only after successful response
+clear messages
+notification that shows Conversation limit and action in notification to clear messages

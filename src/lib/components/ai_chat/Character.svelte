@@ -9,13 +9,9 @@
 		'Describe the character';
 	import Interface from './Interface.svelte';
 	import { download_blob } from '$lib/util';
+	import { notify } from '$lib/util/notify';
 
-	const prefix = `Consider a chat represented by the following JSON array, wherein all elements of the array are messages sent by the value of the \`name\` member of the element
--
-except for any element with its \`role\` member set to \`system\`,
-which we shall call a description element,
-whose \`content\` member describes the sender of messages,
-that follow the description element and have their role member set to \`assistant\`:\n\n`;
+	const prefix = `T`;
 
 	let loading = false,
 		chat_container: HTMLElement,
@@ -36,28 +32,65 @@ that follow the description element and have their role member set to \`assistan
 				frequency_penalty: 0
 			};
 
-	const join = () => {
-		return `${prefix}${JSON.stringify(
-			messages
-		)}`;
-	};
+	const empty_chat = `chat between ${user} and ${name}:\\n${user}: `;
+	let chat = empty_chat;
 
-	const save = () => {
+	const download = () => {
 		download_blob(
-			new Blob([join()]),
-			`Chat between user ${user} and AI simulated entity ${name}`
+			new Blob([chat]),
+			`chat between user ${user} and AI character, ${name}`
 		);
 	};
 
-	const to_chat = (messages: ChatCompletionRequestMessage[]) => {
-		return `Consider two entities, "${user}" and "${name}". "${name}" is described as follows:\n
-		${description}\n
-		Consider the following conversation between ${user} and ${name}:\n
-		${messages.filter(m => m.role === "assistant" || "user").map(m => `\n\n${m.name}: ${m.content}`)}
-		${name}:`
+	const clear = () => chat = empty_chat;
+
+	const download_then_clear = () => {
+		download()
+		clear()
 	}
 
-	const send = async () => {
+	const update_chat = ({
+		content,
+		response
+	}: {
+		content: string;
+		response: string;
+	}) => {
+		chat.concat(
+			`${content}\\n${name}: ${response}\\n${user}: `
+		);
+		messages = [
+			...messages,
+			{ content, role: 'user' },
+			{
+				content: response,
+				role: 'assistant'
+			}
+		];
+	};
+
+	// const to_chat = (
+	// 	messages: ChatCompletionRequestMessage[]
+	// ) => {
+	// 	return `Consider two entities, "${user}" and "${name}". "${name}" is described as follows:\n
+	// 	${description}\n
+	// 	Consider the following conversation between ${user} and ${name}:\n
+	// 	${messages
+	// 		.filter(
+	// 			(m) =>
+	// 				m.role === 'assistant' ||
+	// 				'user'
+	// 		)
+	// 		.map(
+	// 			(m) =>
+	// 				`\n\n${m.name}: ${m.content}`
+	// 		)}
+	// 	${name}:`;
+	// };
+
+	const send = async (
+		content: string
+	) => {
 		loading = true;
 		if (!content) {
 			loading = false;
@@ -65,59 +98,80 @@ that follow the description element and have their role member set to \`assistan
 		}
 		let request = parameters;
 
-		messages = [
-			...messages,
+		request.messages = [
+			{
+				role: 'system',
+				content: `description of ${name}: ${description}`
+			},
 			{
 				role: 'user',
-				content,
+				content: `${content}\\n${user}:`,
 				name: user
 			}
 		];
-		let token_count = await fetch(
-			'/token_count',
-			{
-				method: 'POST',
-				body: messages
+		await axios
+			.post(
+				'/token_count',
+				messages
 					.map(
 						(m) =>
 							`${m.role} ${m.content} ${m.name}`
 					)
 					.join(' ')
-			}
-		).then(
-			async (r) => await r.text()
-		);
-		if (Number(token_count) < 3700) {
-			request.messages = messages;
-		} else {
-			console.log('uhhh');
-		}
-		// delete request.messages;
-		console.log(request);
-		await axios
-			.post<CreateChatCompletionResponse>(
-				'/openai/completion',
-				{prompt: to_chat(messages), ...request}
 			)
-			.then((r) => {
-				console.log('ha', r);
-				for (let c of r.data
-					.choices) {
-					console.log(c);
-					if (c.message)
-						messages = [
-							...messages,
-							{ ...c.message, name }
-						];
+			.then(async (r) => {
+				const token_count = Number(
+					r.data
+				);
+				if (token_count > 14000) {
+					notify(
+						'Please restart the session'
+					);
+					return;
 				}
-				chat_container.scrollTop =
-					chat_container.scrollHeight;
-				content = '';
+				await axios
+					.post<CreateChatCompletionResponse>(
+						'/openai/chat',
+						request
+					)
+					.then((r) => {
+						console.info('haha!', r);
+						let response =
+							r.data.choices[0]
+								.message?.content;
+						if (!response) {
+							console.error(
+								'No message in first element of choices in response'
+							);
+							notify({
+								kind: 'error',
+								title: 'Please retry'
+							});
+							return;
+						}
+						update_chat({
+							content,
+							response
+						});
+						chat_container.scrollTop =
+							chat_container.scrollHeight;
+						content = '';
+					})
+					.catch(() => {
+						notify({
+							kind: 'error',
+							title: 'Please retry'
+						});
+					});
 			})
-			.catch((e) => console.log(e))
+			.catch(() =>
+				notify({
+					kind: 'error',
+					title: 'Please retry'
+				})
+			)
 			.finally(() => {
 				loading = false;
-				content = '';
 			});
 	};
 </script>
@@ -134,6 +188,9 @@ that follow the description element and have their role member set to \`assistan
 	{description_label}
 	on:send_attempt_without_description={() =>
 		(settings_open = true)}
-	on:save={save}
-	on:send={send}
+	on:download={download}
+	on:download_then_clear={download_then_clear}
+	on:clear={clear}
+	on:send={({ detail }) =>
+		send(detail)}
 />

@@ -6,7 +6,7 @@
 		name_label = 'Name',
 		parameters: CreateChatCompletionRequest =
 			{
-				model: 'gpt-4',
+				model: 'gpt-4-0613',
 				temperature: 1,
 				top_p: 1,
 				messages: [],
@@ -18,6 +18,7 @@
 			| null = null,
 		chat_container: HTMLElement | null =
 			null,
+		clear_modal = false,
 		hide_settings_button = false,
 		disable_name_edit = false,
 		disable_description_edit = false,
@@ -40,6 +41,7 @@
 	import Send from 'carbon-icons-svelte/lib/Send.svelte';
 	import Settings from 'carbon-icons-svelte/lib/Settings.svelte';
 	import Download from 'carbon-icons-svelte/lib/Download.svelte';
+	import Clean from 'carbon-icons-svelte/lib/Clean.svelte';
 	import {
 		Button,
 		InlineLoading,
@@ -49,7 +51,10 @@
 		NumberInput,
 		Row,
 		Column,
-		Toggle
+		Toggle,
+
+		ButtonSet
+
 	} from 'carbon-components-svelte';
 	import { onMount } from 'svelte';
 	import type {
@@ -74,7 +79,7 @@
 	});
 
 	let height = '670px',
-		id = v4(),
+		// id = v4(),
 		description_error = false,
 		submit_on_enter = booleanStore(
 			'submit-on-enter',
@@ -103,15 +108,6 @@
 				}
 		}
 	};
-
-	const save = () =>
-		dispatch('save');
-
-	const _send = () => {
-		/**
-		 * add message
-		*/
-	}
 
 	const send = async () => {
 		if (
@@ -149,6 +145,14 @@
 <svelte:window
 	on:keydown={keydown}
 />
+
+<Modal passiveModal>
+	<p>Are you sure you want to clear this chat</p>
+	<ButtonSet stacked>
+		<Button on:click={() => dispatch('download_then_clear')}>Click here to download the chat first before clearing the chat</Button>
+		<Button on:click={() => dispatch('clear')}>Click here to download the chat without downloading first</Button>
+	</ButtonSet>
+</Modal>
 
 <Modal
 	bind:open={settings_open}
@@ -288,7 +292,13 @@
 					/>
 				{/if}<Button
 					size="field"
-					on:click={save}
+					on:click={() => dispatch('download')}
+					iconDescription="Download chat"
+					icon={Download}
+				/>
+				<Button
+					size="field"
+					on:click={()=>clear_modal=true}
 					iconDescription="Download chat"
 					icon={Download}
 				/>

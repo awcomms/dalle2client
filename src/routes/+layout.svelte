@@ -13,6 +13,7 @@
 	// import Login from '$lib/components/Login.svelte';
 	import { dev } from '$app/environment';
 	import { inject } from '@vercel/analytics';
+	import Notifications from '$lib/components/Notification/Notifications.svelte';
 
 	inject({
 		mode: dev
@@ -32,6 +33,8 @@
 </script>
 
 <!-- <Login /> -->
+<Notifications />
+
 <Theme theme="g100" />	
 <Header />
 <Content

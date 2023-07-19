@@ -72,7 +72,7 @@
 		).then(
 			async (r) => await r.text()
 		);
-		if (Number(token_count) < 3700) {
+		if (Number(token_count) < 16000) {
 			request.messages = messages;
 		} else {
 			console.log(token_count);
