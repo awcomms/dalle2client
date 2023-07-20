@@ -18,13 +18,13 @@
 		description: string,
 		settings_open = false,
 		content = '',
-		user = 'You',
+		user = 'User',
 		name = 'Character',
 		messages: ChatCompletionRequestMessage[] =
 			[],
 		parameters: CreateChatCompletionRequest =
 			{
-				model: 'text-davinci-003',
+				model: 'gpt-4',
 				temperature: 1,
 				top_p: 1,
 				messages: [],
@@ -42,12 +42,15 @@
 		);
 	};
 
-	const clear = () => chat = empty_chat;
+	const clear = () => {
+		chat = empty_chat;
+		messages = [];
+	};
 
 	const download_then_clear = () => {
-		download()
-		clear()
-	}
+		download();
+		clear();
+	};
 
 	const update_chat = ({
 		content,
@@ -105,14 +108,14 @@
 			},
 			{
 				role: 'user',
-				content: `${content}\\n${user}:`,
+				content: `${chat}${content}\\n${name}:`,
 				name: user
 			}
 		];
 		await axios
 			.post(
 				'/token_count',
-				messages
+				request.messages
 					.map(
 						(m) =>
 							`${m.role} ${m.content} ${m.name}`
@@ -129,6 +132,10 @@
 					);
 					return;
 				}
+				console.info(
+					'request',
+					request
+				);
 				await axios
 					.post<CreateChatCompletionResponse>(
 						'/openai/chat',
@@ -150,7 +157,6 @@
 							return;
 						}
 						update_chat({
-							content,
 							response
 						});
 						chat_container.scrollTop =

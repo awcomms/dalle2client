@@ -146,12 +146,12 @@
 	on:keydown={keydown}
 />
 
-<Modal passiveModal>
-	<p>Are you sure you want to clear this chat</p>
-	<ButtonSet stacked>
-		<Button on:click={() => dispatch('download_then_clear')}>Click here to download the chat first before clearing the chat</Button>
-		<Button on:click={() => dispatch('clear')}>Click here to download the chat without downloading first</Button>
-	</ButtonSet>
+<Modal modalHeading="Download then clear?" passiveModal bind:open={clear_modal}>
+	<p>Do you want to clear this chat without downloading it first</p>
+	<!-- <ButtonSet stacked> -->
+		<Button on:click={() => dispatch('download_then_clear')}>Download then clear</Button>
+		<Button on:click={() => dispatch('clear')}>Clear without downloading</Button>
+	<!-- </ButtonSet> -->
 </Modal>
 
 <Modal
@@ -299,8 +299,8 @@
 				<Button
 					size="field"
 					on:click={()=>clear_modal=true}
-					iconDescription="Download chat"
-					icon={Download}
+					iconDescription="Clear chat"
+					icon={Clean}
 				/>
 			</div>
 		</div>

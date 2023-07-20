@@ -39,13 +39,22 @@
 		];
 	};
 
-	const save = () =>
+	const download = () =>
 		download_blob(
 			new Blob([
 				JSON.stringify(messages)
 			]),
 			`Chat between user ${user} and GPT3.5 AI Assistant ${name}`
 		);
+
+	const clear = () => {
+		messages = []
+	}
+
+	const download_then_clear = () => {
+		clear()
+		download()
+	}
 
 	const send = async () => {
 		loading = true;
@@ -120,7 +129,9 @@
 	{hide_settings_button}
 	{disable_name_edit}
 	{disable_description_edit}
-	on:save={save}
+	on:download={download}
+	on:clear={clear}
+	on:download_then_clear={download_then_clear}
 	on:send={send}
 	on:send_attempt_without_description={() =>
 		(settings_open = true)}
