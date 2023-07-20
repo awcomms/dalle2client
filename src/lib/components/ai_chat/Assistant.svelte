@@ -14,6 +14,7 @@
 	// import { v4 } from 'uuid';
 	import Interface from './Interface.svelte';
 	import { download_blob } from '$lib/util';
+	import { notify } from '$lib/util/notify';
 
 	let loading = false,
 		// id = v4(),
@@ -48,18 +49,22 @@
 		);
 
 	const clear = () => {
-		messages = []
-	}
+		messages = [];
+	};
 
 	const download_then_clear = () => {
-		clear()
-		download()
-	}
+		clear();
+		download();
+	};
 
 	const send = async () => {
 		loading = true;
 		let request = parameters;
-		messages = [
+		request.messages = [
+			{
+				role: 'system',
+				content: description
+			},
 			...messages,
 			{
 				role: 'user',
@@ -67,47 +72,67 @@
 				name: user
 			}
 		];
-		let token_count = await fetch(
-			'/token_count',
-			{
-				method: 'POST',
-				body: messages
+		await axios
+			.post(
+				'/token_count',
+				messages
 					.map(
 						(m) =>
 							`${m.role} ${m.content} ${m.name}`
 					)
 					.join(' ')
-			}
-		).then(
-			async (r) => await r.text()
-		);
-		if (Number(token_count) < 16000) {
-			request.messages = messages;
-		} else {
-			console.log(token_count);
-			console.log('uhhh');
-		}
-		console.log(request);
-		await axios
-			.post<CreateChatCompletionResponse>(
-				'/openai/chat',
-				request
 			)
-			.then((r) => {
-				for (let c of r.data
-					.choices) {
-					console.log(c);
-					if (c.message)
-						messages = [
-							...messages,
-							{ ...c.message, name }
-						];
+			.then(async (r) => {
+				const token_count = Number(
+					r.data
+				);
+				if (
+					Number(token_count) > 14000
+				) {
+					notify({
+						kind: 'info',
+						title:
+							'Please restart the conversation to stay within the conversation limit'
+					});
+					return;
 				}
-				chat_container.scrollTop =
-					chat_container.scrollHeight;
-				content = '';
+				console.log(request);
+				await axios
+					.post<CreateChatCompletionResponse>(
+						'/openai/chat',
+						request
+					)
+					.then((r) => {
+						for (let c of r.data
+							.choices) {
+							console.log(c);
+							if (c.message)
+								messages = [
+									...messages,
+									{
+										...c.message,
+										name
+									}
+								];
+						}
+						chat_container.scrollTop =
+							chat_container.scrollHeight;
+						content = '';
+					})
+					.catch((e) =>
+						notify({
+							kind: 'error',
+							title: e
+						})
+					);
 			})
-			.catch((e) => console.log(e))
+			.catch(() =>
+				notify({
+					kind: 'error',
+					title:
+						'Encountered an error, please retry'
+				})
+			)
 			.finally(
 				() => (loading = false)
 			);

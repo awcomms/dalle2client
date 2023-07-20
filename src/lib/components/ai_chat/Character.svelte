@@ -157,6 +157,7 @@
 							return;
 						}
 						update_chat({
+							content,
 							response
 						});
 						chat_container.scrollTop =
