@@ -250,9 +250,6 @@
 					<Message {message} />
 				{/each}
 			</div>
-			{#if loading}
-				<InlineLoading />
-			{/if}
 			<div class="input">
 				<Transcribe
 					on:text={({ detail }) =>
@@ -280,7 +277,7 @@
 					size="field"
 					on:click={send}
 					iconDescription={'Send'}
-					icon={Send}
+					icon={loading ? InlineLoading : Send}
 				/>
 				{#if !hide_settings_button}
 					<Button
