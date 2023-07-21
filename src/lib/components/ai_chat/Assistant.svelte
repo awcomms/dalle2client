@@ -1,6 +1,5 @@
 <script lang="ts">
-	export let hide_settings_button =
-			false,
+	export let hide_settings = false,
 		disable_name_edit = false,
 		disable_description_edit = false,
 		description = '';
@@ -15,30 +14,18 @@
 	import Interface from './Interface.svelte';
 	import { download_blob } from '$lib/util';
 	import { notify } from '$lib/util/notify';
+	import Restart from 'carbon-icons-svelte/lib/Restart.svelte';
 
 	let loading = false,
 		// id = v4(),
-		content = '',
-		settings_open = false,
+		_content = '',
+		more_open = false,
 		chat_container: HTMLElement,
 		name = 'Assistant',
 		user = 'You',
 		messages: ChatCompletionRequestMessage[] =
 			[],
 		parameters: CreateChatCompletionRequest;
-
-	const set_description = (
-		content: string
-	) => {
-		// if (messages.length && messages[messages.length -1].role === "system" && !confirm_description) {
-		// 	confirm_description = true
-		// 	confirm_description_change_dialog = true
-		// }
-		messages = [
-			...messages,
-			{ role: 'system', content }
-		];
-	};
 
 	const download = () =>
 		download_blob(
@@ -48,16 +35,19 @@
 			`Chat between user ${user} and GPT3.5 AI Assistant ${name}`
 		);
 
-	const clear = () => {
+	const restart = () => {
 		messages = [];
 	};
 
-	const download_then_clear = () => {
-		clear();
-		download();
-	};
+	const download_then_restart =
+		() => {
+			restart();
+			download();
+		};
 
-	const send = async () => {
+	const send = async (
+		content: string
+	) => {
 		loading = true;
 		let request = parameters;
 		request.messages = [
@@ -72,65 +62,64 @@
 				name: user
 			}
 		];
+
 		await axios
-			.post(
-				'/token_count',
-				messages
-					.map(
-						(m) =>
-							`${m.role} ${m.content} ${m.name}`
-					)
-					.join(' ')
+			.post<CreateChatCompletionResponse>(
+				'/openai/chat',
+				request
 			)
-			.then(async (r) => {
-				const token_count = Number(
-					r.data
-				);
-				if (
-					Number(token_count) > 14000
-				) {
+			.then((r) => {
+				const first_choice =
+					r.data.choices[0];
+				if (!first_choice) {
 					notify({
-						kind: 'info',
-						title:
-							'Please restart the conversation to stay within the conversation limit'
+						kind: 'error',
+						title: 'Please retry'
 					});
 					return;
 				}
-				console.log(request);
-				await axios
-					.post<CreateChatCompletionResponse>(
-						'/openai/chat',
-						request
-					)
-					.then((r) => {
-						for (let c of r.data
-							.choices) {
-							console.log(c);
-							if (c.message)
-								messages = [
-									...messages,
-									{
-										...c.message,
-										name
-									}
-								];
+				if (!first_choice.message) {
+					notify({
+						kind: 'error',
+						title: 'Please retry'
+					});
+					return;
+				}
+				if (
+					first_choice.finish_reason ===
+					'length'
+				) {
+					notify({
+						kind: 'warning',
+						title:
+							'Conversation limit reached',
+						button: {
+							text: 'Restart conversation',
+							icon: Restart,
+							act: restart
 						}
-						chat_container.scrollTop =
-							chat_container.scrollHeight;
-						content = '';
-					})
-					.catch((e) =>
-						notify({
-							kind: 'error',
-							title: e
-						})
-					);
+					});
+				}
+				messages = [
+					...messages,
+					{
+						role: 'user',
+						content,
+						name: user
+					},
+					{
+						...first_choice.message,
+						name
+					}
+				];
+				chat_container.scrollTop =
+					chat_container.scrollHeight;
+				_content = '';
 			})
-			.catch(() =>
+			.catch((e) =>
 				notify({
 					kind: 'error',
-					title:
-						'Encountered an error, please retry'
+					title: e
 				})
 			)
 			.finally(
@@ -141,24 +130,25 @@
 
 <Interface
 	bind:name
-	bind:content
+	bind:content={_content}
 	bind:loading
 	bind:messages
 	bind:description
 	bind:parameters
 	bind:chat_container
-	bind:settings_open
+	bind:more_open
 	settings_heading="AI Assistant settings"
 	name_label="Give the Assistant a name"
 	description_label="Tell the Assistant how to behave"
-	{hide_settings_button}
+	{hide_settings}
 	{disable_name_edit}
 	{disable_description_edit}
 	on:download={download}
-	on:clear={clear}
-	on:download_then_clear={download_then_clear}
-	on:send={send}
+	on:restart={restart}
+	on:download_then_restart={download_then_restart}
+	on:send={({ detail }) =>
+		send(detail)}
 	on:send_attempt_without_description={() =>
-		(settings_open = true)}
+		(more_open = true)}
 	allow_without_description={true}
 />

@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { CopyButton } from 'carbon-components-svelte';
 	import type { ChatCompletionRequestMessage } from 'openai';
 	export let message: ChatCompletionRequestMessage,
 		// hide_system_messages = false,
@@ -18,6 +19,9 @@
 		class:assistant={message.role ===
 			'assistant'}
 	>
+		<CopyButton
+			text={message.content}
+		/>
 		<p class="content">
 			{message.content}
 		</p>

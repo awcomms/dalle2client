@@ -49,9 +49,14 @@ ${JSON.stringify(example)}
 			.then((r) => Number(r.data));
 	};
 
-	const message_token_length = async(m: ChatCompletionRequestMessage) => {
-		return await count_tokens(`${m.role} ${m.content} ${m.name}`)
-	}
+	const message_token_length =
+		async (
+			m: ChatCompletionRequestMessage
+		) => {
+			return await count_tokens(
+				`${m.role} ${m.content} ${m.name}`
+			);
+		};
 
 	const messages_token_length =
 		async (
@@ -67,7 +72,9 @@ ${JSON.stringify(example)}
 			);
 		};
 
-	const ms = async (m: ChatCompletionRequestMessage[]) => {
+	const ms = async (
+		m: ChatCompletionRequestMessage[]
+	) => {
 		/**One possible way to rewrite the function for appending strings to any array using only `while`, without `do`, is to use a flag variable to check if the loop should run at least once. For example:
 
 ```js
@@ -92,9 +99,8 @@ function appendStrings(array, string) {
   return array;
 }
 ```*/
-		let res = []
+		let res = [];
 		for (let _m of m) {
-
 		}
 		console.log(import.meta.url);
 		globals.__dirname =
@@ -176,5 +182,5 @@ function appendStrings(array, string) {
 	name="Assistant"
 	on:send={send}
 	allow_without_description={false}
-	hide_settings_button={true}
+	hide_settings={true}
 />

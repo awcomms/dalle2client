@@ -13,7 +13,10 @@
 	<Column>
 		<div class="links">
 			<Link href="/openai/assistant"
-				>GPT Assistant Chat</Link
+				>Chat with an AI Assistant</Link
+			>
+			<Link href="/chat/character"
+				>Create a custom character to chat with</Link
 			>
 			<!-- <Link href="/chat/ai/character"
 				>Create and chat with an AI

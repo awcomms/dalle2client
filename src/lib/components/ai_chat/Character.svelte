@@ -16,10 +16,10 @@
 	let loading = false,
 		chat_container: HTMLElement,
 		description: string,
-		settings_open = false,
+		more_open = false,
 		content = '',
-		user = 'User',
-		name = 'Character',
+		user = 'Interlocutor_1',
+		name = 'Interlocutor_2',
 		messages: ChatCompletionRequestMessage[] =
 			[],
 		parameters: CreateChatCompletionRequest =
@@ -32,7 +32,7 @@
 				frequency_penalty: 0
 			};
 
-	const empty_chat = `chat between ${user} and ${name}:\\n${user}: `;
+	const empty_chat = `${user}: `;
 	let chat = empty_chat;
 
 	const download = () => {
@@ -42,15 +42,16 @@
 		);
 	};
 
-	const clear = () => {
+	const restart = () => {
 		chat = empty_chat;
 		messages = [];
 	};
 
-	const download_then_clear = () => {
-		download();
-		clear();
-	};
+	const download_then_restart =
+		() => {
+			download();
+			restart();
+		};
 
 	const update_chat = ({
 		content,
@@ -103,12 +104,8 @@
 
 		request.messages = [
 			{
-				role: 'system',
-				content: `description of ${name}: ${description}`
-			},
-			{
 				role: 'user',
-				content: `${chat}${content}\\n${name}:`,
+				content: `The following is a description of an entity, \`${name}\`: ${description}. Provide the response from ${name} in the following chat between ${user} and ${name}:\\n${chat}${content}\\n${name}: `,
 				name: user
 			}
 		];
@@ -126,10 +123,15 @@
 				const token_count = Number(
 					r.data
 				);
-				if (token_count > 14000) {
-					notify(
-						'Please restart the session'
-					);
+				if (token_count > 16000) {
+					notify({
+						title:
+							'Conversation limit reached',
+						button: {
+							text: 'Clear the conversation',
+							act: restart
+						}
+					});
 					return;
 				}
 				console.info(
@@ -191,13 +193,13 @@
 	bind:description
 	bind:messages
 	bind:content
-	bind:settings_open
+	bind:more_open
 	{description_label}
 	on:send_attempt_without_description={() =>
-		(settings_open = true)}
+		(more_open = true)}
 	on:download={download}
-	on:download_then_clear={download_then_clear}
-	on:clear={clear}
+	on:download_then_restart={download_then_restart}
+	on:restart={restart}
 	on:send={({ detail }) =>
 		send(detail)}
 />

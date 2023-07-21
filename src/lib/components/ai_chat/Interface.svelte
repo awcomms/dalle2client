@@ -13,17 +13,14 @@
 				presence_penalty: 0,
 				frequency_penalty: 0
 			},
-		send_function:
-			| (() => Promise<void>)
-			| null = null,
 		chat_container: HTMLElement | null =
 			null,
-		clear_modal = false,
-		hide_settings_button = false,
+		restart_modal = false,
+		hide_settings = false,
 		disable_name_edit = false,
 		disable_description_edit = false,
 		description = '',
-		settings_open = false,
+		more_open = false,
 		description_label =
 			'Description',
 		settings_heading =
@@ -39,9 +36,9 @@
 		loading = false;
 
 	import Send from 'carbon-icons-svelte/lib/Send.svelte';
-	import Settings from 'carbon-icons-svelte/lib/Settings.svelte';
+	import Menu from 'carbon-icons-svelte/lib/Menu.svelte';
 	import Download from 'carbon-icons-svelte/lib/Download.svelte';
-	import Clean from 'carbon-icons-svelte/lib/Clean.svelte';
+	import Restart from 'carbon-icons-svelte/lib/Restart.svelte';
 	import {
 		Button,
 		InlineLoading,
@@ -52,19 +49,16 @@
 		Row,
 		Column,
 		Toggle,
-
 		ButtonSet
-
 	} from 'carbon-components-svelte';
 	import { onMount } from 'svelte';
 	import type {
 		ChatCompletionRequestMessage,
-		CreateChatCompletionRequest,
+		CreateChatCompletionRequest
 	} from 'openai';
 	import { booleanStore } from '$lib/store';
 	import Message from './Message.svelte';
 	import { createEventDispatcher } from 'svelte';
-	import Transcribe from './Transcribe.svelte';
 	import { v4 } from 'uuid';
 
 	const dispatch =
@@ -76,13 +70,14 @@
 		height = `${
 			(window.innerHeight * 79) / 100
 		}px`;
+		ref
 	});
 
 	let height = '670px',
 		// id = v4(),
 		description_error = false,
-		submit_on_enter = booleanStore(
-			'submit-on-enter',
+		send_on_enter = booleanStore(
+			'send_on_enter',
 			false
 		),
 		ref: HTMLTextAreaElement;
@@ -92,20 +87,13 @@
 	) => {
 		switch (e.key) {
 			case 'Enter':
+				if (!$send_on_enter && !e.ctrlKey) return
 				if (
 					can_send &&
 					document &&
 					document.activeElement ===
 						ref
-				) {
-					if (e.ctrlKey) {
-						send();
-					} else if (
-						submit_on_enter
-					) {
-						send();
-					}
-				}
+				) send()
 		}
 	};
 
@@ -114,10 +102,7 @@
 			!(
 				allow_without_description ||
 				(!allow_without_description &&
-					messages.find(
-						(m) =>
-							m.role === 'system'
-					))
+					!description)
 			)
 		) {
 			dispatch(
@@ -132,12 +117,6 @@
 			content_error = true;
 			return;
 		}
-		if (send_function)
-			send_function().then(() => {
-				if (chat_container)
-					chat_container.scrollTop =
-						chat_container.scrollHeight;
-			});
 		dispatch('send', content);
 	};
 </script>
@@ -146,34 +125,60 @@
 	on:keydown={keydown}
 />
 
-<Modal modalHeading="Download then clear?" passiveModal bind:open={clear_modal}>
-	<p>Do you want to clear this chat without downloading it first</p>
+<Modal
+	modalHeading="Download then restart?"
+	passiveModal
+	bind:open={restart_modal}
+>
+	<p>
+		Do you want to restart this chat
+		without downloading it first
+	</p>
 	<!-- <ButtonSet stacked> -->
-		<Button on:click={() => dispatch('download_then_clear')}>Download then clear</Button>
-		<Button on:click={() => dispatch('clear')}>Clear without downloading</Button>
+	<Button
+		on:click={() => {
+			dispatch(
+				'download_then_restart'
+			);
+			restart_modal = false;
+		}}>Download then restart</Button
+	>
+	<Button
+		on:click={() => {
+			dispatch('restart');
+			restart_modal = false;
+		}}
+		>Restart without downloading</Button
+	>
 	<!-- </ButtonSet> -->
 </Modal>
 
 <Modal
-	bind:open={settings_open}
+	bind:open={more_open}
 	modalHeading={settings_heading}
-	primaryButtonText="Set"
-	secondaryButtonText="Cancel"
-	shouldSubmitOnEnter={false}
-	on:click:button--primary={() => {
-		messages = [
-			...messages,
-			{
-				role: 'system',
-				content: description
-			}
-		];
-		settings_open = false;
-	}}
+	passiveModal
 	hasForm
 >
 	<div class="in_modal">
 		<div class="in_modal">
+			<ButtonSet>
+				<Button
+					size="field"
+					on:click={() =>
+						dispatch('download')}
+					iconDescription="Download chat"
+					icon={Download}
+					>Download chat</Button
+				>
+				<Button
+					size="field"
+					on:click={() =>
+						(restart_modal = true)}
+					iconDescription="Restart chat"
+					icon={Restart}
+					>Restart chat</Button
+				>
+			</ButtonSet>
 			<TextInput
 				labelText={name_label}
 				disabled={disable_name_edit}
@@ -190,49 +195,51 @@
 				bind:value={description}
 			/>
 		</div>
-		<div class="in_modal">
-			<div>
-				<p>
-					OpenAI Completions
-					Parameters
-				</p>
-				<NumberInput
-					label="temperature"
-					min={0}
-					max={2}
-					hideSteppers
-					bind:value={parameters.temperature}
-				/>
-				<NumberInput
-					label="top_p"
-					min={0}
-					max={2}
-					hideSteppers
-					bind:value={parameters.top_p}
-				/>
-				<NumberInput
-					label="frequency_penalty"
-					min={-2.0}
-					max={2.0}
-					hideSteppers
-					bind:value={parameters.frequency_penalty}
-				/>
-				<NumberInput
-					label="presence_penalty"
-					min={-2.0}
-					max={2.0}
-					hideSteppers
-					bind:value={parameters.presence_penalty}
-				/>
+		{#if !hide_settings}
+			<div class="in_modal">
+				<div>
+					<p>
+						OpenAI Completions
+						Parameters
+					</p>
+					<NumberInput
+						label="temperature"
+						min={0}
+						max={2}
+						hideSteppers
+						bind:value={parameters.temperature}
+					/>
+					<NumberInput
+						label="top_p"
+						min={0}
+						max={2}
+						hideSteppers
+						bind:value={parameters.top_p}
+					/>
+					<NumberInput
+						label="frequency_penalty"
+						min={-2.0}
+						max={2.0}
+						hideSteppers
+						bind:value={parameters.frequency_penalty}
+					/>
+					<NumberInput
+						label="presence_penalty"
+						min={-2.0}
+						max={2.0}
+						hideSteppers
+						bind:value={parameters.presence_penalty}
+					/>
+				</div>
+				<div>
+					<p>Options</p>
+					<Toggle
+						bind:toggled={$send_on_enter}
+						labelText="Send message when the Enter key is pressed"
+					/>
+				</div>
 			</div>
-			<div>
-				<p>Options</p>
-				<Toggle
-					bind:toggled={$submit_on_enter}
-					labelText="Submit on Enter"
-				/>
-			</div>
-		</div>
+		{/if}
 	</div>
 </Modal>
 
@@ -251,16 +258,14 @@
 				{/each}
 			</div>
 			<div class="input">
-				<Transcribe
-					on:text={({ detail }) =>
-						(content += detail)}
-				/>
 				<TextArea
 					style="min-width: unset"
+					rows={1}
+					disabled={loading}
 					on:keydown={(e) => {
 						if (
 							e.key === 'Enter' &&
-							submit_on_enter
+							$send_on_enter
 						)
 							e.preventDefault();
 					}}
@@ -268,7 +273,6 @@
 					invalidText={content_error_text}
 					on:input={() =>
 						(content_error = false)}
-					rows={1}
 					bind:ref
 					bind:value={content}
 				/>
@@ -277,27 +281,16 @@
 					size="field"
 					on:click={send}
 					iconDescription={'Send'}
-					icon={loading ? InlineLoading : Send}
-				/>
-				{#if !hide_settings_button}
-					<Button
-						size="field"
-						on:click={() =>
-							(settings_open = true)}
-						iconDescription="Settings"
-						icon={Settings}
-					/>
-				{/if}<Button
-					size="field"
-					on:click={() => dispatch('download')}
-					iconDescription="Download chat"
-					icon={Download}
+					icon={loading
+						? InlineLoading
+						: Send}
 				/>
 				<Button
 					size="field"
-					on:click={()=>clear_modal=true}
-					iconDescription="Clear chat"
-					icon={Clean}
+					on:click={() =>
+						(more_open = true)}
+					iconDescription="More"
+					icon={Menu}
 				/>
 			</div>
 		</div>
@@ -335,5 +328,7 @@
 	.messages::-webkit-scrollbar-thumb
 		background-color: colors.$gray-80
 	.messages::-webkit-scrollbar-corner, .messages::-webkit-scrollbar:horizontal
+		display: none
+	.no-scrollbar::-webkit-scrollbar
 		display: none
 </style>

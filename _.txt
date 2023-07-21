@@ -1,5 +1,6 @@
-loading indicator on send button
-add user message to messages only after successful response
-clear messages
 notification that shows Conversation limit and action in notification to clear messages
 disable everything if no internet access and display unclosable warning message, remove warning message when internet access
+option to clear notify if click outside or keydown or both
+add button option to notify notification
+refocus message input after send
+remove scrollbar from message input
