@@ -181,6 +181,6 @@ function appendStrings(array, string) {
 	bind:messages={parameters.messages}
 	name="Assistant"
 	on:send={send}
-	allow_without_description={false}
-	hide_settings={true}
+	send_without_description={false}
+	hide_parameters={true}
 />

@@ -16,8 +16,8 @@
 		chat_container: HTMLElement | null =
 			null,
 		restart_modal = false,
-		hide_settings = false,
-		disable_name_edit = false,
+		hide_parameters = false,
+		show_name_edit = false,
 		disable_description_edit = false,
 		description = '',
 		more_open = false,
@@ -27,9 +27,8 @@
 			'Conversation Partner Settings',
 		description_error_text =
 			'You may not send messages without setting description',
-		allow_without_content = false,
-		allow_without_description =
-			false,
+		send_without_content = false,
+		send_without_description = false,
 		content_error = false,
 		content_error_text =
 			'You may not send an empty message',
@@ -37,29 +36,24 @@
 
 	import Send from 'carbon-icons-svelte/lib/Send.svelte';
 	import Menu from 'carbon-icons-svelte/lib/Menu.svelte';
-	import Download from 'carbon-icons-svelte/lib/Download.svelte';
-	import Restart from 'carbon-icons-svelte/lib/Restart.svelte';
+
 	import {
 		Button,
 		InlineLoading,
-		TextInput,
 		TextArea,
 		Modal,
-		NumberInput,
 		Row,
-		Column,
-		Toggle,
-		ButtonSet
+		Column
 	} from 'carbon-components-svelte';
 	import { onMount } from 'svelte';
 	import type {
 		ChatCompletionRequestMessage,
 		CreateChatCompletionRequest
 	} from 'openai';
-	import { booleanStore } from '$lib/store';
 	import Message from './Message.svelte';
 	import { createEventDispatcher } from 'svelte';
-	import { v4 } from 'uuid';
+	import More from './More.svelte';
+	import { send_on_enter } from './store';
 
 	const dispatch =
 		createEventDispatcher();
@@ -70,16 +64,14 @@
 		height = `${
 			(window.innerHeight * 79) / 100
 		}px`;
-		ref
+		ref.classList.add(
+			'no-scrollbar'
+		);
 	});
 
 	let height = '670px',
 		// id = v4(),
 		description_error = false,
-		send_on_enter = booleanStore(
-			'send_on_enter',
-			false
-		),
 		ref: HTMLTextAreaElement;
 
 	const keydown = (
@@ -87,31 +79,33 @@
 	) => {
 		switch (e.key) {
 			case 'Enter':
-				if (!$send_on_enter && !e.ctrlKey) return
+				if (
+					!$send_on_enter &&
+					!e.ctrlKey
+				)
+					return;
 				if (
 					can_send &&
 					document &&
 					document.activeElement ===
 						ref
-				) send()
+				)
+					send();
 		}
 	};
 
 	const send = async () => {
 		if (
-			!(
-				allow_without_description ||
-				(!allow_without_description &&
-					!description)
-			)
+			!send_without_description &&
+			!description
 		) {
+			description_error = true;
 			dispatch(
 				'send_attempt_without_description'
 			);
-			description_error = true;
 			return;
 		} else if (
-			!allow_without_content &&
+			!send_without_content &&
 			!content
 		) {
 			content_error = true;
@@ -153,95 +147,21 @@
 	<!-- </ButtonSet> -->
 </Modal>
 
-<Modal
+<More
 	bind:open={more_open}
-	modalHeading={settings_heading}
-	passiveModal
-	hasForm
->
-	<div class="in_modal">
-		<div class="in_modal">
-			<ButtonSet>
-				<Button
-					size="field"
-					on:click={() =>
-						dispatch('download')}
-					iconDescription="Download chat"
-					icon={Download}
-					>Download chat</Button
-				>
-				<Button
-					size="field"
-					on:click={() =>
-						(restart_modal = true)}
-					iconDescription="Restart chat"
-					icon={Restart}
-					>Restart chat</Button
-				>
-			</ButtonSet>
-			<TextInput
-				labelText={name_label}
-				disabled={disable_name_edit}
-				bind:value={name}
-			/>
-			<TextArea
-				labelText={description_label}
-				invalid={description_error}
-				disabled={disable_description_edit}
-				invalidText={description_error_text}
-				rows={1}
-				on:input={() =>
-					(description_error = false)}
-				bind:value={description}
-			/>
-		</div>
-		{#if !hide_settings}
-			<div class="in_modal">
-				<div>
-					<p>
-						OpenAI Completions
-						Parameters
-					</p>
-					<NumberInput
-						label="temperature"
-						min={0}
-						max={2}
-						hideSteppers
-						bind:value={parameters.temperature}
-					/>
-					<NumberInput
-						label="top_p"
-						min={0}
-						max={2}
-						hideSteppers
-						bind:value={parameters.top_p}
-					/>
-					<NumberInput
-						label="frequency_penalty"
-						min={-2.0}
-						max={2.0}
-						hideSteppers
-						bind:value={parameters.frequency_penalty}
-					/>
-					<NumberInput
-						label="presence_penalty"
-						min={-2.0}
-						max={2.0}
-						hideSteppers
-						bind:value={parameters.presence_penalty}
-					/>
-				</div>
-				<div>
-					<p>Options</p>
-					<Toggle
-						bind:toggled={$send_on_enter}
-						labelText="Send message when the Enter key is pressed"
-					/>
-				</div>
-			</div>
-		{/if}
-	</div>
-</Modal>
+	{settings_heading}
+	bind:restart_modal
+	{name_label}
+	{show_name_edit}
+	{hide_parameters}
+	bind:name
+	{description_label}
+	{description_error}
+	{description_error_text}
+	{disable_description_edit}
+	bind:description
+	bind:parameters
+/>
 
 <Row>
 	<Column>
@@ -260,7 +180,7 @@
 			<div class="input">
 				<TextArea
 					style="min-width: unset"
-					rows={1}
+					rows={2}
 					disabled={loading}
 					on:keydown={(e) => {
 						if (
@@ -300,10 +220,6 @@
 <style lang="sass">
 	@use '@carbon/colors'
 
-	.in_modal
-		display: flex
-		flex-direction: column
-		row-gap: 1rem
 	.all
 		display: flex
 		flex-direction: column

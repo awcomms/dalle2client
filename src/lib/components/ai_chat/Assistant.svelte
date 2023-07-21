@@ -1,6 +1,6 @@
 <script lang="ts">
-	export let hide_settings = false,
-		disable_name_edit = false,
+	export let hide_parameters = false,
+		show_name_edit = false,
 		disable_description_edit = false,
 		description = '';
 
@@ -140,8 +140,8 @@
 	settings_heading="AI Assistant settings"
 	name_label="Give the Assistant a name"
 	description_label="Tell the Assistant how to behave"
-	{hide_settings}
-	{disable_name_edit}
+	{hide_parameters}
+	{show_name_edit}
 	{disable_description_edit}
 	on:download={download}
 	on:restart={restart}
@@ -150,5 +150,5 @@
 		send(detail)}
 	on:send_attempt_without_description={() =>
 		(more_open = true)}
-	allow_without_description={true}
+	send_without_description={true}
 />

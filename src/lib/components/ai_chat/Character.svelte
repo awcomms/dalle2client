@@ -7,11 +7,10 @@
 	import axios from 'axios';
 	export let description_label =
 		'Describe the character';
+	export let name_label = 'Name the character'
 	import Interface from './Interface.svelte';
 	import { download_blob } from '$lib/util';
 	import { notify } from '$lib/util/notify';
-
-	const prefix = `T`;
 
 	let loading = false,
 		chat_container: HTMLElement,
@@ -72,25 +71,6 @@
 			}
 		];
 	};
-
-	// const to_chat = (
-	// 	messages: ChatCompletionRequestMessage[]
-	// ) => {
-	// 	return `Consider two entities, "${user}" and "${name}". "${name}" is described as follows:\n
-	// 	${description}\n
-	// 	Consider the following conversation between ${user} and ${name}:\n
-	// 	${messages
-	// 		.filter(
-	// 			(m) =>
-	// 				m.role === 'assistant' ||
-	// 				'user'
-	// 		)
-	// 		.map(
-	// 			(m) =>
-	// 				`\n\n${m.name}: ${m.content}`
-	// 		)}
-	// 	${name}:`;
-	// };
 
 	const send = async (
 		content: string
@@ -195,6 +175,7 @@
 	bind:content
 	bind:more_open
 	{description_label}
+	{name_label}
 	on:send_attempt_without_description={() =>
 		(more_open = true)}
 	on:download={download}

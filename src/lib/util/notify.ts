@@ -26,10 +26,10 @@ export const notify = (
 			new Date().toLocaleString();
 		if (!n.kind) n.kind = 'success';
 		if (
-			!n.timeout &&
-			n.kind === 'success'
+			!n.timeout
+			// && n.kind === 'success'
 		)
-			n.timeout = 13700;
+			n.timeout = 3700;
 		n.lowContrast = true;
 		// TODO? timeout
 		notifications.update((ns) => [

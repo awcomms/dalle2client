@@ -24,7 +24,7 @@
 			<SideNavLink
 				menuItem
 				text="AI Assistant"
-				href="/openai/assistant"
+				href="/chat/assistant"
 			/>
 			<!-- <SideNavLink
 				menuItem
