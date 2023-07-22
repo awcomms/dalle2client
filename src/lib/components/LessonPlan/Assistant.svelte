@@ -108,9 +108,9 @@ function appendStrings(array, string) {
 		await import(
 			'gpt-3-encoder'
 		).then((module) => {
-			console.log(
-				module.encode(s).length
-			);
+			// console.log(
+			// 	module.encode(s).length
+			// );
 		});
 	};
 
@@ -126,11 +126,11 @@ function appendStrings(array, string) {
 			},
 			{ role: 'user', content }
 		];
-		await _encode(
-			JSON.stringify(
-				parameters.messages
-			)
-		);
+		// await _encode(
+		// 	JSON.stringify(
+		// 		parameters.messages
+		// 	)
+		// );
 		console.log(_lesson_plan);
 		console.log(
 			JSON.stringify(

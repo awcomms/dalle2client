@@ -7,13 +7,13 @@
 	export let id: Id;
 	console.log(id)
 
-	$: entry = objectStore<Entry | null>(id, null);
+	// $: entry = objectStore<Entry | null>(id, null);
 </script>
 
-{#if $entry}
+<!-- {#if $entry}
 	<h1>{$entry.name}</h1>
 
 	<Entries id={$entry.entries} />
 {:else}
 	<h1>Entry not available</h1>
-{/if}
+{/if} -->

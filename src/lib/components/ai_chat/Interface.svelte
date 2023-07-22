@@ -23,8 +23,6 @@
 		more_open = false,
 		description_label =
 			'Description',
-		settings_heading =
-			'Conversation Partner Settings',
 		description_error_text =
 			'You may not send messages without setting description',
 		send_without_content = false,
@@ -125,12 +123,13 @@
 	bind:open={restart_modal}
 >
 	<p>
-		Do you want to restart this chat
-		without downloading it first
+		Download chat first before
+		restarting?
 	</p>
 	<!-- <ButtonSet stacked> -->
 	<Button
 		on:click={() => {
+			more_open = false;
 			dispatch(
 				'download_then_restart'
 			);
@@ -139,6 +138,7 @@
 	>
 	<Button
 		on:click={() => {
+			more_open = false;
 			dispatch('restart');
 			restart_modal = false;
 		}}
@@ -149,7 +149,6 @@
 
 <More
 	bind:open={more_open}
-	{settings_heading}
 	bind:restart_modal
 	{name_label}
 	{show_name_edit}
@@ -244,7 +243,5 @@
 	.messages::-webkit-scrollbar-thumb
 		background-color: colors.$gray-80
 	.messages::-webkit-scrollbar-corner, .messages::-webkit-scrollbar:horizontal
-		display: none
-	.no-scrollbar::-webkit-scrollbar
 		display: none
 </style>

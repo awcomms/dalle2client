@@ -1,6 +1,5 @@
 <script lang="ts">
 	export let open: boolean,
-		settings_heading: string,
 		restart_modal,
 		name_label: string,
 		show_name_edit: boolean,
@@ -52,7 +51,7 @@
 				<Button
 					size="field"
 					on:click={() =>
-						(restart_modal = true)}
+						{restart_modal = true; open = false}}
 					iconDescription="Restart chat"
 					icon={Restart}
 					>Restart chat</Button

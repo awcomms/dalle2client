@@ -137,7 +137,6 @@
 	bind:parameters
 	bind:chat_container
 	bind:more_open
-	settings_heading="AI Assistant settings"
 	name_label="Give the Assistant a name"
 	description_label="Tell the Assistant how to behave"
 	{hide_parameters}

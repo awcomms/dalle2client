@@ -17,7 +17,7 @@
 		on:close
 		{...props}
 	>
-		<div slot='subtitle'>
+		<div class="button" slot='subtitle'>
 			{#if props.button}
 				<Button
 					{...props.button}
@@ -34,6 +34,8 @@
 
 <style lang="sass">
     @use '@carbon/layout'
+    .button
+        padding-top: layout.$spacing-04
     .all
         position: absolute
         top: layout.$spacing-09

@@ -9,6 +9,7 @@
 	import JournalEntry from './JournalItem.svelte';
 	import { journals_id } from './store';
 	import type { Entry, Journal } from './types';
+	import { typeStore } from '$lib/util/store';
 
 	const window_keydown = (e: KeyboardEvent) => {
 		switch (e.key) {
@@ -25,8 +26,8 @@
 		console.log('s')
 		let id = v4();
 		let entries = v4();
-		arrayStore<Entry>(entries);
-		objectStore<Journal>(id, {
+		arrayStore<Entry>('entries', entries);
+		typeStore<Journal>('journal?', id, {
 			name,
 			entries
 		});

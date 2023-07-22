@@ -6,7 +6,7 @@
 	} from 'openai';
 	import axios from 'axios';
 	export let description_label =
-		'Describe the character';
+		'Describe the character', show_name_edit=true;
 	export let name_label = 'Name the character'
 	import Interface from './Interface.svelte';
 	import { download_blob } from '$lib/util';
@@ -16,7 +16,7 @@
 		chat_container: HTMLElement,
 		description: string,
 		more_open = false,
-		content = '',
+		_content = '',
 		user = 'Interlocutor_1',
 		name = 'Interlocutor_2',
 		messages: ChatCompletionRequestMessage[] =
@@ -85,7 +85,7 @@
 		request.messages = [
 			{
 				role: 'user',
-				content: `The following is a description of an entity, \`${name}\`: ${description}. Provide the response from ${name} in the following chat between ${user} and ${name}:\\n${chat}${content}\\n${name}: `,
+				content: `Consider the following to be description of an interlocutor, \`${name}\`: ${description}. Provide the response from ${name} in the following hypothetical chat between ${user} and ${name}:\\n${chat}${content}\\n${name}: `,
 				name: user
 			}
 		];
@@ -144,7 +144,7 @@
 						});
 						chat_container.scrollTop =
 							chat_container.scrollHeight;
-						content = '';
+						_content = '';
 					})
 					.catch(() => {
 						notify({
@@ -172,8 +172,9 @@
 	bind:chat_container
 	bind:description
 	bind:messages
-	bind:content
+	bind:content={_content}
 	bind:more_open
+	{show_name_edit}
 	{description_label}
 	{name_label}
 	on:send_attempt_without_description={() =>

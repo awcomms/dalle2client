@@ -4,6 +4,5 @@ option to clear notify if click outside or keydown or both
 add button option to notify notification
 refocus message input after send
 remove scrollbar from message input
-close more_modal on clear_chat click
-restart_chat to clear chat
+close more_modal on restart_chat click
 `options` title spacing 
