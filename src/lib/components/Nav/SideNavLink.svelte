@@ -4,7 +4,9 @@
   export let href: string | null | undefined = ''
   export let text = ''
   export let menuItem = false
-  export let isSelected = $page.url.pathname === href
+  // export let isSelected = $page.url.pathname === href
+
+  $: isSelected = $page.url.pathname === href
 
   import { isSideNavOpen } from "./store";
   import { SideNavLink, SideNavMenuItem } from "carbon-components-svelte";
