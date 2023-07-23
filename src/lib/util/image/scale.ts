@@ -47,7 +47,6 @@ export const scale = async (
 					filter_type
 				)
 			);
-			console.log('de');
 		} catch (e) {
 			console.log(e);
 			reject(e);

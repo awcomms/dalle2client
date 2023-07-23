@@ -120,7 +120,7 @@
 					bind:toggled={$send_on_enter}
 					labelA="The enter key will create a new line, instead of sending the message"
 					labelB="The enter key will send the message, instead of creating a new line"
-					labelText="What the Enter key does while the message input is focused"
+					labelText="What the Enter key does while the message input is focused (pressing the 'Ctrl' key with the 'Enter' key overrides this, and sends the message)"
 				/>
 			</div>
 		</div>

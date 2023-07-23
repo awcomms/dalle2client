@@ -4,7 +4,6 @@
   export let href: string | null | undefined = ''
   export let text = ''
   export let menuItem = false
-  // export let isSelected = $page.url.pathname === href
 
   $: isSelected = $page.url.pathname === href
 

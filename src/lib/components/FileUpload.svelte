@@ -2,9 +2,11 @@
 	export let 
 		multiple = false,
 		label = `Upload file${multiple ? 's' : ''}`,
+		button: ButtonProps = {},
 		dispatch_empty = false;
 
 	import { Button } from 'carbon-components-svelte';
+	import type { ButtonProps } from 'carbon-components-svelte/types/Button/Button.svelte';
 	import { createEventDispatcher } from 'svelte';
 
 	let ref: HTMLInputElement;
@@ -21,5 +23,5 @@
 	};
 </script>
 
-<Button on:click={() => ref.click()}>{label}</Button>
+<Button {...button} on:click={() => ref.click()}>{label}</Button>
 <input style="display: none;" {multiple} on:change={change} type="file" bind:this={ref} />
