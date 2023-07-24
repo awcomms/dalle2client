@@ -90,7 +90,7 @@
 		white-space: pre-wrap
 		word-wrap: break-word
 		word-break: normal
-		width: 90%
+		width: 74%
 		padding: 1rem
 
 	.user
