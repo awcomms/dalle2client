@@ -21,18 +21,20 @@
 		menu_open = false;
 
 	const copy = () => {
-			if (message.content)
-				navigator.clipboard
-					.writeText(message.content)
-					.then(() => {
-						notify(
-							{title: 'Copied to clipboard', timeout: 1000}
-						);
+		if (message.content)
+			navigator.clipboard
+				.writeText(message.content)
+				.then(() => {
+					notify({
+						title:
+							'Copied to clipboard',
+						timeout: 1300
 					});
-		}
+				});
+	};
 </script>
 
-<ContextMenu
+<!-- <ContextMenu
 	bind:open={menu_open}
 	target={[target]}
 >
@@ -41,26 +43,34 @@
 		labelText="Copy"
 		icon={Copy}
 	/>
-</ContextMenu>
+</ContextMenu> -->
 
 {#if show && message.content}
 	<!-- svelte-ignore a11y-no-static-element-interactions -->
-	<div
-		bind:this={target}
-		on:click={() =>
-			(menu_open = true)}
-		on:keydown={() =>
-			(menu_open = true)}
-		class="message"
-		class:user={message.role ===
-			'user'}
-		class:assistant={message.role ===
-			'assistant'}
-	>
-		<!-- <Button icon={Copy} size="small" kind='ghost' /> -->
-		<p class="content">
-			{message.content}
-		</p>
+	<div class="a">
+		<div
+			bind:this={target}
+			on:click={() =>
+				(menu_open = true)}
+			on:keydown={() =>
+				(menu_open = true)}
+			class="message"
+			class:user={message.role ===
+				'user'}
+			class:assistant={message.role ===
+				'assistant'}
+		>
+			<p class="content">
+				{message.content}
+			</p>
+		</div>
+		<Button
+			iconDescription="Copy"
+			icon={Copy}
+			on:click={copy}
+			size="small"
+			kind="ghost"
+		/>
 	</div>
 {/if}
 
@@ -68,9 +78,16 @@
 	@use '@carbon/type'
 	@use '@carbon/colors'
 	@use '@carbon/themes'
+	@use '@carbon/layout'
+
+	.a
+		display: flex
+		flex-direction: row
+		column-gap: layout.$spacing-05
 
 	.message
 		white-space: pre-wrap
+		word-wrap: break-word
 		word-break: normal
 		width: fit-content
 		max-width: 74%
