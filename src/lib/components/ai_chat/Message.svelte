@@ -1,5 +1,12 @@
 <script lang="ts">
-	import { CopyButton } from 'carbon-components-svelte';
+	import { notify } from '$lib/util/notify';
+	import {
+		Button,
+		ContextMenu,
+		ContextMenuOption,
+		CopyButton
+	} from 'carbon-components-svelte';
+	import Copy from 'carbon-icons-svelte/lib/Copy.svelte';
 	import type { ChatCompletionRequestMessage } from 'openai';
 	export let message: ChatCompletionRequestMessage,
 		// hide_system_messages = false,
@@ -9,19 +16,48 @@
 	//   !hide_system_messages
 	// ? true
 	// : false;
+
+	let target: HTMLElement,
+		menu_open = false;
+
+	const copy = () => {
+			if (message.content)
+				navigator.clipboard
+					.writeText(message.content)
+					.then(() => {
+						notify(
+							{title: 'Copied to clipboard', timeout: 1000}
+						);
+					});
+		}
 </script>
 
-{#if show}
+<ContextMenu
+	bind:open={menu_open}
+	target={[target]}
+>
+	<ContextMenuOption
+		on:click={copy}
+		labelText="Copy"
+		icon={Copy}
+	/>
+</ContextMenu>
+
+{#if show && message.content}
+	<!-- svelte-ignore a11y-no-static-element-interactions -->
 	<div
+		bind:this={target}
+		on:click={() =>
+			(menu_open = true)}
+		on:keydown={() =>
+			(menu_open = true)}
 		class="message"
 		class:user={message.role ===
 			'user'}
 		class:assistant={message.role ===
 			'assistant'}
 	>
-		<CopyButton
-			text={message.content}
-		/>
+		<!-- <Button icon={Copy} size="small" kind='ghost' /> -->
 		<p class="content">
 			{message.content}
 		</p>

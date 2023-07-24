@@ -29,7 +29,7 @@ export const notify = (
 			!n.timeout
 			// && n.kind === 'success'
 		)
-			n.timeout = 37000;
+			n.timeout = 3700;
 		n.lowContrast = true;
 		// TODO? timeout
 		notifications.update((ns) => [
