@@ -6,8 +6,10 @@
 	} from 'openai';
 	import axios from 'axios';
 	export let description_label =
-		'Describe the character', show_name_edit=true;
-	export let name_label = 'Name the character'
+			'Describe the character',
+		show_name_edit = true;
+	export let name_label =
+		'Name the character';
 	import Interface from './Interface.svelte';
 	import { download_blob } from '$lib/util';
 	import { notify } from '$lib/util/notify';
@@ -19,6 +21,7 @@
 		_content = '',
 		user = 'Interlocutor_1',
 		name = 'Interlocutor_2',
+		message_input_ref: HTMLTextAreaElement,
 		messages: ChatCompletionRequestMessage[] =
 			[],
 		parameters: CreateChatCompletionRequest =
@@ -145,6 +148,7 @@
 						chat_container.scrollTop =
 							chat_container.scrollHeight;
 						_content = '';
+						message_input_ref.focus();
 					})
 					.catch(() => {
 						notify({
@@ -174,6 +178,7 @@
 	bind:messages
 	bind:content={_content}
 	bind:more_open
+	bind:message_input_ref
 	{show_name_edit}
 	{description_label}
 	{name_label}

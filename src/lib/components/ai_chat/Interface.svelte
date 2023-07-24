@@ -30,6 +30,7 @@
 		content_error = false,
 		content_error_text =
 			'You may not send an empty message',
+		message_input_ref: HTMLTextAreaElement,
 		loading = false;
 
 	import Send from 'carbon-icons-svelte/lib/Send.svelte';
@@ -62,15 +63,14 @@
 		height = `${
 			(window.innerHeight * 79) / 100
 		}px`;
-		ref.classList.add(
+		message_input_ref.classList.add(
 			'no-scrollbar'
 		);
 	});
 
 	let height = '670px',
 		// id = v4(),
-		description_error = false,
-		ref: HTMLTextAreaElement;
+		description_error = false;
 
 	const keydown = (
 		e: KeyboardEvent
@@ -86,7 +86,7 @@
 					can_send &&
 					document &&
 					document.activeElement ===
-						ref
+						message_input_ref
 				)
 					send();
 		}
@@ -192,7 +192,7 @@
 					invalidText={content_error_text}
 					on:input={() =>
 						(content_error = false)}
-					bind:ref
+					bind:ref={message_input_ref}
 					bind:value={content}
 				/>
 				<Button

@@ -23,6 +23,7 @@
 		chat_container: HTMLElement,
 		name = 'Assistant',
 		user = 'You',
+		message_input_ref: HTMLTextAreaElement,
 		messages: ChatCompletionRequestMessage[] =
 			[],
 		parameters: CreateChatCompletionRequest;
@@ -115,6 +116,7 @@
 				chat_container.scrollTop =
 					chat_container.scrollHeight;
 				_content = '';
+				message_input_ref.focus();
 			})
 			.catch((e) =>
 				notify({
@@ -134,6 +136,7 @@
 	bind:loading
 	bind:messages
 	bind:description
+	bind:message_input_ref
 	bind:parameters
 	bind:chat_container
 	bind:more_open

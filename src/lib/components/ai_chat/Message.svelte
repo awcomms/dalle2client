@@ -84,13 +84,13 @@
 		display: flex
 		flex-direction: row
 		column-gap: layout.$spacing-05
+		// max-width: 100%
 
 	.message
 		white-space: pre-wrap
 		word-wrap: break-word
 		word-break: normal
-		width: fit-content
-		max-width: 74%
+		width: 90%
 		padding: 1rem
 
 	.user
