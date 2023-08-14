@@ -1,14 +1,27 @@
 <script lang="ts">
-	import { Button, Checkbox, CopyButton } from 'carbon-components-svelte';
+	import {
+		Button,
+		ButtonSet,
+		Checkbox,
+		TextInput
+	} from 'carbon-components-svelte';
+	import { createEventDispatcher } from 'svelte';
 	export let item: import('$lib/types').TodoItem,
 		text = '';
+
+	const dispatch =
+		createEventDispatcher();
 
 	const copy = async (s: string) => {
 		// let all = await navigator.clipboard.read()
 		// all.push(new ClipboardItem({string: s}))
-		await navigator.clipboard.writeText(s);
+		await navigator.clipboard.writeText(
+			s
+		);
 		// todo notify with tooltip
 	};
+
+	const check_done = () => {};
 
 	const focus = (s: string) => {};
 </script>
@@ -16,16 +29,62 @@
 <div class:open={item.open}>
 	<div class="line">
 		<div class="checkbox">
-			<Checkbox indeterminate={/*!item.recommended*/false} bind:checked={item.done} />
+			<Checkbox
+				disabled={Boolean(
+					item.suggestions
+				)}
+				indeterminate={/*!item.recommended*/ false}
+				bind:checked={item.done}
+			/>
 		</div>
-		<Button size="small" kind="ghost" on:click={() => (item.open = !item.open)}>{text}</Button>
-		<CopyButton {text} />
+		<ButtonSet
+			><Button
+				size="small"
+				kind="ghost"
+				on:click={() => {
+					if (item.suggestions) {
+						item.open = !item.open;
+					} else {
+						item.done = !item.done;
+						dispatch('done_changed');
+					}
+				}}>{text}</Button
+			></ButtonSet
+		>
+		<!-- <CopyButton {text} /> -->
 	</div>
-	{#if item.open && item.suggestions}
-		<div class="suggestions">
-			{#each Object.keys(item.suggestions) as text}
-				<svelte:self {text} item={item.suggestions[text]} />
-			{/each}
+	{#if item.open}
+		<div class="indent">
+			<slot />
+			{#if item.suggestions}
+				<svelte:self
+					item={{ open: false }}
+					text="_custom_attribute"
+				>
+					<TextInput
+						size="sm"
+						on:input={({
+							detail
+						}) => {
+							if (detail)
+								dispatch('done');
+						}}
+					/>
+				</svelte:self>
+				{#each Object.keys(item.suggestions) as text}
+					<svelte:self
+						{text}
+						item={item.suggestions[
+							text
+						]}
+						on:done_changed={() => {
+							if (!item.suggestions)
+								return;
+							check_done();
+						}}
+					/>
+				{/each}
+			{/if}
 		</div>
 	{/if}
 </div>
@@ -37,6 +96,6 @@
 		display: flex
 		align-items: center
 		flex-direction: row
-	.suggestions
+	.indent
 		margin-left: 1rem
 </style>

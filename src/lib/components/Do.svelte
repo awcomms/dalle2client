@@ -4,7 +4,6 @@
 		Button,
 		ButtonSet,
 		InlineLoading,
-		NumberInput,
 		Select,
 		SelectItem
 	} from 'carbon-components-svelte';
@@ -14,7 +13,9 @@
 		ImagesResponseDataInner
 	} from 'openai';
 	import axios from 'axios';
+	import Send from 'carbon-icons-svelte/lib/Send.svelte'
 	import { browser } from '$app/environment';
+	import { notify } from '$lib/util/notify';
 
 	let value = '',
 		// auto_download = true,
@@ -66,8 +67,8 @@
 				});
 			})
 			.catch(() =>
-				alert(
-					'error generating image'
+				notify(
+					{kind: 'error', title: `An error occured while trying to generating the image${n === 1 ? '' : 's'}`}
 				)
 			)
 			.finally(
@@ -85,12 +86,23 @@
 </Modal> -->
 <div class="all">
 	<Prompt bind:value />
-	<NumberInput
+	<!-- <NumberInput
 		label="Number of images to generate"
 		min={1}
 		max={10}
 		bind:value={n}
-	/>
+	/> -->
+	<Select
+		labelText="Number of images to generate"
+		bind:selected={n}
+	>
+		{#each Array(10) as s, i}
+			<SelectItem
+				value={i + 1}
+				text={String(i + 1)}
+			/>
+		{/each}
+	</Select>
 	<Select
 		labelText="Size"
 		bind:selected={size}
@@ -106,15 +118,13 @@
 		<!-- <Button on:click={() => (open = true)}>Edit</Button> -->
 		<Button
 			size="small"
+			icon={loading ? InlineLoading : Send}
 			on:click={_do}>Create</Button
 		>
 	</ButtonSet>
 
 	<br />
 	<p>{previous}</p>
-	{#if loading}
-		<InlineLoading />
-	{/if}
 
 	{#if srcs?.length}
 		<div class="imgs">

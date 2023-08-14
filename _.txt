@@ -1,8 +1,6 @@
 notification that shows Conversation limit and action in notification to clear messages
 disable everything if no internet access and display unclosable warning message, remove warning message when internet access
 option to clear notify if click outside or keydown or both
-add button option to notify notification
 refocus message input after send
 remove scrollbar from message input
-close more_modal on restart_chat click
-`options` title spacing 
+if openai/chat 504 server error, notify of timeout and perhaps shorter message or clearing Conversation
