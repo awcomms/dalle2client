@@ -1,12 +1,12 @@
-import {
-	PAYSTACK_SK_LIVE,
-	PAYSTACK_SK_TEST
-} from '$env/static/private';
-import {
-	PUBLIC_PAYSTACK_PK_LIVE,
-	PUBLIC_PAYSTACK_PK_TEST,
-	PUBLIC_PAYSTACK_TEST
-} from '$env/static/public';
+// import {
+// 	PAYSTACK_SK_LIVE,
+// 	PAYSTACK_SK_TEST
+// } from '$env/static/private';
+// import {
+// 	PUBLIC_PAYSTACK_PK_LIVE,
+// 	PUBLIC_PAYSTACK_PK_TEST,
+// 	PUBLIC_PAYSTACK_TEST
+// } from '$env/static/public';
 import axios from 'axios';
 
 export const PAYSTACK_SK = ""
