@@ -58,7 +58,7 @@
 			.post(
 				//TODO-type
 				'/openai/images/create',
-				{ prompt: value, n, size }
+				{ prompt: value, n, size, model: "dall-e-3" }
 			)
 			.then((r) => {
 				srcs = r.data.data;
