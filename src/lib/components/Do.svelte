@@ -8,12 +8,8 @@
 		SelectItem
 	} from 'carbon-components-svelte';
 	import Prompt from './Prompt.svelte';
-	import type {
-		CreateImageRequestSizeEnum,
-		ImagesResponseDataInner
-	} from 'openai';
 	import axios from 'axios';
-	import Send from 'carbon-icons-svelte/lib/Send.svelte'
+	import Send from 'carbon-icons-svelte/lib/Send.svelte';
 	import { browser } from '$app/environment';
 	import { notify } from '$lib/util/notify';
 
@@ -21,16 +17,16 @@
 		// auto_download = true,
 		previous = '',
 		loading = false,
-		srcs: ImagesResponseDataInner[] =
+		srcs: object[] =
 			[],
 		n = 1,
-		sizes: CreateImageRequestSizeEnum[] =
+		sizes =
 			[
 				'1024x1024',
 				'512x512',
 				'256x256'
 			],
-		size: CreateImageRequestSizeEnum =
+		size =
 			sizes[0],
 		open = false;
 
@@ -54,26 +50,35 @@
 	const _do = async () => {
 		loading = true;
 		previous = value;
-		await axios
-			.post(
+		try {
+			const r = await axios.post(
 				//TODO-type
 				'/openai/images/create',
-				{ prompt: value, n, size, model: "dall-e-3" }
-			)
-			.then((r) => {
-				srcs = r.data.data;
-				srcs.forEach(async (s) => {
-					// if (s.url) await download_from_url(s.url);
-				});
-			})
-			.catch(() =>
-				notify(
-					{kind: 'error', title: `An error occured while trying to generating the image${n === 1 ? '' : 's'}`}
-				)
-			)
-			.finally(
-				() => (loading = false)
+				{
+					prompt: value,
+					n,
+					size,
+					model: 'dall-e-3',
+					quality: 'hd',
+					style: 'vivid'
+				}
 			);
+			srcs = r.data;
+			console.log(r.data)
+			srcs.forEach(async (s) => {
+				// if (s.url) await download_from_url(s.url);
+			});
+		} catch (e) {
+			console.error('gen error', e);
+			notify({
+				kind: 'error',
+				title: `An error occured while trying to generating the image${
+					n === 1 ? '' : 's'
+				}`
+			});
+		}
+
+		loading = false;
 	};
 </script>
 
@@ -118,7 +123,9 @@
 		<!-- <Button on:click={() => (open = true)}>Edit</Button> -->
 		<Button
 			size="small"
-			icon={loading ? InlineLoading : Send}
+			icon={loading
+				? InlineLoading
+				: Send}
 			on:click={_do}>Create</Button
 		>
 	</ButtonSet>

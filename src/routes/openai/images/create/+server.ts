@@ -1,14 +1,20 @@
 import { openai } from '$lib/openai';
-import { json } from '@sveltejs/kit';
+import { error, json } from '@sveltejs/kit';
 import type { RequestHandler } from './$types';
 
-export const POST = (async ({
+export const POST = async ({
 	request
-}) =>
-	json(
-		await openai
-			.createImage(
-				await request.json()
-			)
-			.then((r) => r.data)
-	)) satisfies RequestHandler;
+}) => {
+	try {
+		return json(
+			await openai
+				.images.generate(
+					await request.json()
+				)
+				.then((r) => r.data)
+		);
+	} catch (e) {
+		console.error('openai images error', e)
+		throw error(500)
+	}
+}
