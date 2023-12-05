@@ -47,7 +47,7 @@
 		};
 
 	const send = async (
-		content: string
+		message
 	) => {
 		loading = true;
 		let request = parameters;
@@ -56,12 +56,7 @@
 				role: 'system',
 				content: description
 			},
-			...messages,
-			{
-				role: 'user',
-				content,
-				name: user
-			}
+			...messages, message
 		];
 
 		await axios

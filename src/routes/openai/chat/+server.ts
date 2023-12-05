@@ -9,8 +9,8 @@ export const POST = (async ({
 	request
 }) => {
 	return json(
-		await openai
-			.createChatCompletion(
+		await openai.chat
+			.completions.create(
 				await request.json()
 			)
 			.then((r) => {

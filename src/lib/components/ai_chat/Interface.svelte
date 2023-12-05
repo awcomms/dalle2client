@@ -1,10 +1,10 @@
-<script lang="ts">
-	export let messages: ChatCompletionRequestMessage[] =
+0<script lang="ts">
+	export let messages: ChatCompletionMessageParam[] =
 			[],
-		content = '',
+		text = '',
 		name = 'Partner',
 		name_label = 'Name',
-		parameters: CreateChatCompletionRequest =
+		parameters: ChatCompletionCreateParamsNonStreaming =
 			{
 				model: 'gpt-4',
 				temperature: 1,
@@ -33,8 +33,7 @@
 		message_input_ref: HTMLTextAreaElement,
 		loading = false;
 
-	import Send from 'carbon-icons-svelte/lib/Send.svelte';
-	import Menu from 'carbon-icons-svelte/lib/Menu.svelte';
+
 
 	import {
 		Button,
@@ -45,14 +44,14 @@
 		Column
 	} from 'carbon-components-svelte';
 	import { onMount } from 'svelte';
-	import type {
-		ChatCompletionRequestMessage,
-		CreateChatCompletionRequest
-	} from 'openai';
 	import Message from './Message.svelte';
+	import Input from './Input.svelte';
 	import { createEventDispatcher } from 'svelte';
 	import More from './More.svelte';
 	import { send_on_enter } from './store';
+	import type { ChatCompletionCreateParamsNonStreaming, ChatCompletionMessageParam } from 'openai/resources';
+
+	let message: ChatCompletionMessageParam = {role: 'user', content: [{type: 'text', text}]}
 
 	const dispatch =
 		createEventDispatcher();
@@ -92,6 +91,17 @@
 		}
 	};
 
+	const update_images = ({detail: images}) => {
+		const reader = new FileReader()
+		images.forEach(i => {
+			const reader = new FileReader()
+			reader.onloadend = () => {
+				console.log(reader.result)
+				message.content = [...message.content, {type: 'image_url', image_url: reader.result}]
+			}
+		});
+	}
+
 	const send = async () => {
 		if (
 			!send_without_description &&
@@ -104,12 +114,13 @@
 			return;
 		} else if (
 			!send_without_content &&
-			!content
+			!text
 		) {
 			content_error = true;
 			return;
 		}
-		dispatch('send', content);
+		message.content[0].text  = text
+		dispatch('send', message);
 	};
 </script>
 
@@ -176,42 +187,7 @@
 					<Message {message} />
 				{/each}
 			</div>
-			<div class="input">
-				<TextArea
-					style="min-width: unset"
-					rows={2}
-					disabled={loading}
-					on:keydown={(e) => {
-						if (
-							e.key === 'Enter' &&
-							$send_on_enter
-						)
-							e.preventDefault();
-					}}
-					invalid={content_error}
-					invalidText={content_error_text}
-					on:input={() =>
-						(content_error = false)}
-					bind:ref={message_input_ref}
-					bind:value={content}
-				/>
-				<Button
-					disabled={!can_send}
-					size="field"
-					on:click={send}
-					iconDescription={'Send'}
-					icon={loading
-						? InlineLoading
-						: Send}
-				/>
-				<Button
-					size="field"
-					on:click={() =>
-						(more_open = true)}
-					iconDescription="More"
-					icon={Menu}
-				/>
-			</div>
+			<Input on:image={update_images} bind:can_send bind:loading bind:content_error bind:content_error_text bind:more_open bind:text bind:message_input_ref  />
 		</div>
 	</Column>
 </Row>

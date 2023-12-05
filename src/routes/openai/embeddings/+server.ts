@@ -7,13 +7,13 @@ export const POST = (async ({
 }) => {
 	return json(
 		await openai
-			.createEmbedding({
+			.embeddings.create({
 				model:
 					'text-embedding-ada-002',
 				input: [await request.text()]
 			})
 			.then((r) => {
-				return r.data.data[0]
+				return r.data[0]
 					.embedding;
 			})
 	);

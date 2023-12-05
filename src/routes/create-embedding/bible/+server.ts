@@ -34,13 +34,13 @@ export const POST = (async () => {
 					...verse,
 					text_embedding:
 						await openai
-							.createEmbedding({
+							.embeddings.create({
 								model:
 									'text-embedding-ada-002',
 								input: [verse.text]
 							})
 							.then((r) => {
-								return r.data.data[0]
+								return r.data[0]
 									.embedding;
 							}),
 					verse_embedding:
