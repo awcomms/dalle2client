@@ -45,7 +45,7 @@ export const POST = (async () => {
 							}),
 					verse_embedding:
 						await openai
-							.createEmbedding({
+							.embeddings.create({
 								model:
 									'text-embedding-ada-002',
 								input: [

@@ -4,11 +4,7 @@
 		disable_description_edit = false,
 		description = '';
 
-	import type {
-		ChatCompletionRequestMessage,
-		CreateChatCompletionRequest,
-		CreateChatCompletionResponse
-	} from 'openai';
+	import type { ChatCompletion, ChatCompletionCreateParamsNonStreaming, ChatCompletionMessageParam } from 'openai/resources';
 	import axios from 'axios';
 	// import { v4 } from 'uuid';
 	import Interface from './Interface.svelte';
@@ -24,9 +20,9 @@
 		name = 'Assistant',
 		user = 'You',
 		message_input_ref: HTMLTextAreaElement,
-		messages: ChatCompletionRequestMessage[] =
+		messages: ChatCompletionMessageParam[] =
 			[],
-		parameters: CreateChatCompletionRequest;
+		parameters: ChatCompletionCreateParamsNonStreaming;
 
 	const download = () =>
 		download_blob(
@@ -47,7 +43,7 @@
 		};
 
 	const send = async (
-		message
+		message: ChatCompletionMessageParam
 	) => {
 		loading = true;
 		let request = parameters;
@@ -60,7 +56,7 @@
 		];
 
 		await axios
-			.post<CreateChatCompletionResponse>(
+			.post<ChatCompletion>(
 				'/openai/chat',
 				request
 			)
@@ -99,9 +95,7 @@
 				messages = [
 					...messages,
 					{
-						role: 'user',
-						content,
-						name: user
+						...message, name: user
 					},
 					{
 						...first_choice.message,
@@ -127,7 +121,7 @@
 
 <Interface
 	bind:name
-	bind:content={_content}
+	bind:text={_content}
 	bind:loading
 	bind:messages
 	bind:description

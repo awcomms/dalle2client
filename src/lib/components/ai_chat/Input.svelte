@@ -10,9 +10,8 @@
 	import { createEventDispatcher } from 'svelte';
 	import { send_on_enter } from './store';
 	import FileUpload from '../FileUpload.svelte';
+	import type { ChatCompletionMessageParam } from 'openai/resources';
 
-	const dispatch =
-		createEventDispatcher();
 	export let more_open: boolean,
 		can_send: boolean,
 		loading: boolean,
@@ -20,6 +19,30 @@
 		content_error_text: string,
 		message_input_ref: HTMLTextAreaElement,
 		text: string;
+
+	let message: ChatCompletionMessageParam = {role: 'user', content: [{type: 'text', text}]},
+	files_loading = false;
+
+	const dispatch =
+		createEventDispatcher();
+	
+
+	const update_images = ({detail: images}: {detail: File[]}) => {
+		files_loading = true
+		const reader = new FileReader()
+		images.forEach(i => {
+			const reader = new FileReader()
+			reader.onload = () => {
+				console.log(reader.result)
+				message.content = [...message.content, {type: 'image_url', image_url: reader.result}]
+			}
+			reader.onerror = () => {
+				notify({kind: "error", title: "Error occurred while trying to read uploaded file"})
+			}
+			reader.readasDataURL(i)
+		});
+		files_loading = false
+	}
 </script>
 
 <div class="input">
@@ -44,16 +67,16 @@
 	<Button
 		disabled={!can_send}
 		size="field"
-		on:click={() => dispatch('send')}
+		on:click={() => dispatch('send', message)}
 		iconDescription={'Send'}
 		icon={loading
 			? InlineLoading
 			: Send}
 	/>
 	<FileUpload
-		on:change={({detail}) =>
-			dispatch('image', detail)}
-		button={{ icon: Upload }}
+		label="Upload images ({message.content.length - 1})"
+		on:change={update_images}
+		button={{ icon: files_loading ? InlineLoading : Upload }}
 		multiple
 	/>
 	<Button
@@ -64,3 +87,10 @@
 		icon={Menu}
 	/>
 </div>
+<style lang="sass">
+	.input
+		max-width: 100%
+		display: flex
+		flex-grow: 0
+		flex-direction: row
+</style>

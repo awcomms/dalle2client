@@ -1,4 +1,4 @@
-0<script lang="ts">
+<script lang="ts">
 	export let messages: ChatCompletionMessageParam[] =
 			[],
 		text = '',
@@ -51,7 +51,7 @@
 	import { send_on_enter } from './store';
 	import type { ChatCompletionCreateParamsNonStreaming, ChatCompletionMessageParam } from 'openai/resources';
 
-	let message: ChatCompletionMessageParam = {role: 'user', content: [{type: 'text', text}]}
+
 
 	const dispatch =
 		createEventDispatcher();
@@ -91,18 +91,7 @@
 		}
 	};
 
-	const update_images = ({detail: images}) => {
-		const reader = new FileReader()
-		images.forEach(i => {
-			const reader = new FileReader()
-			reader.onloadend = () => {
-				console.log(reader.result)
-				message.content = [...message.content, {type: 'image_url', image_url: reader.result}]
-			}
-		});
-	}
-
-	const send = async () => {
+	const send = async ({detail}) => {
 		if (
 			!send_without_description &&
 			!description
@@ -120,7 +109,7 @@
 			return;
 		}
 		message.content[0].text  = text
-		dispatch('send', message);
+		dispatch('send', detail);
 	};
 </script>
 
@@ -187,7 +176,7 @@
 					<Message {message} />
 				{/each}
 			</div>
-			<Input on:image={update_images} bind:can_send bind:loading bind:content_error bind:content_error_text bind:more_open bind:text bind:message_input_ref  />
+			<Input on:send={send} bind:can_send bind:loading bind:content_error bind:content_error_text bind:more_open bind:text bind:message_input_ref  />
 		</div>
 	</Column>
 </Row>
@@ -199,11 +188,6 @@
 		display: flex
 		flex-direction: column
 		row-gap: .37rem
-	.input
-		max-width: 100%
-		display: flex
-		flex-grow: 0
-		flex-direction: row
 	.messages
 		display: flex
 		flex-grow: 2

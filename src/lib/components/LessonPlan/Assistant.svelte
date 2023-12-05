@@ -3,16 +3,9 @@
 
 	import example from './example.json';
 	import Interface from '$lib/components/ai_chat/Interface.svelte';
-	import type {
-		ChatCompletionRequestMessage,
-		CreateChatCompletionRequest,
-		CreateChatCompletionResponse
-	} from 'openai';
 	import axios from 'axios';
 	import { createEventDispatcher } from 'svelte';
 	import type { _LessonPlan } from '$lib/types';
-
-	import { globals } from 'svelte/internal';
 
 	const regex = /```([\s\S]*?)```/;
 
@@ -71,48 +64,6 @@ ${JSON.stringify(example)}
 					.join(' ')
 			);
 		};
-
-	const ms = async (
-		m: ChatCompletionRequestMessage[]
-	) => {
-		/**One possible way to rewrite the function for appending strings to any array using only `while`, without `do`, is to use a flag variable to check if the loop should run at least once. For example:
-
-```js
-// define a function that takes an array and a string as arguments
-function appendStrings(array, string) {
-  // initialize a flag variable to true
-  let flag = true;
-  // use a while loop with the flag condition
-  while (flag) {
-    // prompt the user for input
-    let input = prompt("Enter a string or press cancel to stop");
-    // check if the input is null or empty
-    if (input === null || input === "") {
-      // set the flag to false to exit the loop
-      flag = false;
-    } else {
-      // append the input and the string argument to the array
-      array.push(input + string);
-    }
-  }
-  // return the modified array
-  return array;
-}
-```*/
-		let res = [];
-		for (let _m of m) {
-		}
-		console.log(import.meta.url);
-		globals.__dirname =
-			import.meta.url;
-		await import(
-			'gpt-3-encoder'
-		).then((module) => {
-			// console.log(
-			// 	module.encode(s).length
-			// );
-		});
-	};
 
 	const send = async () => {
 		loading = true;

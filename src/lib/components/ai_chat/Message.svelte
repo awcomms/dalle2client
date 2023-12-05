@@ -61,7 +61,11 @@
 				'assistant'}
 		>
 			<p class="content">
+				{#if message.role === 'assistant'}
 				{message.content}
+				{:else}
+				{message.content[0].text}
+				{/if}
 			</p>
 		</div>
 		<Button
