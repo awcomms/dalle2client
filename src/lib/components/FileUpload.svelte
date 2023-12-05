@@ -23,5 +23,5 @@
 	};
 </script>
 
-<Button {...button} on:click={() => ref.click()}>{label}</Button>
+<Button {...button} on:click={() => ref.click()}>{#if label}{label}{/if}</Button>
 <input style="display: none;" {multiple} on:change={change} type="file" bind:this={ref} />

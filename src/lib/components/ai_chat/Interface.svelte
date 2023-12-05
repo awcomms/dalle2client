@@ -6,7 +6,7 @@
 		name_label = 'Name',
 		parameters: ChatCompletionCreateParamsNonStreaming =
 			{
-				model: 'gpt-4',
+				model: 'gpt-4-vision-preview',
 				temperature: 1,
 				top_p: 1,
 				messages: [],
@@ -71,26 +71,6 @@
 		// id = v4(),
 		description_error = false;
 
-	const keydown = (
-		e: KeyboardEvent
-	) => {
-		switch (e.key) {
-			case 'Enter':
-				if (
-					!$send_on_enter &&
-					!e.ctrlKey
-				)
-					return;
-				if (
-					can_send &&
-					document &&
-					document.activeElement ===
-						message_input_ref
-				)
-					send();
-		}
-	};
-
 	const send = async ({detail}) => {
 		if (
 			!send_without_description &&
@@ -108,14 +88,11 @@
 			content_error = true;
 			return;
 		}
-		message.content[0].text  = text
 		dispatch('send', detail);
 	};
 </script>
 
-<svelte:window
-	on:keydown={keydown}
-/>
+
 
 <Modal
 	modalHeading="Download then restart?"

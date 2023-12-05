@@ -10,7 +10,11 @@
 	import { createEventDispatcher } from 'svelte';
 	import { send_on_enter } from './store';
 	import FileUpload from '../FileUpload.svelte';
-	import type { ChatCompletionMessageParam } from 'openai/resources';
+	import type {
+		ChatCompletionContentPart,
+		ChatCompletionMessageParam
+	} from 'openai/resources';
+	import { notify } from '$lib/util/notify';
 
 	export let more_open: boolean,
 		can_send: boolean,
@@ -20,30 +24,104 @@
 		message_input_ref: HTMLTextAreaElement,
 		text: string;
 
-	let message: ChatCompletionMessageParam = {role: 'user', content: [{type: 'text', text}]},
-	files_loading = false;
+	let message: ChatCompletionMessageParam =
+			{
+				role: 'user',
+				content: [
+					{ type: 'text', text }
+				]
+			},
+		files_loading = false;
+
+	const keydown = (
+		e: KeyboardEvent
+	) => {
+		switch (e.key) {
+			case 'Enter':
+				if (
+					!$send_on_enter &&
+					!e.ctrlKey
+				)
+					return;
+				if (
+					can_send &&
+					document &&
+					document.activeElement ===
+						message_input_ref
+				)
+					send();
+		}
+	};
+
+	const file_to_base64 = (
+		file: File
+	) => {
+		return new Promise(
+			(resolve, reject) => {
+				const reader =
+					new FileReader();
+
+				reader.onloadend = () => {
+					resolve(reader.result);
+				};
+
+				reader.onerror = reject;
+
+				reader.readAsDataURL(file);
+			}
+		);
+	};
+
+	const send = () => {
+		message.content[0].xtext = text;
+		dispatch('send', message);
+	};
 
 	const dispatch =
 		createEventDispatcher();
-	
 
-	const update_images = ({detail: images}: {detail: File[]}) => {
-		files_loading = true
-		const reader = new FileReader()
-		images.forEach(i => {
-			const reader = new FileReader()
-			reader.onload = () => {
-				console.log(reader.result)
-				message.content = [...message.content, {type: 'image_url', image_url: reader.result}]
+	const update_images = async ({
+		detail: images
+	}: {
+		detail: File[];
+	}) => {
+		files_loading = true;
+		for (	
+			let i = 0;
+			i < images.length;
+			i++
+		) {
+			try {
+				const base64 =
+					await file_to_base64(
+						images[i]
+					);
+				console.log(base64);
+				message.content = [
+					...(message.content as ChatCompletionContentPart[]),
+					{
+						type: 'image_url',
+						image_url: {
+							url: base64 as string,
+							detail: 'high'
+						}
+					}
+				];
+			} catch (err) {
+				notify({
+					kind: 'error',
+					title:
+						'Error occurred while trying to read uploaded file'
+				});
 			}
-			reader.onerror = () => {
-				notify({kind: "error", title: "Error occurred while trying to read uploaded file"})
-			}
-			reader.readasDataURL(i)
-		});
-		files_loading = false
-	}
+		}
+		files_loading = false;
+	};
 </script>
+
+<svelte:window
+	on:keydown={keydown}
+/>
 
 <div class="input">
 	<TextArea
@@ -67,16 +145,22 @@
 	<Button
 		disabled={!can_send}
 		size="field"
-		on:click={() => dispatch('send', message)}
+		on:click={send}
 		iconDescription={'Send'}
 		icon={loading
 			? InlineLoading
 			: Send}
 	/>
 	<FileUpload
-		label="Upload images ({message.content.length - 1})"
+		label="{String((message
+			?.content?.length || 1) - 1)}"
 		on:change={update_images}
-		button={{ icon: files_loading ? InlineLoading : Upload }}
+		button={{
+			iconDescription: "Upload images",
+			icon: files_loading
+				? InlineLoading
+				: Upload
+		}}
 		multiple
 	/>
 	<Button
@@ -87,6 +171,7 @@
 		icon={Menu}
 	/>
 </div>
+
 <style lang="sass">
 	.input
 		max-width: 100%
