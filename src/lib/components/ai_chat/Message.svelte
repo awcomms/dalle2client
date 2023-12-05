@@ -7,8 +7,8 @@
 		CopyButton
 	} from 'carbon-components-svelte';
 	import Copy from 'carbon-icons-svelte/lib/Copy.svelte';
-	import type { ChatCompletionRequestMessage } from 'openai';
-	export let message: ChatCompletionRequestMessage,
+	import type { ChatCompletionMessageParam } from 'openai/resources';
+	export let message: ChatCompletionMessageParam,
 		// hide_system_messages = false,
 		show = message.role !== 'system';
 	// ? true
@@ -20,10 +20,12 @@
 	let target: HTMLElement,
 		menu_open = false;
 
+		console.log(message)
+
 	const copy = () => {
 		if (message.content)
 			navigator.clipboard
-				.writeText(message.content)
+				.writeText(message.role === 'user' ? message.content[0].text : message.content)
 				.then(() => {
 					notify({
 						title:
@@ -61,10 +63,10 @@
 				'assistant'}
 		>
 			<p class="content">
-				{#if message.role === 'assistant'}
-				{message.content}
-				{:else}
+				{#if message.role === 'user'}
 				{message.content[0].text}
+				{:else}
+				{message.content}
 				{/if}
 			</p>
 		</div>

@@ -73,7 +73,7 @@
 	};
 
 	const send = () => {
-		message.content[0].xtext = text;
+		message.content[0].text = text;
 		dispatch('send', message);
 	};
 
