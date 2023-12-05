@@ -38,7 +38,7 @@
 		<!-- </SideNavMenu> -->
 		<SideNavLink
 			menuItem
-			text="DALLE2"
+			text="DALLE3"
 			href="/openai/images/create"
 		/>
 		<SideNavLink

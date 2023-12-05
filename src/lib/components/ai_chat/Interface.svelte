@@ -9,6 +9,7 @@
 				model: 'gpt-4-vision-preview',
 				temperature: 1,
 				top_p: 1,
+				max_tokens: 4095,
 				messages: [],
 				presence_penalty: 0,
 				frequency_penalty: 0
