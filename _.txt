@@ -1,3 +1,5 @@
+remove messages, add multiple messages
+
 notification that shows Conversation limit and action in notification to clear messages
 disable everything if no internet access and display unclosable warning message, remove warning message when internet access
 option to clear notify if click outside or keydown or both

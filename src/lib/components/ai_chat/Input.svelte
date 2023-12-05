@@ -96,7 +96,6 @@
 					await file_to_base64(
 						images[i]
 					);
-				console.log(base64);
 				message.content = [
 					...(message.content as ChatCompletionContentPart[]),
 					{

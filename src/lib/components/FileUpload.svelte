@@ -7,6 +7,7 @@
 
 	import { Button } from 'carbon-components-svelte';
 	import type { ButtonProps } from 'carbon-components-svelte/types/Button/Button.svelte';
+	import Upload from 'carbon-icons-svelte/lib/Upload.svelte';
 	import { createEventDispatcher } from 'svelte';
 
 	let ref: HTMLInputElement;
@@ -23,5 +24,5 @@
 	};
 </script>
 
-<Button {...button} on:click={() => ref.click()}>{#if label}{label}{/if}</Button>
+<Button icon={Upload} iconDescription={label ?? "Upload file"} {...button} on:click={() => ref.click()}>{#if label}{label}{/if}</Button>
 <input style="display: none;" {multiple} on:change={change} type="file" bind:this={ref} />
