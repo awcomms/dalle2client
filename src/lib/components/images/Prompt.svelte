@@ -9,7 +9,7 @@
 		Button,
 		ButtonSet
 	} from 'carbon-components-svelte';
-	import { Todo } from '$lib/components';
+	import Todo from './Todo.svelte';
 </script>
 
 <ButtonSet

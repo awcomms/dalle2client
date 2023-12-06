@@ -7,17 +7,22 @@
 		Select,
 		SelectItem
 	} from 'carbon-components-svelte';
-	import Prompt from '$lib/components/Prompt.svelte';
+	import Prompt from './Prompt.svelte';
 	import axios from 'axios';
 	import Send from 'carbon-icons-svelte/lib/Send.svelte';
 	import { browser } from '$app/environment';
 	import { notify } from '$lib/util/notify';
 	import FileUpload from '../FileUpload.svelte';
 	import { onMount } from 'svelte';
+	import { get_openai } from '$lib/openai';
+	import { OPENAI_API_KEY } from '$lib/store';
+	import type { ImageEditParams, ImagesResponse } from 'openai/resources';
 
 	onMount(() => {
 		let l = canvas.getContext('2d');
 		if (l) ctx = l;
+
+		ctx.fillStyle = 'rgba(0,0,0,0)';
 
 		canvas.onmousedown = (e) => {
 			drawing = true;
@@ -52,19 +57,19 @@
 	});
 
 	let value = '',
+		image: File,
 		canvas: HTMLCanvasElement,
+		img: HTMLImageElement,
 		drawing = false,
 		mask_image,
 		ctx: CanvasRenderingContext2D,
 		// auto_download = true,
 		previous = '',
 		loading = false,
-		srcs: object[] = [],
+		srcs: ImagesResponse['data'] = [],
 		n = 1,
-		sizes = [
+		sizes: ImageEditParams['size'][] = [
 			'1024x1024',
-			'1792x1024',
-			'1024x1792',
 			'512x512',
 			'256x256'
 		],
@@ -89,23 +94,28 @@
 		};
 
 	const _do = async () => {
-		loading = true;
-		previous = value;
 		try {
-			const r = await axios.post(
-				//TODO-type
-				'/openai/images/create',
+			loading = true;
+			previous = value;
+			ctx.fill();
+			const openai = get_openai(
+				$OPENAI_API_KEY
+			);
+			const canvas_blob: Blob = await new Promise((resolve, reject) => {
+				canvas.toBlob(blob => {
+					if (blob){ resolve(blob)} else {reject(new Error('Converting mask canvas to file failed'))}
+				}, 'image/png')
+			})
+			const res = await openai.images.edit(
 				{
-					prompt: value,
+					image,
+					mask: new File([canvas_blob], 'mask', {type: 'image/png'}),
 					n,
 					size,
-					model: 'dall-e-3',
-					quality: 'hd',
-					style: 'vivid'
+					prompt: value
 				}
 			);
-			srcs = r.data;
-			console.log(r.data);
+			srcs = res.data;
 			srcs.forEach(async (s) => {
 				// if (s.url) await download_from_url(s.url);
 			});
@@ -122,25 +132,17 @@
 		loading = false;
 	};
 
-	const use_image = ({ detail }) => {
-		const reader = new FileReader();
-		reader.onload = (e) => {
-			const img = new Image();
-			img.src =
-				window.URL.createObjectURL(
-					detail[0]
-				);
+	const use_image = ({ detail }: {detail: File[]}) => {
+		image = detail[0];
+		img.src =
+			window.URL.createObjectURL(
+				image
+			);
+		img.onload = (e) => {
 			canvas.width =
 				img.naturalWidth;
 			canvas.height =
 				img.naturalHeight;
-			ctx.drawImage(
-				img,
-				0,
-				0,
-				canvas.width,
-				canvas.height
-			);
 		};
 	};
 </script>
@@ -191,7 +193,7 @@
 			icon={loading
 				? InlineLoading
 				: Send}
-			on:click={_do}>Create</Button
+			on:click={_do}>Edit</Button
 		>
 	</ButtonSet>
 
@@ -201,7 +203,7 @@
 	{#if srcs?.length}
 		<div class="imgs">
 			{#each srcs as { url: src }}
-				{#if src}
+				{#if src && size}
 					<div class="img">
 						<img
 							alt="last DallE2 generation result"
@@ -232,21 +234,39 @@
 		label="Upload image to edit"
 		on:change={use_image}
 	/>
+
+	<div class="draw_mask">
+		<img
+			class="draw"
+			bind:this={img}
+			alt="Uploaded to be edited"
+		/>
+		<canvas
+			class="draw"
+			bind:this={canvas}
+		/>
+	</div>
 </div>
 
 <style lang="sass">
-	.all
-		display: flex
-		flex-direction: column
-		row-gap: 1rem
-	.imgs
-		display: flex
-		flex-direction: row
-		flex-wrap: wrap
-	.img
-		width: 10rem
-		height: 10rem
-	img
-		max-inline-size: 100%
-		block-size: auto
+    .draw_mask
+        position: relative
+    .draw
+        position: absolute
+        top: 0
+        bottom: 0
+    .all
+        display: flex
+        flex-direction: column
+        row-gap: 1rem
+    .imgs
+        display: flex
+        flex-direction: row
+        flex-wrap: wrap
+    .img
+        width: 10rem
+        height: 10rem
+    img
+        max-inline-size: 100%
+        block-size: auto
 </style>

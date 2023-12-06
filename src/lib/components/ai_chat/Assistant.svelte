@@ -4,13 +4,19 @@
 		disable_description_edit = false,
 		description = '';
 
-	import type { ChatCompletion, ChatCompletionCreateParamsNonStreaming, ChatCompletionMessageParam } from 'openai/resources';
+	import type {
+		ChatCompletion,
+		ChatCompletionCreateParamsNonStreaming,
+		ChatCompletionMessageParam
+	} from 'openai/resources';
 	import axios from 'axios';
 	// import { v4 } from 'uuid';
 	import Interface from './Interface.svelte';
 	import { download_blob } from '$lib/util';
 	import { notify } from '$lib/util/notify';
 	import Restart from 'carbon-icons-svelte/lib/Restart.svelte';
+	import { get_openai } from '$lib/openai';
+	import { OPENAI_API_KEY } from '$lib/store';
 
 	let loading = false,
 		// id = v4(),
@@ -46,76 +52,80 @@
 		message: ChatCompletionMessageParam
 	) => {
 		loading = true;
-		let request = parameters;
-		request.messages = [
-			{
-				role: 'system',
-				content: description
-			},
-			...messages, message
-		];
+		try {
+			let request = parameters;
+			request.messages = [
+				{
+					role: 'system',
+					content: description
+				},
+				...messages,
+				message
+			];
 
-		await axios
-			.post<ChatCompletion>(
-				'/openai/chat',
-				request
-			)
-			.then((r) => {
-				const first_choice =
-					r.data.choices[0];
-				if (!first_choice) {
-					notify({
-						kind: 'error',
-						title: 'Please retry'
-					});
-					return;
-				}
-				if (!first_choice.message) {
-					notify({
-						kind: 'error',
-						title: 'Please retry'
-					});
-					return;
-				}
-				if (
-					first_choice.finish_reason ===
-					'length'
-				) {
-					notify({
-						kind: 'warning',
-						title:
-							'Conversation limit reached',
-						button: {
-							text: 'Restart conversation',
-							icon: Restart,
-							act: restart
-						}
-					});
-				}
-				messages = [
-					...messages,
-					{
-						...message, name: user
-					},
-					{
-						...first_choice.message,
-						name
-					}
-				];
-				chat_container.scrollTop =
-					chat_container.scrollHeight;
-				_content = '';
-				message_input_ref.focus();
-			})
-			.catch((e) =>
+			const openai = get_openai(
+				$OPENAI_API_KEY
+			);
+
+			const r =
+				await openai.chat.completions.create(
+					request
+				);
+
+			const first_choice =
+				r.choices[0];
+			if (!first_choice) {
 				notify({
 					kind: 'error',
-					title: e
-				})
-			)
-			.finally(
-				() => (loading = false)
-			);
+					title: 'Please retry'
+				});
+				return;
+			}
+			if (!first_choice.message) {
+				notify({
+					kind: 'error',
+					title: 'Please retry'
+				});
+				return;
+			}
+			if (
+				first_choice.finish_reason ===
+				'length'
+			) {
+				notify({
+					kind: 'warning',
+					title:
+						'Conversation limit reached',
+					button: {
+						text: 'Restart conversation',
+						icon: Restart,
+						act: restart
+					}
+				});
+			}
+			messages = [
+				...messages,
+				{
+					...message,
+					name: user
+				},
+				{
+					...first_choice.message,
+					name
+				}
+			];
+			chat_container.scrollTop =
+				chat_container.scrollHeight;
+			_content = '';
+			message_input_ref.focus();
+		} catch (e) {
+			console.error(e);
+			notify({
+				kind: 'error',
+				title: e
+			});
+		}
+		loading = false;
 	};
 </script>
 

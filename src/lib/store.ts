@@ -189,3 +189,4 @@ export const previousPage = stringStore('previousPage', '/');
 export const newUser = booleanStore('newUser');
 export const users = arrayStore('users', []);
 export const userTags = arrayStore('userTags', []);
+export const OPENAI_API_KEY = stringStore('OPENAI_API_KEY')

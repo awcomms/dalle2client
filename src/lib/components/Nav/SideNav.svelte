@@ -33,14 +33,19 @@
 			/>
 			<!-- <SideNavLink menuItem text="Completions" href="/openai/completions" /> -->
 		</SideNavMenu>
-		<!-- <SideNavMenu text="Images"> -->
-		
-		<!-- </SideNavMenu> -->
-		<SideNavLink
-			menuItem
-			text="DALLE3"
-			href="/openai/images/create"
-		/>
+		<SideNavMenu text="Images">
+			<SideNavLink
+				menuItem
+				text="Create"
+				href="/images/create"
+			/>
+			<SideNavLink
+				menuItem
+				text="Edit"
+				href="/images/edit"
+			/>
+		</SideNavMenu>
+
 		<SideNavLink
 			menuItem
 			text="Rescale Images"

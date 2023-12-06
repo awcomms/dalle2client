@@ -12,15 +12,18 @@
 	import Send from 'carbon-icons-svelte/lib/Send.svelte';
 	import { browser } from '$app/environment';
 	import { notify } from '$lib/util/notify';
+	import { get_openai } from '$lib/openai';
+	import { OPENAI_API_KEY } from '$lib/store';
+	import type { ImageGenerateParams, ImagesResponse } from 'openai/resources';
 
 	let value = '',
 		// auto_download = true,
 		previous = '',
 		loading = false,
-		srcs: object[] =
+		srcs: ImagesResponse['data'] =
 			[],
 		n = 1,
-		sizes =
+		sizes: ImageGenerateParams['size'][] =
 			[
 				'1024x1024',
 				'1792x1024',
@@ -51,11 +54,10 @@
 
 	const _do = async () => {
 		loading = true;
-		previous = value;
 		try {
-			const r = await axios.post(
-				//TODO-type
-				'/openai/images/create',
+			previous = value;
+			const openai = get_openai($OPENAI_API_KEY)
+			const r = await openai.images.generate(
 				{
 					prompt: value,
 					n,
@@ -138,7 +140,7 @@
 	{#if srcs?.length}
 		<div class="imgs">
 			{#each srcs as { url: src }}
-				{#if src}
+				{#if src && size}
 					<div class="img">
 						<img
 							alt="last DallE2 generation result"

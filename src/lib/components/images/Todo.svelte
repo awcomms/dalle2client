@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { TodoItem } from '$lib/components';
+	import TodoItem from './TodoItem.svelte';
 	import type { TodoItem as _TodoItem } from '$lib/types';
 
 	let todo: _TodoItem = {
