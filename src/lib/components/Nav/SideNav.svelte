@@ -51,6 +51,11 @@
 			text="Rescale Images"
 			href="/images/scale"
 		/>
+		<SideNavLink
+			menuItem
+			text="Settings"
+			href="/settings"
+		/>
 		<!-- <SideNavLink text="Entries" /> -->
 	</SideNavItems>
 </SideNav>
