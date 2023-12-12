@@ -4,7 +4,12 @@
 		disable_description_edit = false,
 		description = '';
 
-	import type { ChatCompletion, ChatCompletionAssistantMessageParam, ChatCompletionCreateParamsNonStreaming, ChatCompletionMessageParam, ChatCompletionUserMessageParam } from 'openai/resources';
+	import type {
+		ChatCompletionAssistantMessageParam,
+		ChatCompletionCreateParamsNonStreaming,
+		ChatCompletionMessageParam,
+		ChatCompletionUserMessageParam
+	} from 'openai/resources';
 	import axios from 'axios';
 	// import { v4 } from 'uuid';
 	import Interface from './Interface.svelte';
@@ -13,12 +18,13 @@
 	import Restart from 'carbon-icons-svelte/lib/Restart.svelte';
 	import { get_openai } from '$lib/openai';
 	import { OPENAI_API_KEY } from '$lib/store';
-	import { create } from '$lib/util/image/create';
+	import { create_one } from '$lib/util/image/create_one';
 
 	let loading = false,
 		// id = v4(),
 		_content = '',
 		more_open = false,
+		success = false,
 		chat_container: HTMLElement,
 		name = 'Assistant',
 		user = 'You',
@@ -27,8 +33,8 @@
 		parameters: ChatCompletionCreateParamsNonStreaming;
 
 	const tools = {
-		'create_image': create
-	}
+		create_image: create_one
+	};
 
 	const download = () => download_blob(new Blob([JSON.stringify(messages)]), `Chat between user ${user} and GPT3.5 AI Assistant ${name}`);
 
@@ -41,7 +47,7 @@
 		download();
 	};
 
-	const send = async (message: ChatCompletionMessageParam) => {
+	const send = async (message: ChatCompletionUserMessageParam) => {
 		loading = true;
 		try {
 			const openai = get_openai($OPENAI_API_KEY);
@@ -87,7 +93,8 @@
 					chat_container.scrollTop = chat_container.scrollHeight;
 					_content = '';
 					message_input_ref.focus();
-					break
+					success = true;
+					break;
 				case 'length':
 					notify({
 						kind: 'warning',
@@ -98,26 +105,41 @@
 							act: restart
 						}
 					});
-					break
+					break;
 				case 'tool_calls':
-					first_choice.message.tool_calls?.forEach((t) => {
-
-					})
-					break
+					console.info('tool');
+					first_choice.message.tool_calls?.forEach(async (t) => {
+						try {
+							if (t.function.name === 'create_image') {
+								const { data } = await create_one($OPENAI_API_KEY, JSON.parse(t.function.arguments));
+								console.info('b64json', data[0].b64_json);
+								messages = [
+									...messages,
+									{
+										role: 'tool',
+										content: data[0].b64_json ?? '',
+										tool_call_id: t.id
+									}
+								];
+							}
+						} catch {
+							notify({ kind: 'error', title: 'Encountered an error trying to run the function', subtitle: 'Please retry' });
+						}
+					});
+					break;
 				case 'content_filter':
 					notify({
 						kind: 'warning',
 						title: "Content was omitted due to a flag from OpenAI's content filters"
-					})
-					break
+					});
+					break;
 				case 'function_call':
 			}
-
 		} catch (e) {
 			console.error(e);
 			notify({
 				kind: 'error',
-				title: e
+				title: e ?? 'Error'
 			});
 		}
 		loading = false;
@@ -133,6 +155,7 @@
 	bind:message_input_ref
 	bind:parameters
 	bind:chat_container
+	bind:success
 	bind:more_open
 	name_label="Give the Assistant a name"
 	description_label="Tell the Assistant how to behave"
@@ -142,7 +165,7 @@
 	on:download={download}
 	on:restart={restart}
 	on:download_then_restart={download_then_restart}
-	on:send={({ detail }) => send(detail)}
+	on:send={({detail}) => send(detail)}
 	on:send_attempt_without_description={() => (more_open = true)}
 	send_without_description={true}
 />

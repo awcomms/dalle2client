@@ -1,124 +1,88 @@
 <script lang="ts">
-	export let messages: ChatCompletionMessageParam[] =
-			[],
+	export let messages: ChatCompletionMessageParam[] = [],
 		text = '',
 		name = 'Partner',
 		name_label = 'Name',
-		parameters: ChatCompletionCreateParamsNonStreaming =
-			{
-				// tools: [{
-				// 	type: 'function',
-				// 	function: {
-				// 		name: "create_image",
-				// 		description: "Create an image with DALL·E 3",
-				// 		parameters: {
-				// 			type: 'string',
-				// 		}
-				// 	}
-				// }],
-				model: 'gpt-4-vision-preview',
-				temperature: 1,
-				top_p: 1,
-				max_tokens: 4095,
-				messages: [],
-				presence_penalty: 0,
-				frequency_penalty: 0
-			},
-		chat_container: HTMLElement | null =
-			null,
+		parameters: ChatCompletionCreateParamsNonStreaming = {
+			// tools: [{
+			// 	type: 'function',
+			// 	function: {
+			// 		name: "create_image",
+			// 		description: "Create an image with DALL·E 3",
+			// 		parameters: {
+			// 			type: 'string',
+			// 		}
+			// 	}
+			// }],
+			model: 'gpt-4-vision-preview',
+			temperature: 1,
+			top_p: 1,
+			max_tokens: 4095,
+			messages: [],
+			presence_penalty: 0,
+			frequency_penalty: 0
+		},
+		success: boolean,
+		chat_container: HTMLElement | null = null,
 		restart_modal = false,
 		hide_parameters = false,
 		show_name_edit = false,
 		disable_description_edit = false,
 		description = '',
 		more_open = false,
-		description_label =
-			'Description',
-		description_error_text =
-			'You may not send messages without setting description',
+		description_label = 'Description',
+		description_error_text = 'You may not send messages without setting description',
 		send_without_content = false,
 		send_without_description = false,
 		content_error = false,
-		content_error_text =
-			'You may not send an empty message',
+		content_error_text = 'You may not send an empty message',
 		message_input_ref: HTMLTextAreaElement,
+		// run: (m: ChatCompletionUserMessageParam) => void,
 		loading = false;
 
-
-
-	import {
-		Button,
-		InlineLoading,
-		TextArea,
-		Modal,
-		Row,
-		Column
-	} from 'carbon-components-svelte';
+	import { Button, InlineLoading, TextArea, Modal, Row, Column } from 'carbon-components-svelte';
 	import { onMount } from 'svelte';
 	import Message from './Message.svelte';
 	import Input from './Input.svelte';
 	import { createEventDispatcher } from 'svelte';
 	import More from './More.svelte';
 	import { send_on_enter } from './store';
-	import type { ChatCompletionCreateParamsNonStreaming, ChatCompletionMessageParam } from 'openai/resources';
+	import type { ChatCompletionCreateParamsNonStreaming, ChatCompletionMessageParam, ChatCompletionUserMessageParam } from 'openai/resources';
 
-	const dispatch =
-		createEventDispatcher();
+	const dispatch = createEventDispatcher();
 
 	$: can_send = !loading;
 
 	onMount(() => {
-		height = `${
-			(window.innerHeight * 79) / 100
-		}px`;
-		message_input_ref.classList.add(
-			'no-scrollbar'
-		);
+		height = `${(window.innerHeight * 79) / 100}px`;
+		message_input_ref.classList.add('no-scrollbar');
 	});
 
 	let height = '670px',
 		// id = v4(),
 		description_error = false;
 
-	const send = async ({detail}) => {
-		if (
-			!send_without_description &&
-			!description
-		) {
+	const send = async ({ detail }: { detail: ChatCompletionUserMessageParam }) => {
+		if (!send_without_description && !description) {
 			description_error = true;
-			dispatch(
-				'send_attempt_without_description'
-			);
+			dispatch('send_attempt_without_description');
 			return;
-		} else if (
-			!send_without_content &&
-			!text
-		) {
+		} else if (!send_without_content && !text) {
 			content_error = true;
 			return;
 		}
 		dispatch('send', detail);
+		// run(m)
 	};
 </script>
 
-
-
-<Modal
-	modalHeading="Download then restart?"
-	passiveModal
-	bind:open={restart_modal}
->
-	<p>
-		Download chat first before
-		restarting?
-	</p>
+<Modal modalHeading="Download then restart?" passiveModal bind:open={restart_modal}>
+	<p>Download chat first before restarting?</p>
 	<!-- <ButtonSet stacked> -->
 	<Button
 		on:click={() => {
 			more_open = false;
-			dispatch(
-				'download_then_restart'
-			);
+			dispatch('download_then_restart');
 			restart_modal = false;
 		}}>Download then restart</Button
 	>
@@ -127,8 +91,7 @@
 			more_open = false;
 			dispatch('restart');
 			restart_modal = false;
-		}}
-		>Restart without downloading</Button
+		}}>Restart without downloading</Button
 	>
 	<!-- </ButtonSet> -->
 </Modal>
@@ -150,19 +113,23 @@
 
 <Row>
 	<Column>
-		<div
-			style={`height: calc(100vh - 7rem)`}
-			class="all"
-		>
-			<div
-				bind:this={chat_container}
-				class="messages"
-			>
+		<div style={`height: calc(100vh - 7rem)`} class="all">
+			<div bind:this={chat_container} class="messages">
 				{#each messages as message}
 					<Message {message} />
 				{/each}
 			</div>
-			<Input on:send={send} bind:can_send bind:loading bind:content_error bind:content_error_text bind:more_open bind:text bind:message_input_ref  />
+			<Input
+				on:send={send}
+				bind:success
+				bind:can_send
+				bind:loading
+				bind:content_error
+				bind:content_error_text
+				bind:more_open
+				bind:text
+				bind:message_input_ref
+			/>
 		</div>
 	</Column>
 </Row>
