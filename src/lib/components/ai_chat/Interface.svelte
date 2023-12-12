@@ -62,8 +62,6 @@
 	import { send_on_enter } from './store';
 	import type { ChatCompletionCreateParamsNonStreaming, ChatCompletionMessageParam } from 'openai/resources';
 
-
-
 	const dispatch =
 		createEventDispatcher();
 
@@ -83,7 +81,6 @@
 		description_error = false;
 
 	const send = async ({detail}) => {
-		console.log('imessages', messages)
 		if (
 			!send_without_description &&
 			!description

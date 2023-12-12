@@ -42,8 +42,6 @@
 	};
 
 	const send = async (message: ChatCompletionMessageParam) => {
-		console.debug('1-message', message)
-		console.debug('1-messages', messages)
 		loading = true;
 		try {
 			const openai = get_openai($OPENAI_API_KEY);
@@ -57,15 +55,9 @@
 				message
 			];
 
-			console.debug('b', messages, request.messages)
-
-
 			const r = await openai.chat.completions.create(request);
 
-			console.debug('1', messages)
 			const first_choice = r.choices[0];
-			console.debug('f', first_choice)
-			console.debug('2', messages)
 			if (!first_choice) {
 				notify({
 					kind: 'error',
@@ -120,7 +112,6 @@
 					break
 				case 'function_call':
 			}
-			console.debug('3', messages)
 
 		} catch (e) {
 			console.error(e);

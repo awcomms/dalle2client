@@ -21,8 +21,6 @@
 	let target: HTMLElement,
 		menu_open = false;
 
-	console.log(message);
-
 	const copy = () => {
 		if (message.content)
 			navigator.clipboard
@@ -52,7 +50,7 @@
 	/>
 </ContextMenu> -->
 
-{#if show && message.content}
+{#if show && message.content != null}
 	<!-- svelte-ignore a11y-no-static-element-interactions -->
 	<div class="a">
 		<div

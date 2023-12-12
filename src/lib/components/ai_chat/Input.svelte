@@ -1,103 +1,54 @@
 <script lang="ts">
-	import {
-		TextArea,
-		Button,
-		InlineLoading
-	} from 'carbon-components-svelte';
+	import { TextArea, Button, InlineLoading } from 'carbon-components-svelte';
 	import Send from 'carbon-icons-svelte/lib/Send.svelte';
 	import Menu from 'carbon-icons-svelte/lib/Menu.svelte';
 	import Upload from 'carbon-icons-svelte/lib/Upload.svelte';
 	import { createEventDispatcher } from 'svelte';
 	import { send_on_enter } from './store';
 	import FileUpload from '../FileUpload.svelte';
-	import type {
-		ChatCompletionContentPart,
-		ChatCompletionMessageParam
-	} from 'openai/resources';
+	import type { ChatCompletionContentPart, ChatCompletionMessageParam } from 'openai/resources';
 	import { notify } from '$lib/util/notify';
 
-	export let more_open: boolean,
-		can_send: boolean,
-		loading: boolean,
-		content_error: boolean,
-		content_error_text: string,
-		message_input_ref: HTMLTextAreaElement,
-		text: string;
+	export let more_open: boolean, can_send: boolean, loading: boolean, content_error: boolean, content_error_text: string, message_input_ref: HTMLTextAreaElement, text: string;
 
-	let message: ChatCompletionMessageParam =
-			{
-				role: 'user',
-				content: [
-					{ type: 'text', text }
-				]
-			},
+	let images: ChatCompletionContentPart[] = [],
 		files_loading = false;
 
-	const keydown = (
-		e: KeyboardEvent
-	) => {
+	const keydown = (e: KeyboardEvent) => {
 		switch (e.key) {
 			case 'Enter':
-				if (
-					!$send_on_enter &&
-					!e.ctrlKey
-				)
-					return;
-				if (
-					can_send &&
-					document &&
-					document.activeElement ===
-						message_input_ref
-				)
-					send();
+				if (!$send_on_enter && !e.ctrlKey) return;
+				if (can_send && document && document.activeElement === message_input_ref) send();
 		}
 	};
 
-	const file_to_base64 = (
-		file: File
-	) => {
-		return new Promise(
-			(resolve, reject) => {
-				const reader =
-					new FileReader();
+	const file_to_base64 = (file: File) => {
+		return new Promise((resolve, reject) => {
+			const reader = new FileReader();
 
-				reader.onloadend = () => {
-					resolve(reader.result);
-				};
+			reader.onloadend = () => {
+				resolve(reader.result);
+			};
 
-				reader.onerror = reject;
+			reader.onerror = reject;
 
-				reader.readAsDataURL(file);
-			}
-		);
+			reader.readAsDataURL(file);
+		});
 	};
 
 	const send = () => {
-		message.content[0].text = text;
-		dispatch('send', message);
+		dispatch('send', { role: 'user', content: [{ type: 'text', text }, ...images] });
 	};
 
-	const dispatch =
-		createEventDispatcher();
+	const dispatch = createEventDispatcher();
 
-	const update_images = async ({
-		detail: images
-	}: {
-		detail: File[];
-	}) => {
+	const update_images = async ({ detail }: { detail: File[] }) => {
 		files_loading = true;
-		for (	
-			let i = 0;
-			i < images.length;
-			i++
-		) {
+		for (let i = 0; i < detail.length; i++) {
 			try {
-				const base64 =
-					await file_to_base64(
-						images[i]
-					);
-				message.content = [
-					...(message.content as ChatCompletionContentPart[]),
+				const base64 = await file_to_base64(detail[i]);
+				images = [
+					...images,
 					{
 						type: 'image_url',
 						image_url: {
@@ -109,8 +60,7 @@
 			} catch (err) {
 				notify({
 					kind: 'error',
-					title:
-						'Error occurred while trying to read uploaded file'
+					title: 'Error occurred while trying to read uploaded file'
 				});
 			}
 		}
@@ -118,9 +68,7 @@
 	};
 </script>
 
-<svelte:window
-	on:keydown={keydown}
-/>
+<svelte:window on:keydown={keydown} />
 
 <div class="input">
 	<TextArea
@@ -128,47 +76,25 @@
 		rows={2}
 		disabled={loading}
 		on:keydown={(e) => {
-			if (
-				e.key === 'Enter' &&
-				$send_on_enter
-			)
-				e.preventDefault();
+			if (e.key === 'Enter' && $send_on_enter) e.preventDefault();
 		}}
 		invalid={content_error}
 		invalidText={content_error_text}
-		on:input={() =>
-			(content_error = false)}
+		on:input={() => (content_error = false)}
 		bind:ref={message_input_ref}
 		bind:value={text}
 	/>
-	<Button
-		disabled={!can_send}
-		size="field"
-		on:click={send}
-		iconDescription={'Send'}
-		icon={loading
-			? InlineLoading
-			: Send}
-	/>
+	<Button disabled={!can_send} size="field" on:click={send} iconDescription={'Send'} icon={loading ? InlineLoading : Send} />
 	<FileUpload
-		label="{String((message
-			?.content?.length || 1) - 1)}"
+		label={String(images.length)}
 		on:change={update_images}
 		button={{
-			iconDescription: "Upload images",
-			icon: files_loading
-				? InlineLoading
-				: Upload
+			iconDescription: 'Upload images',
+			icon: files_loading ? InlineLoading : Upload
 		}}
 		multiple
 	/>
-	<Button
-		size="field"
-		on:click={() =>
-			(more_open = true)}
-		iconDescription="More"
-		icon={Menu}
-	/>
+	<Button size="field" on:click={() => (more_open = true)} iconDescription="More" icon={Menu} />
 </div>
 
 <style lang="sass">
