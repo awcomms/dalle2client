@@ -90,22 +90,22 @@
 		files_loading = false;
 	};
 
-	$: if (success) images = []
+	$: if (success) images = [];
 </script>
 
 <svelte:window on:keydown={keydown} />
 
 <div class="input">
-	<div class="images">
-		{#if images.length}
+	{#if images.length}
+		<div class="images">
 			{#each images as image}
 				<div class="image">
 					<img class="img" src={image.image_url.url} alt="to be sent as part of the message" />
 					<Button on:click={() => remove_image(image.id)} icon={Close} iconDescription="Delete this image" />
 				</div>
 			{/each}
-		{/if}
-	</div>
+		</div>
+	{/if}
 	<div class="text-and-buttons">
 		<TextArea
 			style="min-width: unset"
