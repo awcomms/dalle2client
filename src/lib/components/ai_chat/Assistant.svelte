@@ -19,17 +19,19 @@
 	import { get_openai } from '$lib/openai';
 	import { OPENAI_API_KEY } from '$lib/store';
 	import { create_one } from '$lib/util/image/create_one';
+	import type { Message } from './types';
 
 	let loading = false,
 		// id = v4(),
 		_content = '',
 		more_open = false,
+		next_message_id = 0,
 		success = false,
 		chat_container: HTMLElement,
 		name = 'Assistant',
 		user = 'You',
 		message_input_ref: HTMLTextAreaElement,
-		messages: ChatCompletionMessageParam[] = [],
+		messages: Message[] = [],
 		parameters: ChatCompletionCreateParamsNonStreaming;
 
 	const tools = {
@@ -57,7 +59,10 @@
 					role: 'system',
 					content: description
 				},
-				...messages,
+				...messages.map(m => {
+					delete m.id
+					return m
+				}),
 				message
 			];
 
@@ -78,22 +83,27 @@
 				});
 				return;
 			}
+
 			switch (first_choice.finish_details.type) {
 				case 'stop':
 					messages = [
 						...messages,
 						{
-							...message
-						} as ChatCompletionUserMessageParam,
+							...message,
+							id: next_message_id
+						} as Message,
 						{
 							...first_choice.message,
-							name
-						} as ChatCompletionAssistantMessageParam
+							name,
+							id: next_message_id + 1
+						} as Message
 					];
+					next_message_id += 2;
 					chat_container.scrollTop = chat_container.scrollHeight;
 					_content = '';
 					message_input_ref.focus();
 					success = true;
+					console.debug('not mid', messages.map(m => m.id))
 					break;
 				case 'length':
 					notify({
@@ -116,11 +126,13 @@
 								messages = [
 									...messages,
 									{
+										id: next_message_id,
 										role: 'tool',
 										content: data[0].b64_json ?? '',
 										tool_call_id: t.id
 									}
 								];
+								next_message_id++
 							}
 						} catch {
 							notify({ kind: 'error', title: 'Encountered an error trying to run the function', subtitle: 'Please retry' });
@@ -165,7 +177,7 @@
 	on:download={download}
 	on:restart={restart}
 	on:download_then_restart={download_then_restart}
-	on:send={({detail}) => send(detail)}
+	on:send={({ detail }) => send(detail)}
 	on:send_attempt_without_description={() => (more_open = true)}
 	send_without_description={true}
 />

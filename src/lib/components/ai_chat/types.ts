@@ -1,5 +1,6 @@
 import type { Id } from '$lib/types';
 import type { ChatCompletionRequestMessage, CreateChatCompletionRequest, CreateCompletionRequest } from 'openai';
+import type { ChatCompletionMessageParam } from 'openai/resources';
 
 export interface Parameters {
 	model: string;
@@ -32,7 +33,4 @@ export interface Description {
 	text: string;
 }
 
-export interface Message {
-	id: Id;
-	message: ChatCompletionRequestMessage;
-}
+export type Message = ChatCompletionMessageParam & { id: number };

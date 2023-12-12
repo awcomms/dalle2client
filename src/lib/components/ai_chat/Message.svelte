@@ -1,15 +1,13 @@
 <script lang="ts">
 	import { notify } from '$lib/util/notify';
 	import { parse } from 'marked';
-	import {
-		Button,
-		ContextMenu,
-		ContextMenuOption,
-		CopyButton
-	} from 'carbon-components-svelte';
+	import { Button, ContextMenu, ContextMenuOption, CopyButton } from 'carbon-components-svelte';
 	import Copy from 'carbon-icons-svelte/lib/Copy.svelte';
 	import type { ChatCompletionMessageParam } from 'openai/resources';
-	export let message: ChatCompletionMessageParam,
+	import { TrashCan } from 'carbon-icons-svelte';
+	import { createEventDispatcher } from 'svelte';
+	import type { Message } from './types';
+	export let message: Message,
 		// hide_system_messages = false,
 		show = message.role !== 'system';
 	// ? true
@@ -21,21 +19,16 @@
 	let target: HTMLElement,
 		menu_open = false;
 
+	const dispatch = createEventDispatcher();
+
 	const copy = () => {
 		if (message.content)
-			navigator.clipboard
-				.writeText(
-					message.role === 'user'
-						? message.content[0].text
-						: message.content
-				)
-				.then(() => {
-					notify({
-						title:
-							'Copied to clipboard',
-						timeout: 1300
-					});
+			navigator.clipboard.writeText(message.role === 'user' ? message.content[0].text : message.content).then(() => {
+				notify({
+					title: 'Copied to clipboard',
+					timeout: 1300
 				});
+			});
 	};
 </script>
 
@@ -55,15 +48,11 @@
 	<div class="a">
 		<div
 			bind:this={target}
-			on:click={() =>
-				(menu_open = true)}
-			on:keydown={() =>
-				(menu_open = true)}
+			on:click={() => (menu_open = true)}
+			on:keydown={() => (menu_open = true)}
 			class="message"
-			class:user={message.role ===
-				'user'}
-			class:assistant={message.role ===
-				'assistant'}
+			class:user={message.role === 'user'}
+			class:assistant={message.role === 'assistant'}
 		>
 			<p class="content">
 				{#if message.role === 'user'}
@@ -73,13 +62,8 @@
 				{/if}
 			</p>
 		</div>
-		<Button
-			iconDescription="Copy"
-			icon={Copy}
-			on:click={copy}
-			size="small"
-			kind="ghost"
-		/>
+		<Button iconDescription="Copy" icon={Copy} on:click={copy} size="small" kind="ghost" />
+		<Button iconDescription="Copy" icon={TrashCan} on:click={() => dispatch('delete_message', message.id)} size="small" kind="ghost" />
 	</div>
 {/if}
 

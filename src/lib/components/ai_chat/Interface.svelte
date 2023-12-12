@@ -1,5 +1,5 @@
 <script lang="ts">
-	export let messages: ChatCompletionMessageParam[] = [],
+	export let messages: Message[] = [],
 		text = '',
 		name = 'Partner',
 		name_label = 'Name',
@@ -62,6 +62,10 @@
 		// id = v4(),
 		description_error = false;
 
+	const delete_message = (id: number) => {
+		messages = [...messages.filter((m) => m.id !== id)];
+	};
+
 	const send = async ({ detail }: { detail: ChatCompletionUserMessageParam }) => {
 		if (!send_without_description && !description) {
 			description_error = true;
@@ -116,7 +120,7 @@
 		<div style={`height: calc(100vh - 7rem)`} class="all">
 			<div bind:this={chat_container} class="messages">
 				{#each messages as message}
-					<Message {message} />
+					<Message on:delete_message={({ detail }) => delete_message(detail)} {message} />
 				{/each}
 			</div>
 			<Input
