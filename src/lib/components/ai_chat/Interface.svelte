@@ -83,6 +83,7 @@
 		description_error = false;
 
 	const send = async ({detail}) => {
+		console.log('imessages', messages)
 		if (
 			!send_without_description &&
 			!description
