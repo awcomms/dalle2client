@@ -6,6 +6,16 @@
 		name_label = 'Name',
 		parameters: ChatCompletionCreateParamsNonStreaming =
 			{
+				// tools: [{
+				// 	type: 'function',
+				// 	function: {
+				// 		name: "create_image",
+				// 		description: "Create an image with DALL·E 3",
+				// 		parameters: {
+				// 			type: 'string',
+				// 		}
+				// 	}
+				// }],
 				model: 'gpt-4-vision-preview',
 				temperature: 1,
 				top_p: 1,

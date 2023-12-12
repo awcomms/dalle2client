@@ -4,11 +4,7 @@
 		disable_description_edit = false,
 		description = '';
 
-	import type {
-		ChatCompletion,
-		ChatCompletionCreateParamsNonStreaming,
-		ChatCompletionMessageParam
-	} from 'openai/resources';
+	import type { ChatCompletion, ChatCompletionAssistantMessageParam, ChatCompletionCreateParamsNonStreaming, ChatCompletionMessageParam, ChatCompletionUserMessageParam } from 'openai/resources';
 	import axios from 'axios';
 	// import { v4 } from 'uuid';
 	import Interface from './Interface.svelte';
@@ -17,6 +13,7 @@
 	import Restart from 'carbon-icons-svelte/lib/Restart.svelte';
 	import { get_openai } from '$lib/openai';
 	import { OPENAI_API_KEY } from '$lib/store';
+	import { create } from '$lib/util/image/create';
 
 	let loading = false,
 		// id = v4(),
@@ -26,33 +23,30 @@
 		name = 'Assistant',
 		user = 'You',
 		message_input_ref: HTMLTextAreaElement,
-		messages: ChatCompletionMessageParam[] =
-			[],
+		messages: ChatCompletionMessageParam[] = [],
 		parameters: ChatCompletionCreateParamsNonStreaming;
 
-	const download = () =>
-		download_blob(
-			new Blob([
-				JSON.stringify(messages)
-			]),
-			`Chat between user ${user} and GPT3.5 AI Assistant ${name}`
-		);
+	const tools = {
+		'create_image': create
+	}
+
+	const download = () => download_blob(new Blob([JSON.stringify(messages)]), `Chat between user ${user} and GPT3.5 AI Assistant ${name}`);
 
 	const restart = () => {
 		messages = [];
 	};
 
-	const download_then_restart =
-		() => {
-			restart();
-			download();
-		};
+	const download_then_restart = () => {
+		restart();
+		download();
+	};
 
-	const send = async (
-		message: ChatCompletionMessageParam
-	) => {
+	const send = async (message: ChatCompletionMessageParam) => {
+		console.debug('1-message', message)
+		console.debug('1-messages', messages)
 		loading = true;
 		try {
+			const openai = get_openai($OPENAI_API_KEY);
 			let request = parameters;
 			request.messages = [
 				{
@@ -63,17 +57,15 @@
 				message
 			];
 
-			const openai = get_openai(
-				$OPENAI_API_KEY
-			);
+			console.debug('b', messages, request.messages)
 
-			const r =
-				await openai.chat.completions.create(
-					request
-				);
 
-			const first_choice =
-				r.choices[0];
+			const r = await openai.chat.completions.create(request);
+
+			console.debug('1', messages)
+			const first_choice = r.choices[0];
+			console.debug('f', first_choice)
+			console.debug('2', messages)
 			if (!first_choice) {
 				notify({
 					kind: 'error',
@@ -88,36 +80,48 @@
 				});
 				return;
 			}
-			if (
-				first_choice.finish_reason ===
-				'length'
-			) {
-				notify({
-					kind: 'warning',
-					title:
-						'Conversation limit reached',
-					button: {
-						text: 'Restart conversation',
-						icon: Restart,
-						act: restart
-					}
-				});
+			switch (first_choice.finish_details.type) {
+				case 'stop':
+					messages = [
+						...messages,
+						{
+							...message
+						} as ChatCompletionUserMessageParam,
+						{
+							...first_choice.message,
+							name
+						} as ChatCompletionAssistantMessageParam
+					];
+					chat_container.scrollTop = chat_container.scrollHeight;
+					_content = '';
+					message_input_ref.focus();
+					break
+				case 'length':
+					notify({
+						kind: 'warning',
+						title: 'Conversation limit reached',
+						button: {
+							text: 'Restart conversation',
+							icon: Restart,
+							act: restart
+						}
+					});
+					break
+				case 'tool_calls':
+					first_choice.message.tool_calls?.forEach((t) => {
+
+					})
+					break
+				case 'content_filter':
+					notify({
+						kind: 'warning',
+						title: "Content was omitted due to a flag from OpenAI's content filters"
+					})
+					break
+				case 'function_call':
 			}
-			messages = [
-				...messages,
-				{
-					...message,
-					name: user
-				},
-				{
-					...first_choice.message,
-					name
-				}
-			];
-			chat_container.scrollTop =
-				chat_container.scrollHeight;
-			_content = '';
-			message_input_ref.focus();
+			console.debug('3', messages)
+
 		} catch (e) {
 			console.error(e);
 			notify({
@@ -147,9 +151,7 @@
 	on:download={download}
 	on:restart={restart}
 	on:download_then_restart={download_then_restart}
-	on:send={({ detail }) =>
-		send(detail)}
-	on:send_attempt_without_description={() =>
-		(more_open = true)}
+	on:send={({ detail }) => send(detail)}
+	on:send_attempt_without_description={() => (more_open = true)}
 	send_without_description={true}
 />

@@ -1,5 +1,6 @@
 <script lang="ts">
 	import { notify } from '$lib/util/notify';
+	import { parse } from 'marked';
 	import {
 		Button,
 		ContextMenu,
@@ -20,12 +21,16 @@
 	let target: HTMLElement,
 		menu_open = false;
 
-		console.log(message)
+	console.log(message);
 
 	const copy = () => {
 		if (message.content)
 			navigator.clipboard
-				.writeText(message.role === 'user' ? message.content[0].text : message.content)
+				.writeText(
+					message.role === 'user'
+						? message.content[0].text
+						: message.content
+				)
 				.then(() => {
 					notify({
 						title:
@@ -64,9 +69,9 @@
 		>
 			<p class="content">
 				{#if message.role === 'user'}
-				{message.content[0].text}
+					{message.content[0].text}
 				{:else}
-				{message.content}
+					{@html parse(message.content)}
 				{/if}
 			</p>
 		</div>

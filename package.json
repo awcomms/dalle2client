@@ -56,7 +56,7 @@
 		"ipfs-http-client": "^60.0.1",
 		"isomorphic-ws": "^5.0.0",
 		"jszip": "^3.10.1",
-		"marked": "^11.0.0",
+		"marked": "^11.1.0",
 		"openai": "^4.20.1",
 		"sass": "^1.69.5",
 		"scale-image": "^0.1.3",

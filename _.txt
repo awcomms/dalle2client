@@ -9,3 +9,7 @@ option to clear notify if click outside or keydown or both
 refocus message input after send
 remove scrollbar from message input
 if openai/chat 504 server error, notify of timeout and perhaps shorter message or clearing Conversation
+
+ai_chat image_gen
+    add function
+    
