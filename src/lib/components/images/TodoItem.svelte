@@ -6,11 +6,12 @@
 		TextInput
 	} from 'carbon-components-svelte';
 	import { createEventDispatcher } from 'svelte';
-	export let item: import('$lib/types').TodoItem,
+	// import { TodoItem } from '$lib/types';
+	export let item: object,
 		text = '';
 
 	const dispatch =
-		createEventDispatcher();
+		createEventDispatcher<{change: string, done: null, 'done_changed': string}>();
 
 	const copy = async (s: string) => {
 		// let all = await navigator.clipboard.read()
@@ -30,9 +31,6 @@
 	<div class="line">
 		<div class="checkbox">
 			<Checkbox
-				disabled={Boolean(
-					item.suggestions
-				)}
 				indeterminate={/*!item.recommended*/ false}
 				bind:checked={item.done}
 			/>
@@ -46,7 +44,7 @@
 						item.open = !item.open;
 					} else {
 						item.done = !item.done;
-						dispatch('done_changed');
+						dispatch('done_changed', text);
 					}
 				}}>{text}</Button
 			></ButtonSet
@@ -73,6 +71,7 @@
 				</svelte:self>
 				{#each Object.keys(item.suggestions) as text}
 					<svelte:self
+					on:done_changed
 						{text}
 						item={item.suggestions[
 							text

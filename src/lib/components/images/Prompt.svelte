@@ -1,5 +1,8 @@
 <script lang="ts">
 	export let value = '';
+	export let words: string = '';
+
+	import {copy_element_text} from '$lib/util/copy_element_text'
 
 	let guide_open = false;
 
@@ -25,11 +28,17 @@
 		>Guide book</Link
 	>
 	<div class="todo">
-		<Todo />
+		<Todo bind:words />
 	</div>
 {/if}
 
+<p>{words}</p>
+
 <TextArea labelText="Prompt" bind:value />
+
+{#if value || words}
+	<p use:copy_element_text>{value}. {words}</p>
+{/if}
 
 <style lang="sass">
     .todo

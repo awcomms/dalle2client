@@ -13,6 +13,13 @@ export interface User {
 	username: string
 }
 
+// export class EscapedEmail {
+// 	value: string;
+// 	constructor(email: string) {
+// 		this.value = escape(email);
+// 	}
+// }
+
 export interface PromptResponse {
 	prompt: Entry,
 	response: Entry

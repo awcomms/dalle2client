@@ -2,6 +2,12 @@
 	import TodoItem from './TodoItem.svelte';
 	import type { TodoItem as _TodoItem } from '$lib/types';
 
+	export let words: string
+
+	let wordlist: string[] = []
+
+	$: words = wordlist.join(', ')
+
 	let todo: _TodoItem = {
 			open: true,
 			done: false,
@@ -443,5 +449,9 @@
 </script>
 
 <div class="all" bind:this={all}>
-	<TodoItem text="all suggestions" bind:item={todo} />
+	<TodoItem on:done_changed={({detail}) => { console.debug(detail); if (wordlist.includes(detail)) {
+		wordlist = wordlist.filter(w => w !== detail)
+	} else {
+		wordlist = [...wordlist, detail]
+	}}} text="all suggestions" bind:item={todo} />
 </div>

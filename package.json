@@ -39,8 +39,6 @@
 	},
 	"type": "module",
 	"dependencies": {
-		"@auth/core": "^0.18.5",
-		"@auth/sveltekit": "^0.3.16",
 		"@carbon/colors": "^11.20.0",
 		"@carbon/layout": "^11.20.0",
 		"@carbon/themes": "^11.28.0",
@@ -52,6 +50,7 @@
 		"axios": "^1.6.2",
 		"carbon-icons-svelte": "^12.4.0",
 		"gpt-3-encoder": "^1.1.4",
+		"groq-sdk": "^0.3.2",
 		"images": "^3.2.4",
 		"ipfs-http-client": "^60.0.1",
 		"isomorphic-ws": "^5.0.0",
