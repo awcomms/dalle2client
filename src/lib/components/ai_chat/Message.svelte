@@ -56,7 +56,8 @@
 		>
 			<p class="content">
 				{#if message.role === 'user'}
-					{message.content[0].text}
+					{message.content}
+					<!-- {message.content[0].text} -->
 				{:else}
 					{@html parse(message.content)}
 				{/if}

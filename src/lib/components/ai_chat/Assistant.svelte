@@ -16,7 +16,6 @@
 	import { download_blob } from '$lib/util';
 	import { notify } from '$lib/util/notify';
 	import Restart from 'carbon-icons-svelte/lib/Restart.svelte';
-	import { get_openai } from '$lib/openai';
 	import { OPENAI_API_KEY } from '$lib/store';
 	import { create_one } from '$lib/util/image/create_one';
 	import type { Message } from './types';
@@ -51,22 +50,29 @@
 
 	const send = async (message: ChatCompletionUserMessageParam) => {
 		loading = true;
+		if (message.content[0].type === 'text') {
+			message.content = message.content[0].text;
+		}
 		try {
-			const openai = get_openai($OPENAI_API_KEY);
 			let request = parameters;
 			request.messages = [
 				{
 					role: 'system',
 					content: description
 				},
-				...messages.map(m => {
-					delete m.id
-					return m
+				...messages.map((m) => {
+					delete m.id;
+					// if (m.content[0].type === 'text') {
+					// 	m.content = m.content[0].text;
+					// }
+					return m;
 				}),
 				message
 			];
 
-			const r = await openai.chat.completions.create(request);
+			const {data: r} = await axios.post('/groq', request);
+
+			console.debug('-r', r)
 
 			const first_choice = r.choices[0];
 			if (!first_choice) {
@@ -84,7 +90,7 @@
 				return;
 			}
 
-			switch (first_choice.finish_details.type) {
+			switch (first_choice.finish_reason) {
 				case 'stop':
 					messages = [
 						...messages,
@@ -103,7 +109,10 @@
 					_content = '';
 					message_input_ref.focus();
 					success = true;
-					console.debug('not mid', messages.map(m => m.id))
+					console.debug(
+						'not mid',
+						messages.map((m) => m.id)
+					);
 					break;
 				case 'length':
 					notify({
@@ -132,7 +141,7 @@
 										tool_call_id: t.id
 									}
 								];
-								next_message_id++
+								next_message_id++;
 							}
 						} catch {
 							notify({ kind: 'error', title: 'Encountered an error trying to run the function', subtitle: 'Please retry' });

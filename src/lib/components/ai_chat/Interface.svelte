@@ -14,13 +14,8 @@
 			// 		}
 			// 	}
 			// }],
-			model: 'gpt-4-vision-preview',
-			temperature: 1,
-			top_p: 1,
-			max_tokens: 4095,
+			model: 'mixtral-8x7b-32768',
 			messages: [],
-			presence_penalty: 0,
-			frequency_penalty: 0
 		},
 		success: boolean,
 		chat_container: HTMLElement | null = null,

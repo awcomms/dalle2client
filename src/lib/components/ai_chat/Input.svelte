@@ -121,7 +121,7 @@
 			bind:value={text}
 		/>
 		<Button disabled={!can_send} size="field" on:click={send} iconDescription={'Send'} icon={loading ? InlineLoading : Send} />
-		<FileUpload
+		<!-- <FileUpload
 			label={String(images.length)}
 			on:change={update_images}
 			button={{
@@ -129,7 +129,7 @@
 				icon: files_loading ? InlineLoading : Upload
 			}}
 			multiple
-		/>
+		/> -->
 		<Button size="field" on:click={() => (more_open = true)} iconDescription="More" icon={Menu} />
 	</div>
 </div>
