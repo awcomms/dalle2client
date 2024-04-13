@@ -1,5 +1,5 @@
 <script lang='ts'>
-    export note: string
+    export let note = ""
     import Assistant from "./ai_chat/Assistant.svelte";
 </script>
 
