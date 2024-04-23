@@ -1,24 +1,15 @@
 <script>
-	import {
-		Content,
-		Grid,
-		Theme
-	} from 'carbon-components-svelte';
+	import { Content, Grid, Theme } from 'carbon-components-svelte';
 	import 'carbon-components-svelte/css/all.css';
 	import { browser } from '$app/environment';
-	import {
-		Header,
-		SideNav
-	} from '$lib/components/Nav';
+	import { Header, SideNav } from '$lib/components/Nav';
 	// import Login from '$lib/components/Login.svelte';
 	import { dev } from '$app/environment';
 	import { inject } from '@vercel/analytics';
 	import Notifications from '$lib/components/Notification/Notifications.svelte';
 
 	inject({
-		mode: dev
-			? 'development'
-			: 'production'
+		mode: dev ? 'development' : 'production'
 	});
 
 	// if (
@@ -35,11 +26,9 @@
 <!-- <Login /> -->
 <Notifications />
 
-<Theme theme="g100" />	
+<Theme theme="g100" />
 <Header />
-<Content
-	style="background: none; padding: 1rem; height: 100%"
->
+<Content style="background: none; padding: 1rem; height: 100%">
 	<SideNav />
 	<Grid>
 		<slot />

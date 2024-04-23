@@ -16,7 +16,7 @@
 	import { onMount } from 'svelte';
 	import { get_openai } from '$lib/openai';
 	import { OPENAI_API_KEY } from '$lib/store';
-	import type { ImageEditParams, ImagesResponse } from 'openai/resources';
+	import type { ImageEditParams, ImagesResponse } from 'openai/resources/images.mjs';
 
 	onMount(() => {
 		let l = canvas.getContext('2d');

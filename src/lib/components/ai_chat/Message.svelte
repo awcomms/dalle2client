@@ -3,7 +3,6 @@
 	import { parse } from 'marked';
 	import { Button, ContextMenu, ContextMenuOption, CopyButton } from 'carbon-components-svelte';
 	import Copy from 'carbon-icons-svelte/lib/Copy.svelte';
-	import type { ChatCompletionMessageParam } from 'openai/resources';
 	import { TrashCan } from 'carbon-icons-svelte';
 	import { createEventDispatcher } from 'svelte';
 	import type { Message } from './types';
@@ -23,7 +22,7 @@
 
 	const copy = () => {
 		if (message.content)
-			navigator.clipboard.writeText(message.role === 'user' ? message.content[0].text : message.content).then(() => {
+			navigator.clipboard.writeText(message.role === 'user' ? message.content : message.content).then(() => {
 				notify({
 					title: 'Copied to clipboard',
 					timeout: 1300

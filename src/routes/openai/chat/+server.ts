@@ -1,7 +1,7 @@
 import { json } from '@sveltejs/kit';
 import { handle_server_error } from '$lib/util/handle_server_error';
 import { openai } from '$lib/util/openai.js';
-import { RequestHandler } from './$types';
+import { type RequestHandler } from './$types';
 
 export const POST: RequestHandler = async ({ request }) => {
 	try {

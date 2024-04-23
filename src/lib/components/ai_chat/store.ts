@@ -13,7 +13,7 @@ export const chats =
 export const send_on_enter =
 	booleanStore(
 		'send_on_enter',
-		false
+		true
 	);
 export const openai_key_modal_open =
 	booleanStore(

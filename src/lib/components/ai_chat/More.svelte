@@ -9,8 +9,8 @@
 		description_error: boolean,
 		description_error_text: string,
 		disable_description_edit: boolean,
-		description: string,
-		parameters: CreateChatCompletionRequest;
+		// description: string,
+		parameters: ChatCompletionCreateParamsNonStreaming;
 
 	import Download from 'carbon-icons-svelte/lib/Download.svelte';
 	import Restart from 'carbon-icons-svelte/lib/Restart.svelte';
@@ -25,8 +25,8 @@
 	} from 'carbon-components-svelte';
 
 	import { createEventDispatcher } from 'svelte';
-	import type { CreateChatCompletionRequest } from 'openai';
 	import { send_on_enter } from './store';
+	import type { ChatCompletionCreateParamsNonStreaming } from 'groq-sdk/resources/chat/completions.mjs';
 	const dispatch =
 		createEventDispatcher();
 </script>
@@ -72,7 +72,7 @@
 				rows={1}
 				on:input={() =>
 					(description_error = false)}
-				bind:value={description}
+				bind:value={parameters.messages[0].content}
 			/>
 		</div>
 		{#if !hide_parameters}

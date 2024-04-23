@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { PUBLIC_PYTHON_API_ENDPOINT } from '$env/static/public';
+	// import { PUBLIC_PYTHON_API_ENDPOINT } from '$env/static/public';
 	import FileUpload from '$lib/components/FileUpload.svelte';
 	import { download_blob } from '$lib/util';
 	// import { transcribe } from '$lib/util/transcribe';
@@ -52,7 +52,8 @@
 		form.append('file', file);
 		await axios
 			.post(
-				PUBLIC_PYTHON_API_ENDPOINT,
+				"dssdsdfadsdfsasf",
+				// PUBLIC_PYTHON_API_ENDPOINT,
 				form,
 				{
 					headers: {

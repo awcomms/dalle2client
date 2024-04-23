@@ -1,29 +1,15 @@
 <script lang="ts">
-	export let messages: Message[] = [],
+	export let messages: _Message[] = [],
 		text = '',
 		name = 'Partner',
 		name_label = 'Name',
-		parameters: ChatCompletionCreateParamsNonStreaming = {
-			// tools: [{
-			// 	type: 'function',
-			// 	function: {
-			// 		name: "create_image",
-			// 		description: "Create an image with DALL·E 3",
-			// 		parameters: {
-			// 			type: 'string',
-			// 		}
-			// 	}
-			// }],
-			model: 'mixtral-8x7b-32768',
-			messages: [],
-		},
+		parameters: ChatCompletionCreateParamsNonStreaming,
 		success: boolean,
 		chat_container: HTMLElement | null = null,
 		restart_modal = false,
 		hide_parameters = false,
 		show_name_edit = false,
 		disable_description_edit = false,
-		description = '',
 		more_open = false,
 		description_label = 'Description',
 		description_error_text = 'You may not send messages without setting description',
@@ -38,11 +24,12 @@
 	import { Button, InlineLoading, TextArea, Modal, Row, Column } from 'carbon-components-svelte';
 	import { onMount } from 'svelte';
 	import Message from './Message.svelte';
+	import { type Message as _Message } from './types';
 	import Input from './Input.svelte';
 	import { createEventDispatcher } from 'svelte';
 	import More from './More.svelte';
 	import { send_on_enter } from './store';
-	import type { ChatCompletionCreateParamsNonStreaming, ChatCompletionMessageParam, ChatCompletionUserMessageParam } from 'openai/resources';
+	import type { ChatCompletionCreateParamsNonStreaming, CompletionCreateParams } from 'groq-sdk/resources/chat/completions.mjs';
 
 	const dispatch = createEventDispatcher();
 
@@ -61,8 +48,8 @@
 		messages = [...messages.filter((m) => m.id !== id)];
 	};
 
-	const send = async ({ detail }: { detail: ChatCompletionUserMessageParam }) => {
-		if (!send_without_description && !description) {
+	const send = async ({ detail }: { detail: CompletionCreateParams.Message }) => {
+		if (!send_without_description && !parameters.messages[0].content) {
 			description_error = true;
 			dispatch('send_attempt_without_description');
 			return;
@@ -106,7 +93,6 @@
 	{description_error}
 	{description_error_text}
 	{disable_description_edit}
-	bind:description
 	bind:parameters
 />
 

@@ -23,8 +23,8 @@
 		<SideNavMenu text="AI Chat">
 			<SideNavLink
 				menuItem
-				text="AI Assistant"
-				href="/chat/assistant"
+				text="AI chat"
+				href="/chat/ai"
 			/>
 			<SideNavLink
 				menuItem

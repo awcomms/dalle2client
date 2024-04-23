@@ -2,10 +2,15 @@
 	import { TextArea, Button, InlineLoading } from 'carbon-components-svelte';
 	import { createEventDispatcher } from 'svelte';
 	import { send_on_enter } from './store';
-	import FileUpload from '../FileUpload.svelte';
-	import type { ChatCompletionContentPartImage, ChatCompletionUserMessageParam } from 'openai/resources';
-	import { notify } from '$lib/util/notify';
-	import { Close, Send, Menu, Upload } from 'carbon-icons-svelte';
+	// import FileUpload from '../FileUpload.svelte';
+	// import { notify } from '$lib/util/notify';
+	import {
+		//  Close,
+		Send,
+		Menu
+		// Upload
+	} from 'carbon-icons-svelte';
+	// import type { ChatCompletionContentPartImage } from 'openai/resources/index.mjs';
 
 	export let // run: (m: ChatCompletionUserMessageParam) => void,
 		success: boolean,
@@ -17,9 +22,9 @@
 		message_input_ref: HTMLTextAreaElement,
 		text: string;
 
-	type Image = ChatCompletionContentPartImage & { id: number };
+	// type Image = ChatCompletionContentPartImage & { id: number };
 
-	let images: Image[] = [],
+	let // images: Image[] = [],
 		next_image_id = 0,
 		files_loading = false;
 
@@ -54,49 +59,50 @@
 		// 	notify({ kind: 'error', title: 'Error', subtitle: e.toString() ?? 'Please retry' });
 		// }
 		success = false;
-		dispatch('send', { role: 'user', content: [{ type: 'text', text }, ...images.map((i) => ({ type: i.type, image_url: i.image_url }))] });
+		dispatch('send', { role: 'user', content: text });
+		// dispatch('send', { role: 'user', content: [{ type: 'text', text }, ...images.map((i) => ({ type: i.type, image_url: i.image_url }))] });
 	};
 
 	const dispatch = createEventDispatcher();
 
-	const remove_image = (id: number) => {
-		images = [...images.filter((i) => i.id !== id)];
-	};
+	// const remove_image = (id: number) => {
+	// 	images = [...images.filter((i) => i.id !== id)];
+	// };
 
-	const update_images = async ({ detail }: { detail: File[] }) => {
-		files_loading = true;
-		for (let i = 0; i < detail.length; i++) {
-			try {
-				const base64 = await file_to_base64(detail[i]);
-				images = [
-					...images,
-					{
-						id: next_image_id,
-						type: 'image_url',
-						image_url: {
-							url: base64 as string,
-							detail: 'high'
-						}
-					}
-				];
-				next_image_id++;
-			} catch (err) {
-				notify({
-					kind: 'error',
-					title: 'Error occurred while trying to read uploaded file'
-				});
-			}
-		}
-		files_loading = false;
-	};
+	// const update_images = async ({ detail }: { detail: File[] }) => {
+	// 	files_loading = true;
+	// 	for (let i = 0; i < detail.length; i++) {
+	// 		try {
+	// 			const base64 = await file_to_base64(detail[i]);
+	// 			images = [
+	// 				...images,
+	// 				{
+	// 					id: next_image_id,
+	// 					type: 'image_url',
+	// 					image_url: {
+	// 						url: base64 as string,
+	// 						detail: 'high'
+	// 					}
+	// 				}
+	// 			];
+	// 			next_image_id++;
+	// 		} catch (err) {
+	// 			notify({
+	// 				kind: 'error',
+	// 				title: 'Error occurred while trying to read uploaded file'
+	// 			});
+	// 		}
+	// 	}
+	// 	files_loading = false;
+	// };
 
-	$: if (success) images = [];
+	// $: if (success) images = [];
 </script>
 
 <svelte:window on:keydown={keydown} />
 
 <div class="input">
-	{#if images.length}
+	<!-- {#if images.length}
 		<div class="images">
 			{#each images as image}
 				<div class="image">
@@ -105,7 +111,7 @@
 				</div>
 			{/each}
 		</div>
-	{/if}
+	{/if} -->
 	<div class="text-and-buttons">
 		<TextArea
 			style="min-width: unset"
@@ -141,18 +147,18 @@
 		display: flex
 		flex-grow: 0
 		flex-direction: row
-	.images
-		display: flex
-		flex-direction: row
-		column-gap: layout.$spacing-06
-		width: 100%
-		overflow: scroll
-	.image
-		display: flex
-		flex-direction: column
-		align-items: center
-	.img
-		height: 123px
+	// .images
+	// 	display: flex
+	// 	flex-direction: row
+	// 	column-gap: layout.$spacing-06
+	// 	width: 100%
+	// 	overflow: scroll
+	// .image
+	// 	display: flex
+	// 	flex-direction: column
+	// 	align-items: center
+	// .img
+	// 	height: 123px
 	.input
 		display: flex
 		flex-direction: column

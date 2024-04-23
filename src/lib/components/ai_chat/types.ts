@@ -1,6 +1,5 @@
 import type { Id } from '$lib/types';
-import type { ChatCompletionRequestMessage, CreateChatCompletionRequest, CreateCompletionRequest } from 'openai';
-import type { ChatCompletionMessageParam } from 'openai/resources';
+import type { ChatCompletionCreateParamsNonStreaming, CompletionCreateParams } from 'groq-sdk/resources/chat/completions.mjs';
 
 export interface Parameters {
 	model: string;
@@ -23,7 +22,7 @@ export interface Parameters {
 export interface Chat {
 	id: Id;
 	messages: Id[];
-	parameters: CreateChatCompletionRequest
+	parameters: ChatCompletionCreateParamsNonStreaming;
 }
 
 export interface Description {
@@ -33,4 +32,4 @@ export interface Description {
 	text: string;
 }
 
-export type Message = ChatCompletionMessageParam & { id: number };
+export type Message = CompletionCreateParams.Message & { id?: number };

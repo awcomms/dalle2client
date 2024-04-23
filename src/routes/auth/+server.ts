@@ -1,4 +1,4 @@
-import { user_index } from '$lib/constants/index.js';
+import { user_index } from '$lib/constants';
 import { handle_server_error } from '$lib/util/handle_server_error.js';
 import { client } from '$lib/util/redis/index.js';
 import { eup } from '$lib/util/user/create/eup.js';

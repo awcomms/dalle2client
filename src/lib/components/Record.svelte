@@ -7,8 +7,8 @@
 	// import TrashCan from 'carbon-icons-svelte/lib/TrashCan.svelte';
 	import MicrophoneFilled from 'carbon-icons-svelte/lib/MicrophoneFilled.svelte';
 	import { Button } from 'carbon-components-svelte';
-	import type { ButtonProps } from 'carbon-components-svelte/types/Button/Button.svelte';
 	import { createEventDispatcher } from 'svelte';
+	import type { ButtonProps } from 'carbon-components-svelte/src/Button/Button.svelte';
 
 	const dispatch =
 		createEventDispatcher();

@@ -8,7 +8,7 @@
 		InlineNotification
 	} from 'carbon-components-svelte';
 	import { Send } from 'carbon-icons-svelte';
-	import { notify } from '$lib/util';
+	import { notify } from '$lib/util/notify';
 	import { invalidateAll } from '$app/navigation';
 	import axios from 'axios';
 	import { goto } from '$app/navigation';

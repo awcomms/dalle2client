@@ -14,6 +14,8 @@
 	import { createEventDispatcher } from 'svelte';
 	import { v4 } from 'uuid';
 
+	export let metadata: any, amount: number;
+
 	const dispatch =
 		createEventDispatcher();
 

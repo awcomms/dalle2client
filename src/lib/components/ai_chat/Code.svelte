@@ -6,9 +6,8 @@
     of that file from the root folder. The 'content' property contains the code for that file`;
 </script>
 
-<Assistant
-	{description}
+<!-- <Assistant
 	hide_parameters={true}
 	disable_description_edit={true}
 	show_name_edit={true}
-/>
+/> -->

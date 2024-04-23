@@ -3,7 +3,7 @@
 	import { post } from '$lib/fetch';
 	import type { Id } from '$lib/types';
 	import { ComboBox } from 'carbon-components-svelte';
-	import type { ComboBoxItem } from 'carbon-components-svelte/types/ComboBox/ComboBox.svelte';
+	import type { ComboBoxItem } from 'carbon-components-svelte/src/ComboBox/ComboBox.svelte';
 
 	export let id: Id,
 		value: string = '',

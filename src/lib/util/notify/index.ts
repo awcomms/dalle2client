@@ -1,7 +1,7 @@
 import { browser } from '$app/environment';
 import { arrayStore } from '$lib/util/store';
-import type { ButtonProps } from 'carbon-components-svelte/types/Button/Button.svelte';
-import type { ToastNotificationProps } from 'carbon-components-svelte/types/Notification/ToastNotification.svelte';
+import type { ButtonProps } from 'carbon-components-svelte/src/Button/Button.svelte';
+import type { ToastNotificationProps } from 'carbon-components-svelte/src/Notification/ToastNotification.svelte';
 
 export type CustomToastNotificationProps =
 	ToastNotificationProps & {

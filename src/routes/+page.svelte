@@ -12,8 +12,8 @@
 <Row>
 	<Column>
 		<div class="links">
-			<Link href="/openai/assistant"
-				>Chat with an AI Assistant</Link
+			<Link href="/chat/ai"
+				>AI chat</Link
 			>
 			<Link href="/chat/character"
 				>Create a custom character to chat with</Link
