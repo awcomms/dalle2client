@@ -13,4 +13,4 @@ export const notify = (message: string | ToastNotificationProps) => {
 	}
 };
 
-export const notifications = arrayStore<ToastNotificationProps>('notifications');
+export const notifications = arrayStore<ToastNotificationProps>('notifications', []);
