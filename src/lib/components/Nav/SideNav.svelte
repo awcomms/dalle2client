@@ -24,7 +24,7 @@
 			<SideNavLink
 				menuItem
 				text="AI chat"
-				href="/chat/ai"
+				href="/ai/chat"
 			/>
 			<SideNavLink
 				menuItem

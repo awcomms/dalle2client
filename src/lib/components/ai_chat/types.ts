@@ -1,6 +1,10 @@
 import type { Id } from '$lib/types';
 import type { ChatCompletionCreateParamsNonStreaming, CompletionCreateParams } from 'groq-sdk/resources/chat/completions.mjs';
 
+export type Params = Omit<ChatCompletionCreateParamsNonStreaming, 'messages'> & {
+	messages: Array<CompletionCreateParams.Message & { id?: number }>;
+};
+
 export interface Parameters {
 	model: string;
 	prompts: string[];

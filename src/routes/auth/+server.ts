@@ -27,14 +27,15 @@ export const POST = async ({ cookies, request, locals }) => {
 			login({ cookies, locals, id });
 			return new Response();
 		} else {
-			const res = await search<{ u: string; p: string }>({
+			const res = await search({
 				index: user_index,
 				query: `@u:"${u}"`,
 				page: 0,
 				options: { LIMIT: { from: 0, size: 1 }, RETURN: ['u', 'p'] }
-			});
+			}) as SearchResponse
 			if (!res.total) return new Response('user not found');
 			const user = res.documents[0];
+			console.debug(user)
 			if (!(await verify(user.value.p, p))) {
 				return new Response('wrong password');
 			}

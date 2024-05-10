@@ -1,8 +1,12 @@
 <script lang="ts">
 	export let hide_parameters = false,
-		messages: Message[] = [],
-		parameters: ChatCompletionCreateParamsNonStreaming,
-		show_name_edit = false,
+		// messages: Message[] = [],
+		id: string | undefined = undefined,
+		parameters: Params = {
+			model: 'llama3-70b-8192',
+			messages: [{ role: 'system', content: '' }]
+		},
+		show_name_edit = true,
 		disable_description_edit = false;
 	import axios from 'axios';
 	// import { v4 } from 'uuid';
@@ -11,8 +15,7 @@
 	import { notify } from '$lib/util/notify';
 	// import Restart from 'carbon-icons-svelte/lib/Restart.svelte';
 	import { create_one } from '$lib/util/image/create_one';
-	import type { Message } from './types';
-	import type { ChatCompletionCreateParamsNonStreaming, CompletionCreateParams } from 'groq-sdk/resources/chat/completions.mjs';
+	import type { Message, Params } from './types';
 
 	let loading = false,
 		// id = v4(),
@@ -29,10 +32,11 @@
 		create_image: create_one
 	};
 
-	const download = () => download_blob(new Blob([JSON.stringify(messages)]), `Chat between user ${user} and GPT3.5 AI Assistant ${name}`);
+	const download = () =>
+		download_blob(new Blob([JSON.stringify(parameters.messages)]), `Chat between user ${user} and GPT3.5 AI Assistant ${name}`);
 
 	const restart = () => {
-		messages = [];
+		parameters.messages = [parameters.messages[0]];
 	};
 
 	const download_then_restart = () => {
@@ -40,13 +44,12 @@
 		download();
 	};
 
-	const send = async (message: CompletionCreateParams.Message) => {
+	const send = async (message: Params['messages'][0]) => {
 		loading = true;
 		try {
 			let request = parameters;
 			request.messages = [
-				...request.messages,
-				...messages.map((m) => {
+				...request.messages.map((m) => {
 					delete m.id;
 					return m;
 				}),
@@ -75,8 +78,8 @@
 
 			switch (first_choice.finish_reason) {
 				case 'stop':
-					messages = [
-						...messages,
+					parameters.messages = [
+						...parameters.messages,
 						{
 							...message,
 							id: next_message_id
@@ -92,10 +95,6 @@
 					_content = '';
 					message_input_ref.focus();
 					success = true;
-					console.debug(
-						'not mid',
-						messages.map((m) => m.id)
-					);
 					break;
 				// 	case 'length':
 				// 		notify({
@@ -154,14 +153,14 @@
 	bind:name
 	bind:text={_content}
 	bind:loading
-	bind:messages
 	bind:message_input_ref
 	bind:parameters
 	bind:chat_container
 	bind:success
 	bind:more_open
-	name_label="Give the Assistant a name"
-	description_label="Tell the Assistant how to behave"
+	name_label="Give the AI a name"
+	description_label="Tell the AI how to behave"
+	{id}
 	{hide_parameters}
 	{show_name_edit}
 	{disable_description_edit}

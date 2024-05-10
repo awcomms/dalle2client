@@ -1,14 +1,14 @@
 <script lang="ts">
-	export let messages: _Message[] = [],
-		text = '',
+	export let text = '',
+		id: string | undefined = undefined,
 		name = 'Partner',
 		name_label = 'Name',
-		parameters: ChatCompletionCreateParamsNonStreaming,
+		parameters: Params,
 		success: boolean,
 		chat_container: HTMLElement | null = null,
 		restart_modal = false,
 		hide_parameters = false,
-		show_name_edit = false,
+		show_name_edit = true,
 		disable_description_edit = false,
 		more_open = false,
 		description_label = 'Description',
@@ -24,7 +24,7 @@
 	import { Button, InlineLoading, TextArea, Modal, Row, Column } from 'carbon-components-svelte';
 	import { onMount } from 'svelte';
 	import Message from './Message.svelte';
-	import { type Message as _Message } from './types';
+	import { type Params, type Message as _Message } from './types';
 	import Input from './Input.svelte';
 	import { createEventDispatcher } from 'svelte';
 	import More from './More.svelte';
@@ -45,7 +45,7 @@
 		description_error = false;
 
 	const delete_message = (id: number) => {
-		messages = [...messages.filter((m) => m.id !== id)];
+		parameters.messages = [...parameters.messages.filter((m) => m.id !== id)];
 	};
 
 	const send = async ({ detail }: { detail: CompletionCreateParams.Message }) => {
@@ -83,6 +83,7 @@
 </Modal>
 
 <More
+	{id}
 	bind:open={more_open}
 	bind:restart_modal
 	{name_label}
@@ -100,7 +101,7 @@
 	<Column>
 		<div style={`height: calc(100vh - 7rem)`} class="all">
 			<div bind:this={chat_container} class="messages">
-				{#each messages as message}
+				{#each parameters.messages as message}
 					<Message on:delete_message={({ detail }) => delete_message(detail)} {message} />
 				{/each}
 			</div>

@@ -12,13 +12,13 @@
 <Row>
 	<Column>
 		<div class="links">
-			<Link href="/chat/ai"
+			<Link href="/ai/chat"
 				>AI chat</Link
 			>
 			<Link href="/chat/character"
 				>Create a custom character to chat with</Link
 			>
-			<!-- <Link href="/chat/ai/character"
+			<!-- <Link href="/ai/chat/character"
 				>Create and chat with an AI
 				chat partner</Link
 			> -->

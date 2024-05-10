@@ -1,5 +1,8 @@
 import { embedding_field_name, items_per_page } from '$lib/constants';
+import type { SearchOptions } from 'redis';
 import { client } from '.';
+import { slim } from '$lib/util/redis/shape/slim';
+// import type { SearchDocument, SearchDocumentValue, SearchResponse } from '$lib/types';
 export interface SearchParams {
 	index: string;
 	page?: number;
@@ -9,7 +12,14 @@ export interface SearchParams {
 	B?: Buffer;
 }
 
-export const search = async ({ index, page = 0, count, options = {}, B, query = '*' }: SearchParams) => {
+export const search = async ({
+	index,
+	page = 0,
+	count,
+	options = {},
+	B,
+	query = '*'
+}: SearchParams) => {
 	options.DIALECT = 3;
 
 	if (count) {
@@ -36,5 +46,9 @@ export const search = async ({ index, page = 0, count, options = {}, B, query = 
 		// };
 	}
 
-	return { ...(await client.ft.search(index, query, options)), page };
+	const res = await client.ft.search(index, query, options);
+	res.documents = res.documents.map((r) => {
+		return { ...r, value: slim(r.value, true) };
+	});
+	return { ...res, page };
 };
