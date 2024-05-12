@@ -2,6 +2,9 @@ import {
 	arrayStore,
 	booleanStore
 } from '$lib/store';
+import { stringStore } from '$lib/util/store';
+
+export const system = stringStore('system', 'You always give short responses')
 
 export const descriptions =
 	arrayStore<string>(

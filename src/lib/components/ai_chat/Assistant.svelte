@@ -4,7 +4,7 @@
 		id: string | undefined = undefined,
 		parameters: Params = {
 			model: 'llama3-70b-8192',
-			messages: [{ role: 'system', content: '' }]
+			messages: [{ role: 'system', content: $system }]
 		},
 		show_name_edit = true,
 		disable_description_edit = false;
@@ -16,6 +16,7 @@
 	// import Restart from 'carbon-icons-svelte/lib/Restart.svelte';
 	import { create_one } from '$lib/util/image/create_one';
 	import type { Message, Params } from './types';
+	import { system } from './store';
 
 	let loading = false,
 		// id = v4(),
@@ -48,13 +49,11 @@
 		loading = true;
 		try {
 			let request = { ...parameters };
-			request.messages = [
-				...request.messages.map((m) => {
-					delete m.id;
-					return m;
-				}),
-				message
-			];
+			request.messages = request.messages.map((m) => {
+				delete m.id;
+				return m;
+			});
+			if (message.content) request.messages = [...request.messages, message];
 
 			const { data: r } = await axios.post('/groq', request);
 
@@ -80,10 +79,13 @@
 				case 'stop':
 					parameters.messages = [
 						...parameters.messages,
-						{
-							...message,
-							id: next_message_id++
-						} as Message,
+						...((!!message.content && [
+							{
+								...message,
+								id: next_message_id++
+							} as Message
+						]) ||
+							[]),
 						{
 							...first_choice.message,
 							name,

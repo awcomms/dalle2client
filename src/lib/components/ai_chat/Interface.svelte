@@ -49,14 +49,14 @@
 	};
 
 	const send = async ({ detail }: { detail: CompletionCreateParams.Message }) => {
-		if (!send_without_description && !parameters.messages[0].content) {
-			description_error = true;
-			dispatch('send_attempt_without_description');
-			return;
-		} else if (!send_without_content && !text) {
-			content_error = true;
-			return;
-		}
+		// if (!send_without_description && !parameters.messages[0].content) {
+		// 	description_error = true;
+		// 	dispatch('send_attempt_without_description');
+		// 	return;
+		// } else if (!send_without_content && !text) {
+		// 	content_error = true;
+		// 	return;
+		// }
 		dispatch('send', detail);
 		// run(m)
 	};
