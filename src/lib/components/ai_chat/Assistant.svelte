@@ -47,7 +47,7 @@
 	const send = async (message: Params['messages'][0]) => {
 		loading = true;
 		try {
-			let request = parameters;
+			let request = { ...parameters };
 			request.messages = [
 				...request.messages.map((m) => {
 					delete m.id;
@@ -82,15 +82,14 @@
 						...parameters.messages,
 						{
 							...message,
-							id: next_message_id
+							id: next_message_id++
 						} as Message,
 						{
 							...first_choice.message,
 							name,
-							id: next_message_id + 1
+							id: next_message_id++
 						} as Message
 					];
-					next_message_id += 2;
 					chat_container.scrollTop = chat_container.scrollHeight;
 					_content = '';
 					message_input_ref.focus();

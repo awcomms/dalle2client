@@ -18,7 +18,19 @@
 
 	import Download from 'carbon-icons-svelte/lib/Download.svelte';
 	import Restart from 'carbon-icons-svelte/lib/Restart.svelte';
-	import { Modal, ButtonSet, Button, TextInput, TextArea, NumberInput, Toggle, InlineLoading, ComboBox } from 'carbon-components-svelte';
+	import {
+		Modal,
+		ButtonSet,
+		Button,
+		TextInput,
+		TextArea,
+		NumberInput,
+		Toggle,
+		InlineLoading,
+		ComboBox,
+		Select,
+		SelectItem
+	} from 'carbon-components-svelte';
 
 	import { createEventDispatcher } from 'svelte';
 	import { send_on_enter } from './store';
@@ -29,7 +41,9 @@
 	import type { ComboBoxItem } from 'carbon-components-svelte/src/ComboBox/ComboBox.svelte';
 	import { page } from '$app/stores';
 
-	let items: ComboBoxItem[]
+	let items: ComboBoxItem[];
+
+	const models = ['llama3-70b-8192', 'llama3-8b-8192', 'mixtral-8x7b-32768', 'gemma-7b-it'];
 
 	const dispatch = createEventDispatcher();
 
@@ -73,6 +87,11 @@
 				{/if}
 			</ButtonSet>
 			<ComboBox {items} />
+			<Select bind:selected={parameters.model}>
+				{#each models as value}
+					<SelectItem {value} text={value} />
+				{/each}
+			</Select>
 			{#if show_name_edit}
 				<TextInput labelText={name_label} disabled={!show_name_edit} bind:value={name} />
 			{/if}
@@ -82,6 +101,7 @@
 				disabled={disable_description_edit}
 				invalidText={description_error_text}
 				rows={1}
+				placeholder="You are an AI that..."
 				on:input={() => (description_error = false)}
 				bind:value={parameters.messages[0].content}
 			/>
