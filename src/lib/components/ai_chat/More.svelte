@@ -92,6 +92,7 @@
 					<SelectItem {value} text={value} />
 				{/each}
 			</Select>
+			<NumberInput bind:value={parameters.seed} label="Seed" />
 			{#if show_name_edit}
 				<TextInput labelText={name_label} disabled={!show_name_edit} bind:value={name} />
 			{/if}
@@ -101,7 +102,7 @@
 				disabled={disable_description_edit}
 				invalidText={description_error_text}
 				rows={1}
-				placeholder="You are an AI that..."
+				placeholder="You are an AI that...	"
 				on:input={() => (description_error = false)}
 				bind:value={parameters.messages[0].content}
 			/>

@@ -29,10 +29,16 @@
 		files_loading = false;
 
 	const keydown = (e: KeyboardEvent) => {
-		switch (e.key) {
-			case 'Enter':
-				if (!$send_on_enter && !e.ctrlKey) return;
-				if (can_send && document && document.activeElement === message_input_ref) send();
+		if (e.key === 'Enter') {
+			if ($send_on_enter) {
+				if (e.shiftKey) return;
+			} else {
+				if (!e.ctrlKey) return;
+			}
+			if (can_send && document) {
+				e.preventDefault();
+				send();
+			}
 		}
 	};
 
@@ -99,7 +105,7 @@
 	// $: if (success) images = [];
 </script>
 
-<svelte:window on:keydown={keydown} />
+<!-- <svelte:window on:keydown={keydown} /> -->
 
 <div class="input">
 	<!-- {#if images.length}
@@ -117,9 +123,7 @@
 			style="min-width: unset"
 			rows={2}
 			disabled={loading}
-			on:keydown={(e) => {
-				if (e.key === 'Enter' && $send_on_enter) e.preventDefault();
-			}}
+			on:keydown={keydown}
 			invalid={content_error}
 			invalidText={content_error_text}
 			on:input={() => (content_error = false)}

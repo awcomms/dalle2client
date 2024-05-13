@@ -4,7 +4,8 @@
 		id: string | undefined = undefined,
 		parameters: Params = {
 			model: 'llama3-70b-8192',
-			messages: [{ role: 'system', content: $system }]
+			messages: [{ role: 'system', content: $system }],
+			seed: $seed
 		},
 		show_name_edit = true,
 		disable_description_edit = false;
@@ -16,7 +17,7 @@
 	// import Restart from 'carbon-icons-svelte/lib/Restart.svelte';
 	import { create_one } from '$lib/util/image/create_one';
 	import type { Message, Params } from './types';
-	import { system } from './store';
+	import { seed, system } from './store';
 
 	let loading = false,
 		// id = v4(),

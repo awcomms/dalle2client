@@ -1,10 +1,8 @@
-import {
-	arrayStore,
-	booleanStore
-} from '$lib/store';
-import { stringStore } from '$lib/util/store';
+import { numberStore, stringStore,arrayStore,
+	booleanStore } from '$lib/util/store';
 
 export const system = stringStore('system', 'You always give short responses')
+export const seed = numberStore('number', 144)
 
 export const descriptions =
 	arrayStore<string>(
