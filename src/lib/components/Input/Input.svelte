@@ -1,34 +1,30 @@
 <script lang="ts">
-    export let autovalidate = true
-    export let ref: HTMLInputElement
-    export let value = ''
-    export let invalid = false
+	import { browser } from '$app/environment';
 
-    import Invalid from './Invalid.svelte'
-    import Valid from './Valid.svelte'
+	export let autovalidate = true;
+	export let ref: HTMLInputElement;
+	export let value = '';
+	export let invalid = false;
 
-    let current = Valid
+	import Invalid from './Invalid.svelte';
+	import Valid from './Valid.svelte';
 
-    $: if (autovalidate) {
-        autovalid(value)
-    }
+	let current = Valid
 
-    $: if (invalid) {
-        current = Invalid
-    } else {
-        current = Valid
-    }
+	$: if (autovalidate) {
+		autovalid(value);
+	}
 
-    const autovalid = (..._trigger: any[]) => {
-        invalid = false
-    }
+	$: if (invalid) {
+		current = Invalid;
+	} else {
+		current = Valid;
+	}
+
+	const autovalid = (..._trigger: any[]) => {
+		invalid = false;
+	};
 </script>
 
-<svelte:component 
-    bind:ref
-    on:input
-    on:keydown
-    this={current}
-    {...$$restProps}
-    bind:value 
-/>
+
+<svelte:component this={current} bind:ref on:input on:keydown {...$$restProps} bind:value />

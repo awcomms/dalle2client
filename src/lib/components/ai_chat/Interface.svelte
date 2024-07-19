@@ -45,7 +45,13 @@
 		description_error = false;
 
 	const delete_message = (id: number) => {
-		parameters.messages = [...parameters.messages.filter((m) => m.id !== id)];
+		console.debug(id);
+		parameters.messages = [
+			...parameters.messages.filter((m) => {
+				console.debug('m.id', m.id);
+				return m.id !== id;
+			})
+		];
 	};
 
 	const send = async ({ detail }: { detail: CompletionCreateParams.Message }) => {

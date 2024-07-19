@@ -5,7 +5,10 @@
 		parameters: Params = {
 			model: 'llama3-70b-8192',
 			messages: [{ role: 'system', content: $system }],
-			seed: $seed
+			// seed: $seed,
+			temperature: 1,
+			frequency_penalty: 0,
+			presence_penalty: 0
 		},
 		show_name_edit = true,
 		disable_description_edit = false;

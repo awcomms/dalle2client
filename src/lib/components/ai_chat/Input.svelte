@@ -7,9 +7,13 @@
 	import {
 		//  Close,
 		Send,
-		Menu
+		Menu,
+		Paste
+
 		// Upload
 	} from 'carbon-icons-svelte';
+	import { browser } from '$app/environment';
+	import { insert_at_cursor } from '$lib/util/insert_at_cursor';
 	// import type { ChatCompletionContentPartImage } from 'openai/resources/index.mjs';
 
 	export let // run: (m: ChatCompletionUserMessageParam) => void,
@@ -20,7 +24,10 @@
 		content_error: boolean,
 		content_error_text: string,
 		message_input_ref: HTMLTextAreaElement,
-		text: string;
+		text: string,
+		paste_selected_btn = false,
+		last_selected = '',
+		selected = '';
 
 	// type Image = ChatCompletionContentPartImage & { id: number };
 
@@ -105,6 +112,16 @@
 	// $: if (success) images = [];
 </script>
 
+<svelte:document
+	on:selectionchange={() => {
+		if (!browser) return;
+		selected = window.getSelection()?.toString() || '';
+		if (selected) {
+			paste_selected_btn = true;
+			last_selected = selected;
+		}
+	}}
+/>
 <!-- <svelte:window on:keydown={keydown} /> -->
 
 <div class="input">
@@ -130,6 +147,17 @@
 			bind:ref={message_input_ref}
 			bind:value={text}
 		/>
+		{#if paste_selected_btn}
+			<Button
+				size="field"
+				on:click={() => {
+					insert_at_cursor(message_input_ref, last_selected);
+					paste_selected_btn = false;
+				}}
+				iconDescription="paste text selection at cursor"
+				icon={Paste}
+			/>
+		{/if}
 		<Button disabled={!can_send} size="field" on:click={send} iconDescription={'Send'} icon={loading ? InlineLoading : Send} />
 		<!-- <FileUpload
 			label={String(images.length)}
