@@ -3,6 +3,7 @@ import { numberStore, stringStore,arrayStore,
 
 export const system = stringStore('system', 'You always give short responses')
 export const seed = numberStore('number', 144)
+export const groq_key = stringStore('groq_key', '')
 
 export const descriptions =
 	arrayStore<string>(

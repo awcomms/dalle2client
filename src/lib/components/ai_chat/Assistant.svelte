@@ -20,7 +20,9 @@
 	// import Restart from 'carbon-icons-svelte/lib/Restart.svelte';
 	import { create_one } from '$lib/util/image/create_one';
 	import type { Message, Params } from './types';
-	import { seed, system } from './store';
+	import { groq_key, seed, system } from './store';
+	import Groq from 'groq-sdk';
+	import type { ChatCompletion } from 'groq-sdk/resources/chat/completions.mjs';
 
 	let loading = false,
 		// id = v4(),
@@ -59,7 +61,9 @@
 			});
 			if (message.content) request.messages = [...request.messages, message];
 
-			const { data: r } = await axios.post('/groq', request);
+			const r = $groq_key
+				? await new Groq({ apiKey: $groq_key }).chat.completions.create(request)
+				: (await axios.post<ChatCompletion>('/groq', request)).data;
 
 			console.debug('-r', r);
 

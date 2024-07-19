@@ -33,7 +33,7 @@
 	} from 'carbon-components-svelte';
 
 	import { createEventDispatcher } from 'svelte';
-	import { send_on_enter } from './store';
+	import { groq_key, send_on_enter } from './store';
 	import type { ChatCompletionCreateParamsNonStreaming } from 'groq-sdk/resources/chat/completions.mjs';
 	import axios from 'axios';
 	import { Save } from 'carbon-icons-svelte';
@@ -93,6 +93,7 @@
 				{/each}
 			</Select>
 			<NumberInput bind:value={parameters.seed} label="Seed" />
+			<TextInput labelText="groq API key"  bind:value={$groq_key} />
 			{#if show_name_edit}
 				<TextInput labelText={name_label} disabled={!show_name_edit} bind:value={name} />
 			{/if}

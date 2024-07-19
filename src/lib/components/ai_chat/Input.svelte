@@ -14,6 +14,7 @@
 	} from 'carbon-icons-svelte';
 	import { browser } from '$app/environment';
 	import { insert_at_cursor } from '$lib/util/insert_at_cursor';
+	import Transcribe from './Transcribe.svelte';
 	// import type { ChatCompletionContentPartImage } from 'openai/resources/index.mjs';
 
 	export let // run: (m: ChatCompletionUserMessageParam) => void,
@@ -159,6 +160,7 @@
 			/>
 		{/if}
 		<Button disabled={!can_send} size="field" on:click={send} iconDescription={'Send'} icon={loading ? InlineLoading : Send} />
+		<Transcribe />
 		<!-- <FileUpload
 			label={String(images.length)}
 			on:change={update_images}
