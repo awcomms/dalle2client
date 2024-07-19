@@ -15,6 +15,7 @@
 	import { browser } from '$app/environment';
 	import { insert_at_cursor } from '$lib/util/insert_at_cursor';
 	import Transcribe from './Transcribe.svelte';
+	import { outside_click } from '$lib/util/actions/outside_click';
 	// import type { ChatCompletionContentPartImage } from 'openai/resources/index.mjs';
 
 	export let // run: (m: ChatCompletionUserMessageParam) => void,
@@ -149,15 +150,23 @@
 			bind:value={text}
 		/>
 		{#if paste_selected_btn}
-			<Button
-				size="field"
-				on:click={() => {
-					insert_at_cursor(message_input_ref, last_selected);
-					paste_selected_btn = false;
+			<div
+				style="display: contents;"
+				use:outside_click
+				on:outside_click={() => {
+					if (!selected) paste_selected_btn = false;
 				}}
-				iconDescription="paste text selection at cursor"
-				icon={Paste}
-			/>
+			>
+				<Button
+					size="field"
+					on:click={() => {
+						insert_at_cursor(message_input_ref, last_selected);
+						paste_selected_btn = false;
+					}}
+					iconDescription="paste text selection at cursor"
+					icon={Paste}
+				/>
+			</div>
 		{/if}
 		<Button disabled={!can_send} size="field" on:click={send} iconDescription={'Send'} icon={loading ? InlineLoading : Send} />
 		<Transcribe />
