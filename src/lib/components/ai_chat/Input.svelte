@@ -169,7 +169,12 @@
 			</div>
 		{/if}
 		<Button disabled={!can_send} size="field" on:click={send} iconDescription={'Send'} icon={loading ? InlineLoading : Send} />
-		<Transcribe />
+		<Transcribe
+			on:text={({detail}) => {
+				console.log('transcribe text', detail);
+				insert_at_cursor(message_input_ref, detail);
+			}}
+		/>
 		<!-- <FileUpload
 			label={String(images.length)}
 			on:change={update_images}

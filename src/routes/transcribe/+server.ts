@@ -1,65 +1,21 @@
-// import { openai } from '$lib/openai';
-// import ffmpeg from 'fluent-ffmpeg';
-// import Waveform from 'node-waveform';
+import { json, text } from '@sveltejs/kit';
+import { handle_server_error } from '$lib/util/handle_server_error';
+import { groq } from '$lib/util/groq';
 
-// const outputPath = 'output.mp3';
-
-// const get_chunks = (blob: Blob) => {
-// 	const chunks = [];
-
-// 	ffmpeg(blob)
-// 		.output(outputPath)
-// 		.noVideo()
-// 		.audioCodec('libmp3lame')
-// 		.on('end', function () {
-// 			console.log(
-// 				'Finished processing'
-// 			);
-// 			const waveform = new Waveform({
-// 				file: outputPath,
-// 				samples: 10000,
-// 				channels: 1,
-// 				bits: 16,
-// 				bitRate: 128000,
-// 				format: 'mp3'
-// 			});
-// 			waveform.getBuffer(function (
-// 				err,
-// 				buffer
-// 			) {
-// 				if (err) {
-// 					console.log(err);
-// 					return;
-// 				}
-// 				const duration =
-// 					waveform.getDuration();
-// 				const chunkSize = 3;
-// 				for (
-// 					let i = 0;
-// 					i < duration;
-// 					i += chunkSize
-// 				) {
-// 					chunks.push(
-// 						buffer.slice(
-// 							(i *
-// 								waveform.sampleRate *
-// 								waveform.channels *
-// 								waveform.bits) /
-// 								8,
-// 							((i + chunkSize) *
-// 								waveform.sampleRate *
-// 								waveform.channels *
-// 								waveform.bits) /
-// 								8
-// 						)
-// 					);
-// 				}
-// 				console.log(chunks);
-// 			});
-// 		})
-// 		.run();
-// };
-
-// const transcribe = () => {
-// 	openai.createTranscription()
-// }
+export const POST = async ({ request }) => {
+	try {
+		const form = await request.formData();
+		const file = form.get('file') as File;
+		if (!file) {
+			throw new Error('No file provided');
+		}
+		const result = await groq.audio.transcriptions.create({
+			file: new File([file], 'file'),
+			model: 'whisper-large-v3',
+			response_format: 'text'
+		});
+		return text(result.text);
+	} catch (e) {
+		throw handle_server_error(request, e);
+	}
+};
