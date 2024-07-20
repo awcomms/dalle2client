@@ -1,12 +1,18 @@
 <script>
 	import { Button, TextInput } from 'carbon-components-svelte';
+	import axios from 'axios';
 
 	let user1 = '';
 	let user1_done = false;
 	let user2 = '';
 	let user2_done = false;
+	let res = '';
 
-	$: user1_done && user2_done && console.log(user1, user2);
+	$: user1_done &&
+		user2_done &&
+		(async () => {
+			res = (await axios.post('./', { user1, user2 })).data;
+		})();
 </script>
 
 {#if !user1_done}
