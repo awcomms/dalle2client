@@ -1,4 +1,4 @@
-<script>
+<script lang="ts">
 	import { Button, TextInput } from 'carbon-components-svelte';
 	import axios from 'axios';
 
@@ -11,7 +11,7 @@
 	$: user1_done &&
 		user2_done &&
 		(async () => {
-			res = (await axios.post('./', { user1, user2 })).data;
+			res = (await axios.post('/want', { user1, user2 })).data;
 		})();
 </script>
 
@@ -23,4 +23,9 @@
 {#if user1_done && !user2_done}
 	<TextInput bind:value={user2} labelText="User 2" />
 	<Button on:click={() => (user2_done = true)}>Done</Button>
+{/if}
+
+{#if user1_done && user2_done}
+	<p>{res}</p>
+	<Button on:click={() => (user1 = user2 = res = '')}>Reset</Button>
 {/if}
