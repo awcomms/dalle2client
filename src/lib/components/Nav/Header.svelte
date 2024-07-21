@@ -1,26 +1,22 @@
 <script lang="ts">
 	import { navigating } from '$app/stores';
 	import { isSideNavOpen } from './store';
-	// import { loginOpen } from '$lib/store';
-	// import { logout } from '$lib/logout';
+	import { loginOpen } from '$lib/store';
+	import { logout } from '$lib/logout';
 	import {page} from "$app/stores"
 	import {
 		InlineLoading,
 		SkipToContent,
 		Header,
 		HeaderUtilities,
-		// HeaderAction,
-		// HeaderPanelLinks,
-		// HeaderPanelLink,
-
-		HeaderGlobalAction,
-
-		Link
-
-
+		HeaderAction,
+		HeaderPanelLinks,
+		HeaderPanelLink,
 	} from 'carbon-components-svelte';
-	// import UserAvatarFilledAlt from 'carbon-icons-svelte/lib/UserAvatarFilledAlt.svelte';
 	import LogoGithub from 'carbon-icons-svelte/lib/LogoGithub.svelte';
+	import { UserAvatarFilledAlt } from 'carbon-icons-svelte';
+	import { sign_out } from '$lib/util/user/auth/sign_out';
+	import { goto } from '$app/navigation';
 </script>
 
 <Header
@@ -38,22 +34,15 @@
 		<SkipToContent />
 	</svelte:fragment>
 	<HeaderUtilities>
-		<!-- <HeaderAction
-			icon={UserAvatarFilledAlt}
-			closeIcon={UserAvatarFilledAlt}
-		>
+		<HeaderAction icon={UserAvatarFilledAlt} closeIcon={UserAvatarFilledAlt}>
 			<HeaderPanelLinks>
-				<HeaderPanelLink
-					on:click={() => {
-						$loginOpen = true;
-					}}>Login</HeaderPanelLink
-				>
-				<HeaderPanelLink
-					on:click={logout}
-					>Logout</HeaderPanelLink
-				>
+				{#if $page.data.user}
+					<HeaderPanelLink on:click={() => sign_out()}>sign out</HeaderPanelLink>
+				{:else}
+					<HeaderPanelLink on:click={() => goto('/auth')}>sign in</HeaderPanelLink>
+				{/if}
 			</HeaderPanelLinks>
-		</HeaderAction> -->
+		</HeaderAction>
 		<a href={$page.data.github_repo} rel="noopener noreferrer" target="_blank" class="bx--header__action logo">
 			<LogoGithub size={20} />
 		</a>

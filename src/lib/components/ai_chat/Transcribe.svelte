@@ -1,12 +1,11 @@
 <script lang="ts">
-	import axios from 'axios';
 	import Record from '../Record.svelte';
 	import { createEventDispatcher } from 'svelte';
 	import { transcribe } from '$lib/util/transcribe';
 	import { groq_key } from './store';
+	import { webm2flac } from '$lib/util/audio/webm2flac';
 
-	const dispatch =
-		createEventDispatcher();
+	const dispatch = createEventDispatcher();
 </script>
 
 <Record
@@ -17,12 +16,12 @@
 		dispatch(
 			'text',
 			await transcribe(
-				await new Blob(
-					e.detail.chunks,
-					{
+				await webm2flac(
+					new Blob(e.detail.chunks, {
 						type: e.detail.type
-					}
-				), $groq_key
+					})
+				),
+				$groq_key
 			)
 		);
 	}}

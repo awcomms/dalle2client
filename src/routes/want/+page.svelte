@@ -13,7 +13,9 @@
 		(async () => {
 			res = (await axios.post('/want', { user1, user2 })).data;
 		})();
+
 </script>
+
 
 {#if !user1_done}
 	<TextInput bind:value={user1} labelText="User 1" />
