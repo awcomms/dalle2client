@@ -3,7 +3,7 @@
 		// messages: Message[] = [],
 		id: string | undefined = undefined,
 		parameters: Params = {
-			model: 'llama3-70b-8192',
+			model: 'llama-3.1-70b-versatile',
 			messages: [{ role: 'system', content: $system }],
 			// seed: $seed,
 			temperature: 1,
