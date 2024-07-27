@@ -80,6 +80,15 @@
 
 	const dispatch = createEventDispatcher();
 
+	const insert_selection_at_cursor = () => {
+		if (!browser) return;
+		selected = window.getSelection()?.toString() || '';
+		if (selected) {
+			paste_selected_btn = true;
+			last_selected = selected;
+		}
+	}
+
 	// const remove_image = (id: number) => {
 	// 	images = [...images.filter((i) => i.id !== id)];
 	// };
@@ -114,15 +123,17 @@
 	// $: if (success) images = [];
 </script>
 
+<svelte:window
+  on:keydown={(event) => {
+    if (event.ctrlKey && event.key === 'i') {
+		event.preventDefault();
+		insert_selection_at_cursor();
+    }
+  }}
+/>
+
 <svelte:document
-	on:selectionchange={() => {
-		if (!browser) return;
-		selected = window.getSelection()?.toString() || '';
-		if (selected) {
-			paste_selected_btn = true;
-			last_selected = selected;
-		}
-	}}
+	on:selectionchange={insert_selection_at_cursor}
 />
 <!-- <svelte:window on:keydown={keydown} /> -->
 

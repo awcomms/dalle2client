@@ -10,6 +10,6 @@ export const POST = async ({ request }) => {
 		const res = await groq.chat.completions.create(args);
 		return json(res);
 	} catch (e) {
-		throw handle_server_error(request, e);
+		throw handle_server_error(request, e, "", );
 	}
 };
