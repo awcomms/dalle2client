@@ -81,13 +81,9 @@
 	const dispatch = createEventDispatcher();
 
 	const insert_selection_at_cursor = () => {
-		if (!browser) return;
-		selected = window.getSelection()?.toString() || '';
-		if (selected) {
-			paste_selected_btn = true;
-			last_selected = selected;
-		}
-	}
+		insert_at_cursor(message_input_ref, last_selected);
+		paste_selected_btn = false;
+	};
 
 	// const remove_image = (id: number) => {
 	// 	images = [...images.filter((i) => i.id !== id)];
@@ -124,16 +120,23 @@
 </script>
 
 <svelte:window
-  on:keydown={(event) => {
-    if (event.ctrlKey && event.key === 'i') {
-		event.preventDefault();
-		insert_selection_at_cursor();
-    }
-  }}
+	on:keydown={(event) => {
+		if (event.ctrlKey && event.key === 'i') {
+			insert_selection_at_cursor();
+			event.preventDefault();
+		}
+	}}
 />
 
 <svelte:document
-	on:selectionchange={insert_selection_at_cursor}
+	on:selectionchange={() => {
+		if (!browser) return;
+		selected = window.getSelection()?.toString() || '';
+		if (selected) {
+			paste_selected_btn = true;
+			last_selected = selected;
+		}
+	}}
 />
 <!-- <svelte:window on:keydown={keydown} /> -->
 
@@ -168,20 +171,12 @@
 					if (!selected) paste_selected_btn = false;
 				}}
 			>
-				<Button
-					size="field"
-					on:click={() => {
-						insert_at_cursor(message_input_ref, last_selected);
-						paste_selected_btn = false;
-					}}
-					iconDescription="paste text selection at cursor"
-					icon={Paste}
-				/>
+				<Button size="field" on:click={insert_selection_at_cursor} iconDescription="paste text selection at cursor" icon={Paste} />
 			</div>
 		{/if}
 		<Button disabled={!can_send} size="field" on:click={send} iconDescription={'Send'} icon={loading ? InlineLoading : Send} />
 		<Transcribe
-			on:text={({detail}) => {
+			on:text={({ detail }) => {
 				console.log('transcribe text', detail);
 				insert_at_cursor(message_input_ref, detail);
 			}}
