@@ -6,7 +6,7 @@ import { handle_server_error } from '$lib/util/handle_server_error';
 export const POST = async ({ request }) => {
 	try {
 		const args = await request.json();
-		if (!args.model) args.model = 'mixtral-8x7b-32768';
+		if (!args.model) args.model = 'llama-3.1-70b-versatile';
 		const res = await groq.chat.completions.create(args);
 		return json(res);
 	} catch (e) {

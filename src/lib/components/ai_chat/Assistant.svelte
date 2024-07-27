@@ -5,7 +5,7 @@
 		parameters: Params = {
 			model: 'llama-3.1-70b-versatile',
 			messages: [{ role: 'system', content: $system }],
-			// seed: $seed,
+			seed: $seed,
 			temperature: 1,
 			frequency_penalty: 0,
 			presence_penalty: 0
@@ -20,7 +20,7 @@
 	// import Restart from 'carbon-icons-svelte/lib/Restart.svelte';
 	import { create_one } from '$lib/util/image/create_one';
 	import type { Message, Params } from './types';
-	import { groq_key, seed, system } from './store';
+	import { base, key, seed, system } from './store';
 	import Groq from 'groq-sdk';
 	import type { ChatCompletion } from 'groq-sdk/resources/chat/completions.mjs';
 
@@ -61,8 +61,8 @@
 			});
 			if (message.content) request.messages = [...request.messages, message];
 
-			const r = $groq_key
-				? await new Groq({ apiKey: $groq_key }).chat.completions.create(request)
+			const r = $key && $base
+				? await new Groq({ apiKey: $key, baseURL: $base }).chat.completions.create(request)
 				: (await axios.post<ChatCompletion>('/groq', request)).data;
 
 			console.debug('-r', r);

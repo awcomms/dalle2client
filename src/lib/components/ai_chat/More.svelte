@@ -33,7 +33,7 @@
 	} from 'carbon-components-svelte';
 
 	import { createEventDispatcher } from 'svelte';
-	import { groq_key, send_on_enter } from './store';
+	import { key, send_on_enter, base } from './store';
 	import type { ChatCompletionCreateParamsNonStreaming } from 'groq-sdk/resources/chat/completions.mjs';
 	import axios from 'axios';
 	import { Save } from 'carbon-icons-svelte';
@@ -43,7 +43,14 @@
 
 	let items: ComboBoxItem[];
 
-	const models = ['llama-3.1-405b-reasoning', 'llama-3.1-70b-versatile', 'llama3-70b-8192', 'llama3-8b-8192', 'mixtral-8x7b-32768', 'gemma-7b-it'];
+	const models = [
+		'llama-3.1-405b-reasoning',
+		'llama-3.1-70b-versatile',
+		'llama3-70b-8192',
+		'llama3-8b-8192',
+		'mixtral-8x7b-32768',
+		'gemma-7b-it'
+	];
 
 	const dispatch = createEventDispatcher();
 
@@ -93,7 +100,8 @@
 				{/each}
 			</Select>
 			<NumberInput bind:value={parameters.seed} label="Seed" />
-			<TextInput labelText="groq API key"  bind:value={$groq_key} />
+			<TextInput labelText="API key" bind:value={$key} />
+			<TextInput labelText="API base" bind:value={$base} />
 			{#if show_name_edit}
 				<TextInput labelText={name_label} disabled={!show_name_edit} bind:value={name} />
 			{/if}

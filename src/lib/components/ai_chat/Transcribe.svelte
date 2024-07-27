@@ -2,7 +2,7 @@
 	import Record from '../Record.svelte';
 	import { createEventDispatcher } from 'svelte';
 	import { transcribe } from '$lib/util/transcribe';
-	import { groq_key } from './store';
+	import { key } from './store';
 	// import { webm2flac } from '$lib/util/audio/webm2flac';
 
 	const dispatch = createEventDispatcher();
@@ -21,7 +21,7 @@
 					type: e.detail.type
 				}),
 				// )
-				$groq_key
+				$key
 			)
 		);
 	}}
