@@ -1,9 +1,9 @@
 <script lang="ts">
 	import { notify } from '$lib/util/notify';
 	import { parse } from 'marked';
-	import { Button, ContextMenu, ContextMenuOption, CopyButton } from 'carbon-components-svelte';
+	import { Button, ContextMenu, ContextMenuOption, CopyButton, TextArea } from 'carbon-components-svelte';
 	import Copy from 'carbon-icons-svelte/lib/Copy.svelte';
-	import { TrashCan } from 'carbon-icons-svelte';
+	import { Checkmark, Edit, TrashCan } from 'carbon-icons-svelte';
 	import { createEventDispatcher } from 'svelte';
 	import type { Message } from './types';
 	export let message: Message,
@@ -16,6 +16,7 @@
 	// : false;
 
 	let target: HTMLElement,
+		editing = false,
 		menu_open = false;
 
 	const dispatch = createEventDispatcher();
@@ -53,17 +54,39 @@
 			class:user={message.role === 'user'}
 			class:assistant={message.role === 'assistant'}
 		>
-			<p class="content">
-				{#if message.role === 'user'}
-					{message.content}
-					<!-- {message.content[0].text} -->
-				{:else}
-					{@html parse(message.content)}
-				{/if}
-			</p>
+			{#if editing}
+				<TextArea
+					rows={1}
+					bind:value={message.content}
+					on:blur={() => (editing = false)}
+					on:keydown={(e) => {
+						if (e.key === 'Enter') {
+							e.preventDefault();
+							editing = false;
+							dispatch('edit_message', message.id, message.content);
+						}
+					}}
+				/>
+			{:else}
+				<p class="content">
+					{#if message.role === 'user'}
+						{message.content}
+						<!-- {message.content[0].text} -->
+					{:else}
+						{@html parse(message.content)}
+					{/if}
+				</p>
+			{/if}
 		</div>
+		<Button
+			iconDescription={editing ? 'Set' : 'Edit'}
+			icon={editing ? Checkmark : Edit}
+			on:click={() => (editing = !editing)}
+			size="small"
+			kind="ghost"
+		/>
 		<Button iconDescription="Copy" icon={Copy} on:click={copy} size="small" kind="ghost" />
-		<Button iconDescription="Copy" icon={TrashCan} on:click={() => dispatch('delete_message', message.id)} size="small" kind="ghost" />
+		<Button iconDescription="Delete" icon={TrashCan} on:click={() => dispatch('delete_message', message.id)} size="small" kind="ghost" />
 	</div>
 {/if}
 
