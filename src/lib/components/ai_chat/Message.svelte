@@ -118,4 +118,6 @@
 
 	.content
 		@include type.type-style('body-01')
+		overflow-x: auto
+		// overflow-x: visible
 </style>
