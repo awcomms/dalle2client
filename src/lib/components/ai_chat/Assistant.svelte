@@ -61,9 +61,10 @@
 			});
 			if (message.content) request.messages = [...request.messages, message];
 
-			const r = $key && $base
-				? await new Groq({ apiKey: $key, baseURL: $base }).chat.completions.create(request)
-				: (await axios.post<ChatCompletion>('/groq', request)).data;
+			const r =
+				$key && $base
+					? await new Groq({ apiKey: $key, baseURL: $base }).chat.completions.create(request)
+					: (await axios.post<ChatCompletion>('/groq', request)).data;
 
 			console.debug('-r', r);
 

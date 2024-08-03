@@ -16,11 +16,7 @@
 		dispatch(
 			'text',
 			await transcribe(
-				// await webm2flac(
-				new Blob(e.detail.chunks, {
-					type: e.detail.type
-				}),
-				// )
+				e.detail,
 				$key
 			)
 		);

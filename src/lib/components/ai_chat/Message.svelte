@@ -119,5 +119,14 @@
 	.content
 		@include type.type-style('body-01')
 		overflow-x: auto
-		// overflow-x: visible
+	.content::-webkit-scrollbar 
+		width: 3px
+
+	.content::-webkit-scrollbar-track 
+		background: transparent
+
+	.content::-webkit-scrollbar-thumb 
+		background: colors.$blue-60
+		border-radius: 0
+
 </style>

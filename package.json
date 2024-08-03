@@ -3,7 +3,7 @@
 	"version": "0.0.1",
 	"private": true,
 	"scripts": {
-		"dev": "vite dev --port 3767",
+		"dev": "vite dev --port 3762",
 		"build": "vite build",
 		"preview": "vite preview",
 		"test": "playwright test",
@@ -54,6 +54,7 @@
 		"ipfs-http-client": "^60.0.1",
 		"isomorphic-ws": "^5.0.0",
 		"jszip": "^3.10.1",
+		"libflacjs": "^5.4.0",
 		"marked": "^13.0.2",
 		"openai": "^4.53.0",
 		"peerjs": "^1.5.4",

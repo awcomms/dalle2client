@@ -6,3 +6,11 @@ export const ai_index = 'ai';
 export const embedding_model = 'text-embedding-3-large';
 export const embedding_field_name = 'v';
 export const items_per_page = 7;
+export const embed_endpoint = 'https://fastembedserver.shuttleapp.rs/embeddings';
+export const allowedOrigins = [
+	'https://udoflow.com',
+	'https://*.udoflow.com',
+	'https://udoflow.net',
+	'https://*.udoflow.net',
+	'http://localhost:4329'
+];
