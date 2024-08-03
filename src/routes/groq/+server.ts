@@ -2,11 +2,12 @@ import { json } from '@sveltejs/kit';
 import { groq } from '../../lib/util/groq';
 import { handle_server_error } from '$lib/util/handle_server_error';
 import type { RequestHandler } from './$types';
-import { allowedOrigins } from '$lib/constants';
+import { allowed_origins } from '$lib/constants';
+import { get_cors_headers } from '$lib/util/cors/get_cors_headers';
 
 export const OPTIONS: RequestHandler = ({ request }): Response => {
 	const origin = request.headers.get('origin');
-	const corsHeaders = getCorsHeaders(origin);
+	const corsHeaders = get_cors_headers(origin);
 
 	return new Response(null, { headers: corsHeaders });
 };

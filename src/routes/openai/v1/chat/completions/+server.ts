@@ -2,11 +2,11 @@ import { json } from '@sveltejs/kit';
 import { groq } from '$lib/util/groq';
 import { handle_server_error } from '$lib/util/handle_server_error';
 import type { RequestHandler } from './$types';
-import { allowedOrigins } from '$lib/constants';
+import { allowed_origins } from '$lib/constants';
 
 const isAllowedOrigin = (origin: string | null): boolean => {
   if (!origin) return true; // Same-origin requests or requests without an Origin header
-  return allowedOrigins.some(allowed => {
+  return allowed_origins.some(allowed => {
     if (allowed.includes('*')) {
       const regex = new RegExp('^' + allowed.replace('*', '.*') + '$');
       return regex.test(origin);

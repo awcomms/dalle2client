@@ -7,7 +7,7 @@ export const embedding_model = 'text-embedding-3-large';
 export const embedding_field_name = 'v';
 export const items_per_page = 7;
 export const embed_endpoint = 'https://fastembedserver.shuttleapp.rs/embeddings';
-export const allowedOrigins = [
+export const allowed_origins = [
 	'https://udoflow.com',
 	'https://*.udoflow.com',
 	'https://udoflow.net',
