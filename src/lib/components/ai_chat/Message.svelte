@@ -111,10 +111,10 @@
 
 	.user
 		align-self: flex-end
-		background-color: themes.$field-01
+		background-color: none
 
 	.assistant
-		background-color: colors.$blue-60
+		background-color: themes.$field-01
 
 	.content
 		@include type.type-style('body-01')
