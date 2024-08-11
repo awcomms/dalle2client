@@ -1,7 +1,7 @@
 import { numberStore, stringStore,arrayStore,
 	booleanStore } from '$lib/util/store';
 
-export const system = stringStore('system', 'You always give short responses')
+export const system = stringStore('system', 'You always give short responses. You always use BibleHub links for Bible verses')
 export const seed = numberStore('number', 144)
 export const key = stringStore('key', '')
 export const base = stringStore('base', 'https://api.groq.com/openai/v1/')
